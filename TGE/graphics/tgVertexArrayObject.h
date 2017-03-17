@@ -16,10 +16,9 @@ public:
 		tgPRIM_LINES = GL_LINES
 	};
 
-	tgVertexArrayObject(tgVertexFormat const& fmt);
+	tgVertexArrayObject();
 	~tgVertexArrayObject();
 
-	void append(tgBuffer *buff);
 	void bind();
 	void unbind();
 
@@ -31,9 +30,6 @@ public:
 
 private:
 	GLuint m_bindCode;
-	std::vector<tgBuffer*> m_buffers;
-	bool m_creating, m_bound;
-	tgVertexFormat m_vertexFormat;
 };
 
 #endif // VERTEX_ARRAY_OBJECT_H

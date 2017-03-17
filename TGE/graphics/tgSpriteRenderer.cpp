@@ -14,13 +14,16 @@ tgSpriteRenderer::tgSpriteRenderer(int screen_width, int screen_height)
 	fmt.append(tgVertexFormat::tgATTR_POSITION, false);
 	fmt.append(tgVertexFormat::tgATTR_TEXCOORD, false);
 
-	m_vao = new tgVertexArrayObject(fmt);
+	m_vao = new tgVertexArrayObject();
 	m_vbo = new tgBuffer(tgBuffer::tgTARG_ARRAY_BUFFER, tgBuffer::tgUSAGE_DYNAMIC);
 	m_ibo = new tgBuffer(tgBuffer::tgTARG_INDEX_BUFFER, tgBuffer::tgUSAGE_DYNAMIC);
 
 	m_vao->bind();
-	m_vao->append(m_vbo);
-	m_vao->append(m_ibo);
+	m_vbo->bind();
+	fmt.bind();
+
+	m_ibo->bind();
+
 	m_vao->unbind();
 
 	std::string sb_vert =
@@ -64,6 +67,8 @@ tgSpriteRenderer::tgSpriteRenderer(int screen_width, int screen_height)
 }
 
 tgSpriteRenderer::~tgSpriteRenderer() {
+	tgDelete(m_ibo);
+	tgDelete(m_vbo);
 	tgDelete(m_vao);
 	tgDelete(m_shader);
 }
@@ -94,7 +99,7 @@ void tgSpriteRenderer::render() {
 		glBindTexture(GL_TEXTURE_2D, batch.texture);
 
 		//m_vao->drawArrays(tgVertexArrayObject::tgPRIM_TRIANGLES, batch.offset, batch.numVertices);
-		m_vao->drawElements(tgVertexArrayObject::tgPRIM_LINES, batch.numIndices, batch.offset);
+		m_vao->drawElements(tgVertexArrayObject::tgPRIM_TRIANGLES, batch.numIndices, batch.offset);
 
 		glBindTexture(GL_TEXTURE_2D, 0);
 	}
@@ -118,7 +123,10 @@ void tgSpriteRenderer::updateBuffers() {
 	}
 
 	std::vector<tgVertex2D> vertices;
+	vertices.reserve(m_sprites.size() * 4);
+
 	std::vector<int> indices;
+	indices.reserve(m_sprites.size() * 6);
 
 	tgSprite spr0 = m_sprites[0];
 	int indexOffset = 0, offset = 0;
@@ -172,6 +180,7 @@ void tgSpriteRenderer::updateBuffers() {
 		prevtex = spr.texture;
 	}
 
+	m_vbo->bind();
 	int vboSize = vertices.size() * sizeof(tgVertex2D);
 	if(vboSize > m_prevVBOSize) {
 		m_vbo->reserve(vboSize);
@@ -179,6 +188,7 @@ void tgSpriteRenderer::updateBuffers() {
 	}
 	m_vbo->update(0, &vertices[0], vboSize);
 
+	m_ibo->bind();
 	int iboSize = indices.size() * sizeof(int);
 	if(iboSize > m_prevIBOSize) {
 		m_ibo->reserve(iboSize);

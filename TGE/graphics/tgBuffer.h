@@ -33,7 +33,6 @@ private:
 	GLuint m_bindCode;
 	tgBufferTarget m_target;
 	tgBufferUsage m_usage;
-	bool m_bound;
 };
 
 #endif // BUFFER_H
