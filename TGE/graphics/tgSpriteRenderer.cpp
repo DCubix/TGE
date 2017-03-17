@@ -94,7 +94,7 @@ void tgSpriteRenderer::render() {
 		glBindTexture(GL_TEXTURE_2D, batch.texture);
 
 		//m_vao->drawArrays(tgVertexArrayObject::tgPRIM_TRIANGLES, batch.offset, batch.numVertices);
-		m_vao->drawElements(tgVertexArrayObject::tgPRIM_TRIANGLES, batch.numVertices, batch.offset);
+		m_vao->drawElements(tgVertexArrayObject::tgPRIM_LINES, batch.numIndices, batch.offset);
 
 		glBindTexture(GL_TEXTURE_2D, 0);
 	}
@@ -118,56 +118,58 @@ void tgSpriteRenderer::updateBuffers() {
 	}
 
 	std::vector<tgVertex2D> vertices;
+	std::vector<int> indices;
 
 	tgSprite spr0 = m_sprites[0];
-	int off = 0;
-	int vertexCount = 0;
+	int indexOffset = 0, offset = 0;
+	int indexCount = 0;
 	int prevtex = spr0.texture;
-	int dc = 0;
 
+	vertices.push_back(spr0.BL);
 	vertices.push_back(spr0.TL);
 	vertices.push_back(spr0.TR);
 	vertices.push_back(spr0.BR);
-	vertices.push_back(spr0.BL);
 
-	vertexCount += 6;
+	indices.push_back(0);
+	indices.push_back(1);
+	indices.push_back(2);
+	indices.push_back(2);
+	indices.push_back(3);
+	indices.push_back(0);
 
-	for(int i = 1; i < m_sprites.size(); i++) {
+	indexCount += 6;
+	indexOffset += 4;
+
+	for(std::size_t i = 1; i < m_sprites.size(); i++) {
 		tgSprite spr = m_sprites[i];
 
+		vertices.push_back(spr.BL);
 		vertices.push_back(spr.TL);
 		vertices.push_back(spr.TR);
 		vertices.push_back(spr.BR);
-		vertices.push_back(spr.BL);
 
-		vertexCount += 6;
+		indices.push_back(0 + indexOffset);
+		indices.push_back(1 + indexOffset);
+		indices.push_back(2 + indexOffset);
+		indices.push_back(2 + indexOffset);
+		indices.push_back(3 + indexOffset);
+		indices.push_back(0 + indexOffset);
+
+		indexCount += 6;
+		indexOffset += 4;
 
 		if(prevtex != spr.texture || i >= m_sprites.size()-1) {
 			tgBatch b;
-			b.numVertices = vertexCount;
-			b.offset = off;
+			b.numIndices = indexCount;
+			b.offset = offset;
 			b.texture = spr.texture;
 			m_batches.push_back(b);
 
-			off += vertexCount;
-			vertexCount = 0;
-			dc++;
+			offset += indexCount;
+			indexCount = 0;
 		}
 
 		prevtex = spr.texture;
-	}
-
-	std::vector<int> indices;
-
-	off = 0;
-	for(int i = 0; i < m_sprites.size(); i++) {
-		indices.push_back(0 + off);
-		indices.push_back(1 + off);
-		indices.push_back(2 + off);
-		indices.push_back(2 + off);
-		indices.push_back(3 + off);
-		indices.push_back(0 + off);
-		off += 4;
 	}
 
 	int vboSize = vertices.size() * sizeof(tgVertex2D);

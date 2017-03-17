@@ -38,7 +38,7 @@ private:
 	} tgSprite;
 
 	typedef struct tgBatch {
-		int offset, numVertices, texture;
+		int offset, numIndices, texture;
 	} tgBatch;
 
 	tgBuffer *m_vbo, *m_ibo;

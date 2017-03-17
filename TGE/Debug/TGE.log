@@ -1,7 +1,7 @@
 ﻿  tgSpriteRenderer.cpp
-c:\users\diego\documentos\visual studio 2015\projects\tge\tge\graphics\tgspriterenderer.cpp(135): warning C4018: '<': signed/unsigned mismatch
-c:\users\diego\documentos\visual studio 2015\projects\tge\tge\graphics\tgspriterenderer.cpp(145): warning C4018: '>=': signed/unsigned mismatch
-c:\users\diego\documentos\visual studio 2015\projects\tge\tge\graphics\tgspriterenderer.cpp(163): warning C4018: '<': signed/unsigned mismatch
+  Generating Code...
+  Compiling...
+  tgVertexArrayObject.cpp
   Generating Code...
   Skipping... (no relevant changes detected)
   main.cpp

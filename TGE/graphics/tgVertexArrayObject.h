@@ -13,7 +13,7 @@ public:
 		tgPRIM_TRIANGLE_FAN = GL_TRIANGLE_FAN,
 		tgPRIM_TRIANGLE_STRIP = GL_TRIANGLE_STRIP,
 		tgPRIM_POINTS = GL_POINTS,
-		tgPRIM_LINE = GL_LINE
+		tgPRIM_LINES = GL_LINES
 	};
 
 	tgVertexArrayObject(tgVertexFormat const& fmt);
