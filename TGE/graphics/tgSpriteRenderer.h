@@ -41,7 +41,7 @@ private:
 		int offset, numVertices, texture;
 	} tgBatch;
 
-	tgBuffer *m_vbo;
+	tgBuffer *m_vbo, *m_ibo;
 	tgVertexArrayObject *m_vao;
 	std::vector<tgSprite> m_sprites;
 	std::vector<tgBatch> m_batches;

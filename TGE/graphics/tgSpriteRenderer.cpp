@@ -16,9 +16,11 @@ tgSpriteRenderer::tgSpriteRenderer(int screen_width, int screen_height)
 
 	m_vao = new tgVertexArrayObject(fmt);
 	m_vbo = new tgBuffer(tgBuffer::tgTARG_ARRAY_BUFFER, tgBuffer::tgUSAGE_DYNAMIC);
+	m_ibo = new tgBuffer(tgBuffer::tgTARG_INDEX_BUFFER, tgBuffer::tgUSAGE_DYNAMIC);
 
 	m_vao->bind();
 	m_vao->append(m_vbo);
+	m_vao->append(m_ibo);
 	m_vao->unbind();
 
 	std::string sb_vert =
@@ -85,12 +87,14 @@ void tgSpriteRenderer::end() {
 }
 
 void tgSpriteRenderer::render() {
+	bool shouldUnbind = false;
 	m_vao->bind();
 	for(tgBatch batch : m_batches) {
 		glActiveTexture(GL_TEXTURE0);
 		glBindTexture(GL_TEXTURE_2D, batch.texture);
 
-		m_vao->drawArrays(tgVertexArrayObject::tgPRIM_TRIANGLES, batch.offset, batch.numVertices);
+		//m_vao->drawArrays(tgVertexArrayObject::tgPRIM_TRIANGLES, batch.offset, batch.numVertices);
+		m_vao->drawElements(tgVertexArrayObject::tgPRIM_TRIANGLES, batch.numVertices, batch.offset);
 
 		glBindTexture(GL_TEXTURE_2D, 0);
 	}
@@ -124,9 +128,7 @@ void tgSpriteRenderer::updateBuffers() {
 	vertices.push_back(spr0.TL);
 	vertices.push_back(spr0.TR);
 	vertices.push_back(spr0.BR);
-	vertices.push_back(spr0.BR);
 	vertices.push_back(spr0.BL);
-	vertices.push_back(spr0.TL);
 
 	vertexCount += 6;
 
@@ -136,9 +138,7 @@ void tgSpriteRenderer::updateBuffers() {
 		vertices.push_back(spr.TL);
 		vertices.push_back(spr.TR);
 		vertices.push_back(spr.BR);
-		vertices.push_back(spr.BR);
 		vertices.push_back(spr.BL);
-		vertices.push_back(spr.TL);
 
 		vertexCount += 6;
 
@@ -157,12 +157,32 @@ void tgSpriteRenderer::updateBuffers() {
 		prevtex = spr.texture;
 	}
 
+	std::vector<int> indices;
+
+	off = 0;
+	for(int i = 0; i < m_sprites.size(); i++) {
+		indices.push_back(0 + off);
+		indices.push_back(1 + off);
+		indices.push_back(2 + off);
+		indices.push_back(2 + off);
+		indices.push_back(3 + off);
+		indices.push_back(0 + off);
+		off += 4;
+	}
+
 	int vboSize = vertices.size() * sizeof(tgVertex2D);
 	if(vboSize > m_prevVBOSize) {
 		m_vbo->reserve(vboSize);
 		m_prevVBOSize = vboSize;
 	}
 	m_vbo->update(0, &vertices[0], vboSize);
+
+	int iboSize = indices.size() * sizeof(int);
+	if(iboSize > m_prevIBOSize) {
+		m_ibo->reserve(iboSize);
+		m_prevIBOSize = iboSize;
+	}
+	m_ibo->update(0, &indices[0], iboSize);
 }
 
 static tgVector2 rotatePoint(tgVector2 const& p, float rad) {

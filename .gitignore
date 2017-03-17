@@ -3,4 +3,8 @@
 *.exe
 *.ilk
 *.pdb
+*.dll
+*.lib
+*.a
+*.obj
 .vs

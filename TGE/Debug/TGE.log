@@ -1,11 +1,9 @@
 ﻿  tgSpriteRenderer.cpp
 c:\users\diego\documentos\visual studio 2015\projects\tge\tge\graphics\tgspriterenderer.cpp(135): warning C4018: '<': signed/unsigned mismatch
-c:\users\diego\documentos\visual studio 2015\projects\tge\tge\graphics\tgspriterenderer.cpp(147): warning C4018: '>=': signed/unsigned mismatch
+c:\users\diego\documentos\visual studio 2015\projects\tge\tge\graphics\tgspriterenderer.cpp(145): warning C4018: '>=': signed/unsigned mismatch
+c:\users\diego\documentos\visual studio 2015\projects\tge\tge\graphics\tgspriterenderer.cpp(163): warning C4018: '<': signed/unsigned mismatch
   Generating Code...
-  Compiling...
+  Skipping... (no relevant changes detected)
   main.cpp
-c:\users\diego\documentos\visual studio 2015\projects\tge\tge\main.cpp(73): warning C4244: 'argument': conversion from 'int' to 'float', possible loss of data
-c:\users\diego\documentos\visual studio 2015\projects\tge\tge\main.cpp(80): warning C4244: 'argument': conversion from 'int' to 'float', possible loss of data
-  Generating Code...
   TGE.vcxproj -> C:\Users\diego\Documentos\Visual Studio 2015\Projects\TGE\Debug\TGE.exe
   TGE.vcxproj -> C:\Users\diego\Documentos\Visual Studio 2015\Projects\TGE\Debug\TGE.pdb (Partial PDB)
