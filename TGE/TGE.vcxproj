@@ -127,10 +127,12 @@
     <ClInclude Include="core\stb_image_write.h" />
     <ClInclude Include="core\tgImageData.h" />
     <ClInclude Include="core\tgInput.h" />
+    <ClInclude Include="core\tgLog.h" />
     <ClInclude Include="core\tgUtil.h" />
     <ClInclude Include="core\tgWindow.h" />
     <ClInclude Include="graphics\tgBuffer.h" />
     <ClInclude Include="graphics\tgGL.h" />
+    <ClInclude Include="graphics\tgRenderer.h" />
     <ClInclude Include="graphics\tgShaderProgram.h" />
     <ClInclude Include="graphics\tgSpriteRenderer.h" />
     <ClInclude Include="graphics\tgTexture.h" />
@@ -138,14 +140,21 @@
     <ClInclude Include="graphics\tgVertexFormat.h" />
     <ClInclude Include="math\tgMath.h" />
     <ClInclude Include="math\tgMatrixBase.h" />
+    <ClInclude Include="math\tgQuaternion.h" />
+    <ClInclude Include="math\tgTransform.h" />
     <ClInclude Include="math\tgVectorBase.h" />
+    <ClInclude Include="nodes\tgSpriteNode.h" />
+    <ClInclude Include="scenegraph\tgNode.h" />
+    <ClInclude Include="scenegraph\tgSceneTree.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="core\tgImageData.cpp" />
     <ClCompile Include="core\tgInput.cpp" />
+    <ClCompile Include="core\tgLog.cpp" />
     <ClCompile Include="core\tgUtil.cpp" />
     <ClCompile Include="core\tgWindow.cpp" />
     <ClCompile Include="graphics\tgBuffer.cpp" />
+    <ClCompile Include="graphics\tgRenderer.cpp" />
     <ClCompile Include="graphics\tgShaderProgram.cpp" />
     <ClCompile Include="graphics\tgSpriteRenderer.cpp" />
     <ClCompile Include="graphics\tgTexture.cpp" />
@@ -153,6 +162,11 @@
     <ClCompile Include="graphics\tgVertexFormat.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="math\tgMath.cpp" />
+    <ClCompile Include="math\tgQuaternion.cpp" />
+    <ClCompile Include="math\tgTransform.cpp" />
+    <ClCompile Include="nodes\tgSpriteNode.cpp" />
+    <ClCompile Include="scenegraph\tgNode.cpp" />
+    <ClCompile Include="scenegraph\tgSceneTree.cpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

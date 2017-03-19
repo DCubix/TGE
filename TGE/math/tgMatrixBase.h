@@ -38,6 +38,11 @@ public:
 		return ret;
 	}
 
+	tgVectorBase<3> operator * (tgVectorBase<3> const& o) {
+		tgVectorBase<4> ret = tgVectorBase<4>(o, 1.0f);
+		return ((*this) * ret).xyz();
+	}
+
 	MBASE operator * (float o) {
 		MBASE ret;
 		for(unsigned x = 0; x < C; x++) {
@@ -146,6 +151,21 @@ public:
 		ret[2][1] = -x * s + t * y * z;
 		ret[2][2] = 1 + t * (z * z - 1);
 
+		return ret;
+	}
+
+	static MBASE rotation(tgVectorBase<3> const& f, tgVectorBase<3> const& u, tgVectorBase<3> const& r) {
+		static_assert (C == 4 || C == 3, "This is not a Matrix4x4 or Matrix3x3");
+		MBASE ret = MBASE::identity();
+		ret[0][0] = r.x();
+		ret[0][1] = r.y();
+		ret[0][2] = r.z();
+		ret[1][0] = u.x();
+		ret[1][1] = u.y();
+		ret[1][2] = u.z();
+		ret[2][0] = f.x();
+		ret[2][1] = f.y();
+		ret[2][2] = f.z();
 		return ret;
 	}
 

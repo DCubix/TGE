@@ -6,25 +6,29 @@
 #include "tgVertexArrayObject.h"
 #include "tgShaderProgram.h"
 #include "tgTexture.h"
+#include "tgRenderer.h"
 
 #include "../core/tgUtil.h"
 
 #include <vector>
 
-class tgSpriteRenderer {
+class tgSpriteRenderer : public tgRenderer {
 public:
 	tgSpriteRenderer(int screen_width, int screen_height);
-	~tgSpriteRenderer();
+	~tgSpriteRenderer() override final;
 
 	void draw(tgTexture *tex,
 		tgVector4 const& uv, tgVector4 const& dst,
 		tgVector2 const& origin, float rotation);
+	void drawTile(tgTexture *atlas, int tileIndex,
+		int tileWidth, int tileHeight,
+		int tileX, int tileY, float scale);
 
-	void begin();
-	void end();
-	void render();
+	void begin() override final;
+	void end() override final;
+	void render() override final;
 
-	void resize(int w, int h);
+	void resize(int w, int h) override final;
 
 private:
 	typedef struct tgVertex2D {
@@ -39,6 +43,10 @@ private:
 
 	typedef struct tgBatch {
 		int offset, numIndices, texture;
+
+		tgBatch(int offset, int indices, int texture)
+			: offset(offset), numIndices(indices), texture(texture)
+		{}
 	} tgBatch;
 
 	tgBuffer *m_vbo, *m_ibo;

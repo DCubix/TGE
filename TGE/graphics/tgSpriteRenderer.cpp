@@ -3,8 +3,11 @@
 #include <string>
 #include <cmath>
 
+#include "../core/tgLog.h"
+
 tgSpriteRenderer::tgSpriteRenderer(int screen_width, int screen_height)
 	: m_vbo(nullptr),
+	m_ibo(nullptr),
 	m_vao(nullptr),
 	m_prevVBOSize(0),
 	m_prevIBOSize(0),
@@ -92,13 +95,12 @@ void tgSpriteRenderer::end() {
 }
 
 void tgSpriteRenderer::render() {
-	bool shouldUnbind = false;
 	m_vao->bind();
-	for(tgBatch batch : m_batches) {
+	for(tgBatch &batch : m_batches) {
 		glActiveTexture(GL_TEXTURE0);
 		glBindTexture(GL_TEXTURE_2D, batch.texture);
+		m_shader->setInt("tex0", 0);
 
-		//m_vao->drawArrays(tgVertexArrayObject::tgPRIM_TRIANGLES, batch.offset, batch.numVertices);
 		m_vao->drawElements(tgVertexArrayObject::tgPRIM_TRIANGLES, batch.numIndices, batch.offset);
 
 		glBindTexture(GL_TEXTURE_2D, 0);
@@ -122,79 +124,63 @@ void tgSpriteRenderer::updateBuffers() {
 		return;
 	}
 
+	std::sort(m_sprites.begin(), m_sprites.end(),
+		[](tgSprite const& a, tgSprite const& b) -> bool {
+			return a.texture < b.texture;
+		}
+	);
+
 	std::vector<tgVertex2D> vertices;
 	vertices.reserve(m_sprites.size() * 4);
 
 	std::vector<int> indices;
 	indices.reserve(m_sprites.size() * 6);
 
-	tgSprite spr0 = m_sprites[0];
-	int indexOffset = 0, offset = 0;
-	int indexCount = 0;
-	int prevtex = spr0.texture;
+	vertices.insert(vertices.end(), 
+		{ m_sprites[0].BL, m_sprites[0].TL, m_sprites[0].TR, m_sprites[0].BR }
+	);
 
-	vertices.push_back(spr0.BL);
-	vertices.push_back(spr0.TL);
-	vertices.push_back(spr0.TR);
-	vertices.push_back(spr0.BR);
+	indices.insert(indices.end(), { 0, 1, 2, 2, 3, 0 });
 
-	indices.push_back(0);
-	indices.push_back(1);
-	indices.push_back(2);
-	indices.push_back(2);
-	indices.push_back(3);
-	indices.push_back(0);
+	m_batches.emplace_back(0, 6, m_sprites[0].texture);
 
-	indexCount += 6;
-	indexOffset += 4;
-
-	for(std::size_t i = 1; i < m_sprites.size(); i++) {
-		tgSprite spr = m_sprites[i];
-
-		vertices.push_back(spr.BL);
-		vertices.push_back(spr.TL);
-		vertices.push_back(spr.TR);
-		vertices.push_back(spr.BR);
-
-		indices.push_back(0 + indexOffset);
-		indices.push_back(1 + indexOffset);
-		indices.push_back(2 + indexOffset);
-		indices.push_back(2 + indexOffset);
-		indices.push_back(3 + indexOffset);
-		indices.push_back(0 + indexOffset);
-
-		indexCount += 6;
-		indexOffset += 4;
-
-		if(prevtex != spr.texture || i >= m_sprites.size()-1) {
-			tgBatch b;
-			b.numIndices = indexCount;
-			b.offset = offset;
-			b.texture = spr.texture;
-			m_batches.push_back(b);
-
-			offset += indexCount;
-			indexCount = 0;
+	int indexOffset = 4;
+	int off = 0;
+	for(std::size_t i = 1; i < m_sprites.size(); ++i) {
+		if(m_sprites[i].texture != m_sprites[i - 1].texture) {
+			off += m_batches.back().numIndices;
+			m_batches.push_back({ off, 6,  m_sprites[i].texture});
+		} else {
+			m_batches.back().numIndices += 6;
 		}
 
-		prevtex = spr.texture;
+		vertices.insert(vertices.end(), 
+			{ m_sprites[i].BL, m_sprites[i].TL, m_sprites[i].TR, m_sprites[i].BR }
+		);
+
+		indices.insert(indices.end(),
+			{ 0 + indexOffset, 1 + indexOffset, 2 + indexOffset,
+			  2 + indexOffset, 3 + indexOffset, 0 + indexOffset }
+		);
+
+		indexOffset += 4;
 	}
 
 	m_vbo->bind();
 	int vboSize = vertices.size() * sizeof(tgVertex2D);
 	if(vboSize > m_prevVBOSize) {
-		m_vbo->reserve(vboSize);
+		m_vbo->resize(vboSize);
 		m_prevVBOSize = vboSize;
 	}
-	m_vbo->update(0, &vertices[0], vboSize);
-
+	m_vbo->update(0, vertices.data(), vboSize);
+	
 	m_ibo->bind();
 	int iboSize = indices.size() * sizeof(int);
 	if(iboSize > m_prevIBOSize) {
-		m_ibo->reserve(iboSize);
+		m_ibo->resize(iboSize);
 		m_prevIBOSize = iboSize;
 	}
-	m_ibo->update(0, &indices[0], iboSize);
+	m_ibo->update(0, indices.data(), iboSize);
 }
 
 static tgVector2 rotatePoint(tgVector2 const& p, float rad) {
@@ -245,4 +231,20 @@ void tgSpriteRenderer::draw(tgTexture* tex,
 	spr.texture = tex->getBindCode();
 
 	m_sprites.push_back(spr);
+}
+
+void tgSpriteRenderer::drawTile(tgTexture *atlas, int tileIndex, int tileWidth, int tileHeight, int tileX, int tileY, float scale) {
+	int cols = atlas->getWidth() / tileWidth;
+	int rows = atlas->getHeight() / tileHeight;
+
+	float tx = tileX * float(tileWidth) * scale;
+	float ty = tileY * float(tileHeight) * scale;
+
+	float uvw = 1.0f / float(cols);
+	float uvh = 1.0f / float(rows);
+	float uvx = float(tileIndex % cols) * uvw;
+	float uvy = float(int(tileIndex / cols)) * uvh;
+
+	tgVector4 uv(uvx, uvy, uvw, uvh);
+	draw(atlas, uv, tgVector4(tx, ty, atlas->getWidth() * scale, atlas->getHeight() * scale), tgVector2(0.0f), 0.0f);
 }

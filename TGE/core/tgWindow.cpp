@@ -2,13 +2,14 @@
 #include "tgUtil.h"
 
 #include "../graphics/tgGL.h"
+#include "tgLog.h"
 
 tgWindow::tgWindow(std::string const &title, int width, int height)
 	: m_title(title), m_width(width), m_height(height) {
 	m_sdlWindow = nullptr;
 
 	if(SDL_Init(SDL_INIT_VIDEO) < 0) {
-		Err("Could not initialize SDL backend. " << SDL_GetError());
+		tgLog::log("Could not initialize SDL backend. ", SDL_GetError());
 	} else {
 		SDL_GL_SetAttribute(SDL_GL_CONTEXT_MAJOR_VERSION, 4);
 		SDL_GL_SetAttribute(SDL_GL_CONTEXT_MINOR_VERSION, 5);
@@ -36,19 +37,19 @@ tgWindow::tgWindow(std::string const &title, int width, int height)
 			SDL_WINDOW_OPENGL | SDL_WINDOW_SHOWN
 		);
 		if(m_sdlWindow == nullptr) {
-			Err("Could not create a window. " << SDL_GetError());
+			tgLog::log("Could not create a window. ", SDL_GetError());
 		}
 
 		m_sdl_glContext = SDL_GL_CreateContext(m_sdlWindow);
 		if(m_sdl_glContext == nullptr) {
-			Err("Could not create an OpenGL context. " << SDL_GetError());
+			tgLog::log("Could not create an OpenGL context. ", SDL_GetError());
 		}
 		SDL_GL_MakeCurrent(m_sdlWindow, m_sdl_glContext);
 
 		glewExperimental = GL_TRUE;
 		int err = glewInit();
 		if(err != GLEW_OK) {
-			Err("Could not initialize OpenGL extensions. " << glewGetErrorString(err));
+			tgLog::log("Could not initialize OpenGL extensions. ", glewGetErrorString(err));
 		}
 	}
 }

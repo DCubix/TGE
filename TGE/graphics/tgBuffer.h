@@ -23,7 +23,7 @@ public:
 	void bind();
 	void unbind();
 
-	void reserve(std::size_t size);
+	void resize(std::size_t size);
 	void setData(void *data, std::size_t data_size);
 	void update(unsigned offset, void *data, std::size_t data_size);
 

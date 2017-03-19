@@ -23,7 +23,7 @@ void tgBuffer::unbind() {
 	GLCall(glBindBuffer(m_target, 0));
 }
 
-void tgBuffer::reserve(size_t size) {
+void tgBuffer::resize(size_t size) {
 	GLCall(glBufferData(m_target, size, nullptr, m_usage));
 }
 

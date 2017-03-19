@@ -31,5 +31,5 @@ void tgVertexArrayObject::drawElements(tgPrimitiveType primitive, int count, voi
 }
 
 void tgVertexArrayObject::drawElements(tgPrimitiveType primitive, int count, int offset) {
-	GLCall(glDrawElements(primitive, count, GL_UNSIGNED_INT, (void*)offset));
+	GLCall(glDrawElements(primitive, count, GL_UNSIGNED_INT, (void*)(offset * sizeof(int))));
 }

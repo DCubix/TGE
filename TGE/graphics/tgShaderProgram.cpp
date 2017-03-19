@@ -1,6 +1,7 @@
 #include "tgShaderProgram.h"
 
 #include <sstream>
+#include "../core/tgLog.h"
 
 tgShaderProgram::tgShaderProgram()
 	: m_program(-1),
@@ -22,7 +23,7 @@ int tgShaderProgram::createShader(std::string const& src, GLenum stype) {
 	if(status == GL_FALSE) {
 		char log[1024];
 		glGetShaderInfoLog(shader, 1024, nullptr, log);
-		Err(log);
+		tgLog::log(log);
 		return -1;
 	}
 
@@ -45,7 +46,7 @@ void tgShaderProgram::unbind() {
 
 void tgShaderProgram::addShader(std::string const& src, tgShaderType stype) {
 	if(src.empty()) {
-		Err("Your shader source cannot be empty.");
+		tgLog::log("Your shader source cannot be empty.");
 		m_valid = false;
 	}
 
@@ -57,7 +58,7 @@ void tgShaderProgram::addShader(std::string const& src, tgShaderType stype) {
 	if(shader != -1) {
 		for(tgShader s : m_shaders) {
 			if(s.stype == stype) {
-				Err("You can't have more than 1 shader of this type.");
+				tgLog::log("You can't have more than 1 shader of this type.");
 				m_valid = false;
 				break;
 			}
@@ -67,14 +68,14 @@ void tgShaderProgram::addShader(std::string const& src, tgShaderType stype) {
 			m_shaders.push_back({ stype, shader, src });
 		}
 	} else {
-		Err("Could not create shader.");
+		tgLog::log("Could not create shader.");
 		m_valid = false;
 	}
 }
 
 void tgShaderProgram::link() {
 	if(!m_valid) {
-		Err("Cannot link an invalid shader program.");
+		tgLog::log("Cannot link an invalid shader program.");
 		return;
 	}
 
@@ -85,7 +86,7 @@ void tgShaderProgram::link() {
 		m_valid = false;
 		char log[1024];
 		glGetProgramInfoLog(m_program, 1024, nullptr, log);
-		Err(log);
+		tgLog::log(log);
 	} else {
 		int uniforms;
 		glGetProgramiv(m_program, GL_ACTIVE_UNIFORMS, &uniforms);
@@ -120,7 +121,7 @@ void tgShaderProgram::addUniform(std::string const& name) {
 	if(loc != -1) {
 		m_uniforms[name] = loc;
 	} else {
-		Err("Could not find an uniform named \"" << name << "\".");
+		tgLog::log("Could not find an uniform named \"", name, "\".");
 	}
 }
 

@@ -1,7 +1,7 @@
 #include "tgImageData.h"
 
 #include "stb.h"
-#include "tgUtil.h"
+#include "tgLog.h"
 
 tgImageData::tgImageData(int width, int height)
 	: m_width(width),
@@ -11,7 +11,7 @@ tgImageData::tgImageData(int width, int height)
 
 tgImageData::tgImageData(std::ifstream &stream) {
 	if(!stream.is_open()) {
-		Err("The input stream is not open.");
+		tgLog::log("The input stream is not open.");
 		return;
 	}
 	stream.seekg(0, std::ios::end);
@@ -24,7 +24,7 @@ tgImageData::tgImageData(std::ifstream &stream) {
 	int comp;
 	byte *dat = stbi_load_from_memory(data, int(pos), &m_width, &m_height, &comp, STBI_rgb_alpha);
 	if(dat == nullptr) {
-		Err("The image failed to load.");
+		tgLog::log("The image failed to load.");
 		return;
 	}
 
@@ -86,7 +86,7 @@ tgImageData& tgImageData::flipY() {
 
 bool tgImageData::saveAs(std::ofstream &stream) {
 	if(!stream.is_open()) {
-		Err("The output stream is not open.");
+		tgLog::log("The output stream is not open.");
 		return false;
 	}
 	int len;

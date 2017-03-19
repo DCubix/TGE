@@ -3,6 +3,8 @@
 #include <GL/glew.h>
 #include <GL/glu.h>
 
+#include "tgLog.h"
+
 unsigned int checkError() {
 	return glGetError();
 }
@@ -10,8 +12,7 @@ unsigned int checkError() {
 bool glLog(const char* function, const char* file, int line) {
 	unsigned int error = checkError();
 	if(error != GL_NO_ERROR) {
-		std::cerr << "OpenGL Error (" << error << "): " << function << "\n\t"
-			<< file << ":" << line << ":\n\t\t" << gluErrorString(error) << std::endl;
+		tgLog::log("OpenGL Error (", error, "): ", function, "\n\t", file, ":", line, ":\n\t\t", gluErrorString(error));
 		return false;
 	}
 	return true;
