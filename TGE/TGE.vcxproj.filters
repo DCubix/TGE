@@ -45,9 +45,6 @@
     <ClInclude Include="graphics\tgShaderProgram.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="graphics\tgSpriteRenderer.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="graphics\tgTexture.h">
       <Filter>Header Files</Filter>
     </ClInclude>
@@ -96,9 +93,6 @@
     <ClInclude Include="ecs\tgComponent.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="ecs\tgWorld.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="ecs\tgSystem.h">
       <Filter>Header Files</Filter>
     </ClInclude>
@@ -106,6 +100,30 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="ecs\tgComponentHandler.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="ecs\tgEntitySystemManager.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="components\tgTransformComponent.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="components\tgSpriteComponent.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="systems\tgSpriteRenderingSystem.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="assets\tgTextureAsset.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="assets\tgAsset.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="assets\tgAssets.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="assets\PhysFS.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
@@ -126,9 +144,6 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="graphics\tgShaderProgram.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="graphics\tgSpriteRenderer.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="graphics\tgTexture.cpp">
@@ -173,16 +188,19 @@
     <ClCompile Include="ecs\tgEntity.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="ecs\tgComponent.cpp">
+    <ClCompile Include="ecs\tgEntitySystemManager.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="ecs\tgWorld.cpp">
+    <ClCompile Include="systems\tgSpriteRenderingSystem.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="ecs\tgSystem.cpp">
+    <ClCompile Include="assets\tgTextureAsset.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="ecs\tgComponentHandler.cpp">
+    <ClCompile Include="assets\tgAssets.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="assets\PhysFS.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

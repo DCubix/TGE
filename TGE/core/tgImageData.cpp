@@ -9,13 +9,13 @@ tgImageData::tgImageData(int width, int height)
 	m_data.reserve(width * height * 4);
 }
 
-tgImageData::tgImageData(std::ifstream &stream) {
-	if(!stream.is_open()) {
+tgImageData::tgImageData(std::istream &stream) {
+	if(stream.bad()) {
 		tgLog::log("The input stream is not open.");
 		return;
 	}
 	stream.seekg(0, std::ios::end);
-	std::ifstream::pos_type pos = stream.tellg();
+	std::istream::pos_type pos = stream.tellg();
 
 	byte *data = new byte[pos];
 	stream.seekg(0, std::ios::beg);
@@ -28,12 +28,22 @@ tgImageData::tgImageData(std::ifstream &stream) {
 		return;
 	}
 
-	m_data = std::vector<byte>(dat, dat + (m_width * m_height * 4));
+	const unsigned data_size = m_width * m_height * comp;
+	const unsigned final_data_size = m_width * m_height * 4;
+	m_data.resize(final_data_size);
+	for (unsigned i = 0; i < final_data_size; i+= 4) {
+		m_data[i + 0] = dat[i + 0];
+		m_data[i + 1] = dat[i + 1];
+		m_data[i + 2] = dat[i + 2];
+		if (data_size == final_data_size) {
+			m_data[i + 3] = dat[i + 3];
+		} else {
+			m_data[i + 3] = (byte)255;
+		}
+	}
 
 	stbi_image_free(dat);
 	delete[] data;
-
-	stream.close();
 }
 
 tgImageData tgImageData::getSubData(int x, int y, int w, int h) {
@@ -84,8 +94,8 @@ tgImageData& tgImageData::flipY() {
 	return *this;
 }
 
-bool tgImageData::saveAs(std::ofstream &stream) {
-	if(!stream.is_open()) {
+bool tgImageData::saveAs(std::ostream &stream) {
+	if(stream.bad()) {
 		tgLog::log("The output stream is not open.");
 		return false;
 	}
@@ -95,7 +105,6 @@ bool tgImageData::saveAs(std::ofstream &stream) {
 		stream.write(reinterpret_cast<const char*> (png), len);
 		STBI_FREE(png);
 	}
-	stream.close();
 	return true;
 }
 

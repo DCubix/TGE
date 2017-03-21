@@ -9,7 +9,11 @@ template <unsigned C>
 class tgVectorBase {
 	using VBASE = tgVectorBase<C>;
 public:
-	tgVectorBase() {}
+	tgVectorBase() {
+		for (int i = 0; i < C; i++) {
+			m_data[i] = 0;
+		}
+	}
 	tgVectorBase(float v) {
 		for(int i = 0; i < C; i++) {
 			m_data[i] = v;
@@ -48,9 +52,9 @@ public:
 	}
 	tgVectorBase(tgVectorBase<3> const& o, float w) {
 		static_assert (C >= 4, "This vector doesn't have 4 components");
-		m_data[0] = o[0];
-		m_data[1] = o[1];
-		m_data[2] = o[2];
+		m_data[0] = o.x();
+		m_data[1] = o.y();
+		m_data[2] = o.z();
 		m_data[3] = w;
 	}
 

@@ -1,7 +1,7 @@
 #ifndef ECS_H
 #define ECS_H
 
-#include "tgWorld.h"
+#include "tgEntitySystemManager.h"
 #include "tgEntity.h"
 #include "tgComponent.h"
 #include "tgSystem.h"

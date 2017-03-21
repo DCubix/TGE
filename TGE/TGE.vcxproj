@@ -1,5 +1,5 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
-<Project DefaultTargets="Build" ToolsVersion="14.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+<Project DefaultTargets="Build" ToolsVersion="15.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup Label="ProjectConfigurations">
     <ProjectConfiguration Include="Debug|Win32">
       <Configuration>Debug</Configuration>
@@ -21,32 +21,32 @@
   <PropertyGroup Label="Globals">
     <ProjectGuid>{526537AD-96F4-4B72-A6E6-9BD8CE03F70F}</ProjectGuid>
     <RootNamespace>TGE</RootNamespace>
-    <WindowsTargetPlatformVersion>8.1</WindowsTargetPlatformVersion>
+    <WindowsTargetPlatformVersion>10.0.14393.0</WindowsTargetPlatformVersion>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
     <ConfigurationType>Application</ConfigurationType>
     <UseDebugLibraries>true</UseDebugLibraries>
-    <PlatformToolset>v140</PlatformToolset>
+    <PlatformToolset>v141</PlatformToolset>
     <CharacterSet>MultiByte</CharacterSet>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="Configuration">
     <ConfigurationType>Application</ConfigurationType>
     <UseDebugLibraries>false</UseDebugLibraries>
-    <PlatformToolset>v140</PlatformToolset>
+    <PlatformToolset>v141</PlatformToolset>
     <WholeProgramOptimization>true</WholeProgramOptimization>
     <CharacterSet>MultiByte</CharacterSet>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="Configuration">
     <ConfigurationType>Application</ConfigurationType>
     <UseDebugLibraries>true</UseDebugLibraries>
-    <PlatformToolset>v140</PlatformToolset>
+    <PlatformToolset>v141</PlatformToolset>
     <CharacterSet>MultiByte</CharacterSet>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="Configuration">
     <ConfigurationType>Application</ConfigurationType>
     <UseDebugLibraries>false</UseDebugLibraries>
-    <PlatformToolset>v140</PlatformToolset>
+    <PlatformToolset>v141</PlatformToolset>
     <WholeProgramOptimization>true</WholeProgramOptimization>
     <CharacterSet>MultiByte</CharacterSet>
   </PropertyGroup>
@@ -74,12 +74,12 @@
       <WarningLevel>Level3</WarningLevel>
       <Optimization>Disabled</Optimization>
       <SDLCheck>true</SDLCheck>
-      <AdditionalIncludeDirectories>$(SolutionDir)deps\SDL2-2.0.5\include;$(SolutionDir)deps\glew-2.0.0\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir)deps\physfs\include;$(SolutionDir)deps\SDL2-2.0.5\include;$(SolutionDir)deps\glew-2.0.0\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <PreprocessorDefinitions>_CRT_SECURE_NO_WARNINGS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
     </ClCompile>
     <Link>
-      <AdditionalLibraryDirectories>$(SolutionDir)deps\SDL2-2.0.5\lib;$(SolutionDir)deps\glew-2.0.0\lib;%(AdditionalLibraryDirectories);</AdditionalLibraryDirectories>
-      <AdditionalDependencies>opengl32.lib;glu32.lib;glew32s.lib;SDL2.lib;SDL2main.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalLibraryDirectories>$(SolutionDir)deps\physfs\lib;$(SolutionDir)deps\SDL2-2.0.5\lib;$(SolutionDir)deps\glew-2.0.0\lib;%(AdditionalLibraryDirectories);</AdditionalLibraryDirectories>
+      <AdditionalDependencies>opengl32.lib;glu32.lib;glew32s.lib;SDL2.lib;SDL2main.lib;physfs.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <SubSystem>Console</SubSystem>
     </Link>
   </ItemDefinitionGroup>
@@ -97,14 +97,14 @@
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <SDLCheck>true</SDLCheck>
-      <AdditionalIncludeDirectories>$(SolutionDir)deps\SDL2-2.0.5\include;$(SolutionDir)deps\glew-2.0.0\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir)deps\physfs\include;$(SolutionDir)deps\SDL2-2.0.5\include;$(SolutionDir)deps\glew-2.0.0\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <PreprocessorDefinitions>_CRT_SECURE_NO_WARNINGS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
     </ClCompile>
     <Link>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
-      <AdditionalLibraryDirectories>$(SolutionDir)deps\SDL2-2.0.5\lib;$(SolutionDir)deps\glew-2.0.0\lib;%(AdditionalLibraryDirectories);$(VcpkgRoot)lib;$(VcpkgRoot)lib\manual-link</AdditionalLibraryDirectories>
-      <AdditionalDependencies>opengl32.lib;glu32.lib;glew32s.lib;SDL2.lib;SDL2main.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalLibraryDirectories>$(SolutionDir)deps\physfs\lib;$(SolutionDir)deps\SDL2-2.0.5\lib;$(SolutionDir)deps\glew-2.0.0\lib;%(AdditionalLibraryDirectories);$(VcpkgRoot)lib;$(VcpkgRoot)lib\manual-link</AdditionalLibraryDirectories>
+      <AdditionalDependencies>opengl32.lib;glu32.lib;glew32s.lib;SDL2.lib;SDL2main.lib;physfs.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <SubSystem>Console</SubSystem>
     </Link>
   </ItemDefinitionGroup>
@@ -122,9 +122,15 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClInclude Include="assets\tgTextureAsset.h" />
+    <ClInclude Include="components\tgSpriteComponent.h" />
+    <ClInclude Include="components\tgTransformComponent.h" />
+    <ClInclude Include="assets\PhysFS.h" />
     <ClInclude Include="core\stb.h" />
     <ClInclude Include="core\stb_image.h" />
     <ClInclude Include="core\stb_image_write.h" />
+    <ClInclude Include="assets\tgAsset.h" />
+    <ClInclude Include="assets\tgAssets.h" />
     <ClInclude Include="core\tgImageData.h" />
     <ClInclude Include="core\tgInput.h" />
     <ClInclude Include="core\tgLog.h" />
@@ -135,12 +141,11 @@
     <ClInclude Include="ecs\tgECS.h" />
     <ClInclude Include="ecs\tgEntity.h" />
     <ClInclude Include="ecs\tgSystem.h" />
-    <ClInclude Include="ecs\tgWorld.h" />
+    <ClInclude Include="ecs\tgEntitySystemManager.h" />
     <ClInclude Include="graphics\tgBuffer.h" />
     <ClInclude Include="graphics\tgGL.h" />
     <ClInclude Include="graphics\tgRenderer.h" />
     <ClInclude Include="graphics\tgShaderProgram.h" />
-    <ClInclude Include="graphics\tgSpriteRenderer.h" />
     <ClInclude Include="graphics\tgTexture.h" />
     <ClInclude Include="graphics\tgVertexArrayObject.h" />
     <ClInclude Include="graphics\tgVertexFormat.h" />
@@ -153,22 +158,22 @@
     <ClInclude Include="nodes\tgSpriteNode.h" />
     <ClInclude Include="scenegraph\tgNode.h" />
     <ClInclude Include="scenegraph\tgSceneTree.h" />
+    <ClInclude Include="systems\tgSpriteRenderingSystem.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="assets\tgTextureAsset.cpp" />
+    <ClCompile Include="assets\PhysFS.cpp" />
+    <ClCompile Include="assets\tgAssets.cpp" />
     <ClCompile Include="core\tgImageData.cpp" />
     <ClCompile Include="core\tgInput.cpp" />
     <ClCompile Include="core\tgLog.cpp" />
     <ClCompile Include="core\tgUtil.cpp" />
     <ClCompile Include="core\tgWindow.cpp" />
-    <ClCompile Include="ecs\tgComponent.cpp" />
-    <ClCompile Include="ecs\tgComponentHandler.cpp" />
     <ClCompile Include="ecs\tgEntity.cpp" />
-    <ClCompile Include="ecs\tgSystem.cpp" />
-    <ClCompile Include="ecs\tgWorld.cpp" />
+    <ClCompile Include="ecs\tgEntitySystemManager.cpp" />
     <ClCompile Include="graphics\tgBuffer.cpp" />
     <ClCompile Include="graphics\tgRenderer.cpp" />
     <ClCompile Include="graphics\tgShaderProgram.cpp" />
-    <ClCompile Include="graphics\tgSpriteRenderer.cpp" />
     <ClCompile Include="graphics\tgTexture.cpp" />
     <ClCompile Include="graphics\tgVertexArrayObject.cpp" />
     <ClCompile Include="graphics\tgVertexFormat.cpp" />
@@ -180,6 +185,7 @@
     <ClCompile Include="nodes\tgSpriteNode.cpp" />
     <ClCompile Include="scenegraph\tgNode.cpp" />
     <ClCompile Include="scenegraph\tgSceneTree.cpp" />
+    <ClCompile Include="systems\tgSpriteRenderingSystem.cpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

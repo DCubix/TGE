@@ -10,17 +10,21 @@
 
 using tgEntityID = std::size_t;
 
-class tgWorld;
+class tgEntitySystemManager;
 class tgEntity {
-	friend class tgWorld;
+	friend class tgEntitySystemManager;
 public:
 	virtual ~tgEntity();
 
 	template <typename T>
 	bool contains() const {
 		for(tgComponent *comp : m_components) {
-			return dynamic_cast<T*>(comp) != nullptr;
+			T* t_comp = dynamic_cast<T*>(comp);
+			if (t_comp != nullptr) {
+				return true;
+			}
 		}
+		return false;
 	}
 
 	template <typename T, typename V, typename... Types>
@@ -72,13 +76,14 @@ public:
 	}
 
 	void removeAll();
+	void kill(bool enqueue=true);
 
 	tgEntityID getID() const { return m_id; }
-	tgWorld *getWorld() const { return m_world; }
+	tgEntitySystemManager *getManager() const { return m_manager; }
 	bool isDead() const { return m_dead; }
 
 protected:
-	tgEntity(tgWorld *world, tgEntityID id);
+	tgEntity(tgEntitySystemManager *m, tgEntityID id);
 
 	template <typename T>
 	T* _get() const {
@@ -92,7 +97,7 @@ protected:
 	}
 
 	tgEntityID m_id;
-	tgWorld *m_world;
+	tgEntitySystemManager *m_manager;
 	bool m_dead;
 	std::vector<tgComponent*> m_components;
 };

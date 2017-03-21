@@ -7,6 +7,7 @@
 class tgTransform {
 public:
 	tgTransform();
+	~tgTransform() = default;
 
 	tgVector3 getLocalPosition() const { return m_position; }
 	void setLocalPosition(tgVector3 const& v) { m_position = v; }
@@ -17,6 +18,10 @@ public:
 	tgQuaternion getLocalRotation() const { return m_rotation; }
 	void getLocalRotation(tgQuaternion const& v) { m_rotation = v; }
 
+	tgVector3 getWorldPosition();
+	tgVector3 getWorldScaling();
+	tgQuaternion getWorldRotation();
+
 	tgMatrix4 getTransformationMatrix();
 
 	tgVector3 left();
@@ -26,9 +31,17 @@ public:
 	tgVector3 forward();
 	tgVector3 back();
 
+	void rotate(tgVector3 const& axis, float angle);
+
+	tgTransform *getParent() const { return m_parent; }
+	void setParent(tgTransform *parent);
+
 private:
 	tgVector3 m_position, m_scale;
 	tgQuaternion m_rotation;
+
+	tgTransform *m_parent;
+	tgMatrix4 getParentTransformationMatrix();
 };
 
 #endif

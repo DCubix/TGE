@@ -1,11 +1,13 @@
 #ifndef SYSTEM_H
 #define SYSTEM_H
 
-class tgWorld;
+class tgEntitySystemManager;
+
 class tgSystem {
 public:
 	virtual ~tgSystem() = default;
-	virtual void update(tgWorld *world, float dt) = 0;
+	virtual void render(tgEntitySystemManager *manager) {}
+	virtual void update(tgEntitySystemManager *manager, float dt) {}
 };
 
 #endif

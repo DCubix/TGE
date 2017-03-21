@@ -12,35 +12,39 @@
 #include "graphics/tgGL.h"
 
 #include "ecs/tgECS.h"
+#include "systems/tgSpriteRenderingSystem.h"
+#include "components/tgSpriteComponent.h"
+#include "components/tgTransformComponent.h"
+
+#include "assets/tgAssets.h"
+#include "assets/tgTextureAsset.h"
 
 #include <vector>
-
-class Position : public tgComponent {
-public:
-	Position() : position(tgVector2(0.0f)) {}
-	Position(tgVector2 pos) : position(pos) {}
-
-	tgVector2 position;
-};
-
-class tgTestSystem : public tgSystem {
-public:
-	void update(tgWorld *world, float dt) {
-		world->forEach<Position>([&](tgEntity *e, tgHandler<Position> pos) {
-			tgLog::log(pos->position, " from entity #", e->getID());
-		});
-	}
-};
 
 int main (int argc, char **argv) {
 	tgWindow *win = new tgWindow ("Test", 320, 240);
 	tgInput input;
 	
-	tgWorld *ecs_world = new tgWorld();
-	ecs_world->addSystem(new tgTestSystem());
+	tgAssets::create();
+	tgAssets::addSource(".");
 
-	tgEntity *test = ecs_world->create();
-	test->add<Position>();
+	tgAssets::add<tgTextureAsset>("apple.png");
+
+	tgAssets::load();
+
+	///////// Using the ECS
+	tgEntitySystemManager *ecs_world = new tgEntitySystemManager();
+	tgSpriteRenderingSystem *ren = new tgSpriteRenderingSystem(320, 240);
+	ecs_world->addSystem(ren);
+
+	tgEntity *apple = ecs_world->create();
+	tgHandler<tgTransformComponent> apple_transform = apple->add<tgTransformComponent>();
+	apple_transform->getTransform()->setLocalPosition(tgVector3(160, 120, 0));
+
+	tgTexture *tex = tgAssets::get<tgTexture>("apple.png");
+
+	tgHandler<tgSpriteComponent> apple_sprite = apple->add<tgSpriteComponent>(tex, tgVector2(0.5f));
+	/////////
 
 	float timeDelta = 1.0f / 300.0f;
 	float timeAccum = 0.0f;
@@ -50,7 +54,6 @@ int main (int argc, char **argv) {
 	float ft = 0.0f;
 
 	while (!win->shouldClose()) {
-		bool canRender = false;
 		float currentTime = float (SDL_GetTicks()) / 1000.0f;
 		float delta = currentTime - startTime;
 		startTime = currentTime;
@@ -63,27 +66,28 @@ int main (int argc, char **argv) {
 
 		while (timeAccum >= timeDelta) {
 			timeAccum -= timeDelta;
-			canRender = true;
 			
 			ecs_world->update(timeDelta);
+			apple_transform->getTransform()->rotate(tgVector3(0, 0, 1), timeDelta * 2);
 
 			ft += timeDelta;
 			if(ft >= 1.0f) {
 				ft = 0.0f;
+				tgLog::println(frames);
 				frames = 0;
 			}
 		}
 
-		if (canRender) {
-			glClearColor(0.1f, 0.25f, 0.5f, 1.0f);
-			glClear (GL_COLOR_BUFFER_BIT);
+		glClearColor(0.1f, 0.25f, 0.5f, 1.0f);
+		glClear (GL_COLOR_BUFFER_BIT);
 
-			win->swapBuffers();
-			frames++; 
-		} else {
-			SDL_Delay (1);
-		}
+		ecs_world->render();
+
+		win->swapBuffers();
+		frames++;
 	}
+
+	tgAssets::destroy();
 
 	delete ecs_world;
 	delete win;

@@ -14,7 +14,7 @@ public:
 	} Byte4;
 
 	tgImageData(int width, int height);
-	tgImageData(std::ifstream &stream);
+	tgImageData(std::istream &stream);
 
 	std::vector<byte>& getData() { return m_data; }
 	tgImageData getSubData(int x, int y, int w, int h);
@@ -25,7 +25,7 @@ public:
 	tgImageData& flipX();
 	tgImageData& flipY();
 
-	bool saveAs(std::ofstream &stream);
+	bool saveAs(std::ostream &stream);
 
 private:
 	int m_width, m_height;
