@@ -8,13 +8,13 @@ class tgTransform {
 public:
 	tgTransform();
 
-	tgVector3 const& getLocalPosition() const { return m_position; }
+	tgVector3 getLocalPosition() const { return m_position; }
 	void setLocalPosition(tgVector3 const& v) { m_position = v; }
 
-	tgVector3 const& getLocalScaling() const { return m_scale; }
+	tgVector3 getLocalScaling() const { return m_scale; }
 	void setLocalScaling(tgVector3 const& v) { m_scale = v; }
 
-	tgQuaternion const& getLocalRotation() const { return m_rotation; }
+	tgQuaternion getLocalRotation() const { return m_rotation; }
 	void getLocalRotation(tgQuaternion const& v) { m_rotation = v; }
 
 	tgMatrix4 getTransformationMatrix();

@@ -128,3 +128,10 @@ tgMatrix4 tgQuaternion::toMatrix() {
 
 	return tgMatrix4::rotation(forward, up, right);
 }
+
+tgVector3 tgQuaternion::toEuler() {
+	float ey = std::atan2(2.0f * (y() * z() + w() * x()), w() * w() - x() * x() - y() * y() + z() * z());
+	float ez = std::asin(-2.0f * (x() * z() - w() * y()));
+	float ex = std::atan2(2.0f * (x() * y() + w() * z()), w() * w() + x() * x() - y() * y() - z() * z());
+	return tgVector3(ex, ey, ez);
+}

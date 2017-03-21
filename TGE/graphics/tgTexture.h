@@ -28,7 +28,7 @@ public:
 	void unbind();
 
 	void resize(int nw, int nh);
-	void setFilter(int filter);
+	void setFilter(int min_filter, int mag_filter);
 	void setWrap(int wrap);
 
 	void generateMipMaps();

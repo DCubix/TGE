@@ -26,6 +26,7 @@ public:
 	tgVector3 rotateVector3(tgVector3 const& v);
 
 	tgMatrix4 toMatrix();
+	tgVector3 toEuler();
 
 	float& operator [](unsigned i) {
 		switch(i) {

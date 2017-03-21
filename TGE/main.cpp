@@ -7,36 +7,44 @@
 #include "core/tgInput.h"
 #include "core/tgUtil.h"
 #include "core/tgLog.h"
+#include "math/tgMath.h"
 
-#include "graphics/tgSpriteRenderer.h"
+#include "graphics/tgGL.h"
 
-#include "core/tgImageData.h"
-#include "graphics/tgTexture.h"
-
-#include "scenegraph/tgSceneTree.h"
-#include "nodes/tgSpriteNode.h"
+#include "ecs/tgECS.h"
 
 #include <vector>
 
+class Position : public tgComponent {
+public:
+	Position() : position(tgVector2(0.0f)) {}
+	Position(tgVector2 pos) : position(pos) {}
+
+	tgVector2 position;
+};
+
+class tgTestSystem : public tgSystem {
+public:
+	void update(tgWorld *world, float dt) {
+		world->forEach<Position>([&](tgEntity *e, tgHandler<Position> pos) {
+			tgLog::log(pos->position, " from entity #", e->getID());
+		});
+	}
+};
+
 int main (int argc, char **argv) {
-	tgWindow *win = new tgWindow ("Test", 1024, 600);
+	tgWindow *win = new tgWindow ("Test", 320, 240);
 	tgInput input;
 	
+	tgWorld *ecs_world = new tgWorld();
+	ecs_world->addSystem(new tgTestSystem());
+
+	tgEntity *test = ecs_world->create();
+	test->add<Position>();
+
 	float timeDelta = 1.0f / 300.0f;
 	float timeAccum = 0.0f;
 	float startTime = float (SDL_GetTicks()) / 1000.0f;
-
-	tgSpriteRenderer *ren = new tgSpriteRenderer (1024, 600);
-
-	std::ifstream f2 ("C:\\Users\\diego\\Documentos\\Visual Studio 2015\\Projects\\TGE\\Release\\apple.png", std::ios::binary);
-	tgImageData apple_img (f2);
-	tgTexture *apple_tex = new tgTexture (apple_img, tgTexture::tgTEXTURE_RGBA);
-
-	tgSceneTree *stree = new tgSceneTree();
-	tgSpriteNode *apple = new tgSpriteNode(apple_tex);
-	stree->addChild(apple);
-
-	apple->getTransform().setLocalPosition(tgVector3(512, 300, 0));
 
 	int frames = 0;
 	float ft = 0.0f;
@@ -57,23 +65,18 @@ int main (int argc, char **argv) {
 			timeAccum -= timeDelta;
 			canRender = true;
 			
-			stree->update(timeDelta);
+			ecs_world->update(timeDelta);
 
 			ft += timeDelta;
 			if(ft >= 1.0f) {
 				ft = 0.0f;
 				frames = 0;
 			}
-
 		}
 
 		if (canRender) {
 			glClearColor(0.1f, 0.25f, 0.5f, 1.0f);
 			glClear (GL_COLOR_BUFFER_BIT);
-
-			ren->begin();
-			stree->render(ren);
-			ren->end();
 
 			win->swapBuffers();
 			frames++; 
@@ -82,8 +85,7 @@ int main (int argc, char **argv) {
 		}
 	}
 
-	delete stree;
-	delete ren;
+	delete ecs_world;
 	delete win;
 
 	return 0;

@@ -130,6 +130,12 @@
     <ClInclude Include="core\tgLog.h" />
     <ClInclude Include="core\tgUtil.h" />
     <ClInclude Include="core\tgWindow.h" />
+    <ClInclude Include="ecs\tgComponent.h" />
+    <ClInclude Include="ecs\tgComponentHandler.h" />
+    <ClInclude Include="ecs\tgECS.h" />
+    <ClInclude Include="ecs\tgEntity.h" />
+    <ClInclude Include="ecs\tgSystem.h" />
+    <ClInclude Include="ecs\tgWorld.h" />
     <ClInclude Include="graphics\tgBuffer.h" />
     <ClInclude Include="graphics\tgGL.h" />
     <ClInclude Include="graphics\tgRenderer.h" />
@@ -143,6 +149,7 @@
     <ClInclude Include="math\tgQuaternion.h" />
     <ClInclude Include="math\tgTransform.h" />
     <ClInclude Include="math\tgVectorBase.h" />
+    <ClInclude Include="nodes\tgAnimatedSpriteNode.h" />
     <ClInclude Include="nodes\tgSpriteNode.h" />
     <ClInclude Include="scenegraph\tgNode.h" />
     <ClInclude Include="scenegraph\tgSceneTree.h" />
@@ -153,6 +160,11 @@
     <ClCompile Include="core\tgLog.cpp" />
     <ClCompile Include="core\tgUtil.cpp" />
     <ClCompile Include="core\tgWindow.cpp" />
+    <ClCompile Include="ecs\tgComponent.cpp" />
+    <ClCompile Include="ecs\tgComponentHandler.cpp" />
+    <ClCompile Include="ecs\tgEntity.cpp" />
+    <ClCompile Include="ecs\tgSystem.cpp" />
+    <ClCompile Include="ecs\tgWorld.cpp" />
     <ClCompile Include="graphics\tgBuffer.cpp" />
     <ClCompile Include="graphics\tgRenderer.cpp" />
     <ClCompile Include="graphics\tgShaderProgram.cpp" />
@@ -164,6 +176,7 @@
     <ClCompile Include="math\tgMath.cpp" />
     <ClCompile Include="math\tgQuaternion.cpp" />
     <ClCompile Include="math\tgTransform.cpp" />
+    <ClCompile Include="nodes\tgAnimatedSpriteNode.cpp" />
     <ClCompile Include="nodes\tgSpriteNode.cpp" />
     <ClCompile Include="scenegraph\tgNode.cpp" />
     <ClCompile Include="scenegraph\tgSceneTree.cpp" />

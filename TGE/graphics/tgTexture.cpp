@@ -6,7 +6,7 @@ tgTexture::tgTexture(int width, int height, tgTextureType ttype)
 	m_height(height),
 	m_type(ttype) {
 	init(nullptr);
-	setFilter(GL_LINEAR_MIPMAP_LINEAR);
+	setFilter(GL_LINEAR_MIPMAP_LINEAR, GL_LINEAR);
 }
 
 tgTexture::tgTexture(tgImageData& data, tgTextureType ttype)
@@ -20,7 +20,7 @@ tgTexture::tgTexture(tgImageData& data, tgTextureType ttype)
 	} else {
 		init(nullptr);
 	}
-	setFilter(GL_LINEAR_MIPMAP_LINEAR);
+	setFilter(GL_LINEAR_MIPMAP_LINEAR, GL_LINEAR);
 }
 
 tgTexture::~tgTexture() {
@@ -48,10 +48,10 @@ void tgTexture::resize(int nw, int nh) {
 	init(nullptr);
 }
 
-void tgTexture::setFilter(int filter) {
+void tgTexture::setFilter(int min_filter, int mag_filter) {
 	glBindTexture(GL_TEXTURE_2D, m_bindCode);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, filter);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, min_filter);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, mag_filter);
 	glBindTexture(GL_TEXTURE_2D, 0);
 }
 
