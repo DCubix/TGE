@@ -367,8 +367,6 @@ int main (int argc, char **argv) {
 
 			win->swapBuffers();
 			frames++;
-		} else {
-			SDL_Delay(1);
 		}
 	}
 
