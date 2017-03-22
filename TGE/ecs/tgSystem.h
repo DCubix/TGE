@@ -8,6 +8,7 @@ public:
 	virtual ~tgSystem() = default;
 	virtual void render(tgEntitySystemManager *manager) {}
 	virtual void update(tgEntitySystemManager *manager, float dt) {}
+	virtual void fixedUpdate(tgEntitySystemManager *manager, float dt) {}
 };
 
 #endif

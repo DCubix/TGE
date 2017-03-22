@@ -1,8 +1,13 @@
 #include "tgInput.h"
 #include "tgUtil.h"
-tgInput::tgInput() {
-	m_closeRequested = false;
-}
+
+SDL_Event tgInput::m_sdlEvent;
+std::unordered_map<int, tgState> tgInput::m_keyboard;
+std::unordered_map<int, tgState> tgInput::m_mouse;
+int tgInput::m_mouseX = 0;
+int tgInput::m_mouseY = 0;
+int tgInput::m_scrollOffset = 0;
+bool tgInput::m_closeRequested = false;
 
 void tgInput::update() {
 	for(auto& kv : m_keyboard) {
@@ -25,7 +30,7 @@ void tgInput::update() {
 			} break;
 			case SDL_KEYUP:
 			{
-				int key = m_sdlEvent.key.keysym.scancode;
+				int key = m_sdlEvent.key.keysym.sym;
 				m_keyboard[key].released = true;
 				m_keyboard[key].down = false;
 			} break;

@@ -10,20 +10,22 @@ class tgMatrixBase {
 	using MBASE = tgMatrixBase<C>;
 public:
 	tgMatrixBase() {
-		for(unsigned x = 0; x < C; x++) {
-			for(unsigned y = 0; y < C; y++) {
-				(*this)[x][y] = 0.0f;
+		for(unsigned y = 0; y < C; y++) {
+			for(unsigned x = 0; x < C; x++) {
+				(*this)[y][x] = 0.0f;
 			}
 		}
 	}
 
-	MBASE operator * (MBASE const& o) {
+	MBASE operator *(MBASE const& o) {
 		MBASE ret;
-		for(unsigned x = 0; x < C; x++) {
-			for(unsigned y = 0; y < C; y++) {
+		for(unsigned y = 0; y < C; y++) {
+			for(unsigned x = 0; x < C; x++) {
+				float sum = 0.0f;
 				for(unsigned k = 0; k < C; k++) {
-					ret[x][y] += (*this) [x][k] * o[k][y];
+					sum += (*this) [y][k] * o[k][x];
 				}
+				ret[y][x] = sum;
 			}
 		}
 		return ret;
@@ -45,9 +47,9 @@ public:
 
 	MBASE operator * (float o) {
 		MBASE ret;
-		for(unsigned x = 0; x < C; x++) {
-			for(unsigned y = 0; y < C; y++) {
-				ret[x][y] = (*this) [x][y] * o;
+		for(unsigned y = 0; y < C; y++) {
+			for(unsigned x = 0; x < C; x++) {
+				ret[y][x] = (*this) [y][x] * o;
 			}
 		}
 		return ret;

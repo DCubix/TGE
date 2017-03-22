@@ -11,34 +11,32 @@ typedef struct tgState {
 
 class tgInput {
 public:
-	tgInput();
+	static void update();
 
-	void update();
+	static const tgState getKeyboardState(int key);
+	static const tgState getMouseState(int button);
 
-	const tgState getKeyboardState(int key);
-	const tgState getMouseState(int button);
+	static bool isKeyPressed(int key);
+	static bool isKeyReleased(int key);
+	static bool isKeyDown(int key);
 
-	bool isKeyPressed(int key);
-	bool isKeyReleased(int key);
-	bool isKeyDown(int key);
+	static bool isMouseButtonPressed(int btn);
+	static bool isMouseButtonReleased(int btn);
+	static bool isMouseButtonDown(int btn);
 
-	bool isMouseButtonPressed(int btn);
-	bool isMouseButtonReleased(int btn);
-	bool isMouseButtonDown(int btn);
+	static int getScrollOffset() { return m_scrollOffset; }
+	static int getMouseX() { return m_mouseX; }
+	static int getMouseY() { return m_mouseY; }
 
-	int getScrollOffset() const { return m_scrollOffset; }
-	int getMouseX() const { return m_mouseX; }
-	int getMouseY() const { return m_mouseY; }
-
-	bool isCloseRequested() const { return m_closeRequested; }
+	static bool isCloseRequested() { return m_closeRequested; }
 
 private:
-	SDL_Event m_sdlEvent;
-	std::unordered_map<int, tgState> m_keyboard;
-	std::unordered_map<int, tgState> m_mouse;
-	int m_mouseX, m_mouseY;
-	int m_scrollOffset;
-	bool m_closeRequested;
+	static SDL_Event m_sdlEvent;
+	static std::unordered_map<int, tgState> m_keyboard;
+	static std::unordered_map<int, tgState> m_mouse;
+	static int m_mouseX, m_mouseY;
+	static int m_scrollOffset;
+	static bool m_closeRequested;
 };
 
 #endif // INPUT_H

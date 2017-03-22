@@ -122,6 +122,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClInclude Include="assets\tgTextAsset.h" />
     <ClInclude Include="assets\tgTextureAsset.h" />
     <ClInclude Include="components\tgSpriteComponent.h" />
     <ClInclude Include="components\tgTransformComponent.h" />
@@ -159,8 +160,12 @@
     <ClInclude Include="scenegraph\tgNode.h" />
     <ClInclude Include="scenegraph\tgSceneTree.h" />
     <ClInclude Include="systems\tgSpriteRenderingSystem.h" />
+    <ClInclude Include="tween\tgTimer.h" />
+    <ClInclude Include="tween\tgTween.h" />
+    <ClInclude Include="tween\tgTweens.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="assets\tgTextAsset.cpp" />
     <ClCompile Include="assets\tgTextureAsset.cpp" />
     <ClCompile Include="assets\PhysFS.cpp" />
     <ClCompile Include="assets\tgAssets.cpp" />
@@ -186,6 +191,9 @@
     <ClCompile Include="scenegraph\tgNode.cpp" />
     <ClCompile Include="scenegraph\tgSceneTree.cpp" />
     <ClCompile Include="systems\tgSpriteRenderingSystem.cpp" />
+    <ClCompile Include="tween\tgTimer.cpp" />
+    <ClCompile Include="tween\tgTween.cpp" />
+    <ClCompile Include="tween\tgTweens.cpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

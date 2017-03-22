@@ -7,7 +7,6 @@ class tgTextureAsset : public tgRawAsset {
 public:
 	TG_ASSET_CTOR(TextureAsset) {}
 
-	tgAssetType getType() const override { return tgAssetType::tgTEXTURE_ASSET;  }
 	void* load(PhysFS::ifstream &stream) override;
 };
 

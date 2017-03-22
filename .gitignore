@@ -11,3 +11,9 @@
 *.iobj
 *.tlog
 *.idb
+/.vs
+/Debug
+Debug
+/Release
+Delease
+.vs

@@ -92,6 +92,11 @@ public:
 		return dp;
 	}
 
+	VBASE reflect(VBASE const& N) const {
+		VBASE I = (*this);
+		return I - (N * (I.dot(N) * 2.0f));
+	}
+
 	VBASE cross(VBASE const& o) const {
 		static_assert (C == 3, "Cross products are only supported by Vector3");
 		VBASE ret;

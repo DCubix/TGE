@@ -8,7 +8,7 @@
 #include "tgAsset.h"
 
 using tgRawAssetQueue = std::unordered_map<std::string, tgRawAsset*>;
-using tgAssetQueue = std::unordered_map<std::string, tgAsset*>;
+using tgAssetQueue = std::unordered_map<std::string, void*>;
 class tgAssets {
 public:
 	static void create();
@@ -30,7 +30,7 @@ public:
 	static T* get(std::string const& name) {
 		auto pos = m_assets.find(name);
 		if (pos != m_assets.end()) {
-			return static_cast<T*>(m_assets[name]->data);
+			return static_cast<T*>(m_assets[name]);
 		}
 		return nullptr;
 	}

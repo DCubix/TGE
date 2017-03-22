@@ -19,6 +19,7 @@ tgSpriteRenderingSystem::tgSpriteRenderingSystem(int screen_width, int screen_he
 	tgVertexFormat fmt(sizeof(tgVertex2D));
 	fmt.append(tgVertexFormat::tgATTR_POSITION, false);
 	fmt.append(tgVertexFormat::tgATTR_TEXCOORD, false);
+	fmt.append(tgVertexFormat::tgATTR_COLOR, true);
 
 	m_vao = new tgVertexArrayObject();
 	m_vbo = new tgBuffer(tgBuffer::tgTARG_ARRAY_BUFFER, tgBuffer::tgUSAGE_DYNAMIC);
@@ -36,15 +37,18 @@ tgSpriteRenderingSystem::tgSpriteRenderingSystem(int screen_width, int screen_he
 		"#version 440\n"
 		"layout (location = 0) in vec3 v_pos;"
 		"layout (location = 1) in vec2 v_uv;"
+		"layout (location = 2) in vec4 v_color;"
 		"out DATA {"
 		"	vec3 position;"
 		"	vec2 uv;"
+		"	vec4 color;"
 		"} vs_out;"
 		"uniform mat4 viewProjection = mat4(1.0);"
 		"void main() {"
 		"	gl_Position = viewProjection * vec4(v_pos, 1.0);"
 		"	vs_out.position = v_pos;"
 		"	vs_out.uv = v_uv;"
+		"	vs_out.color = v_color;"
 		"}";
 	std::string sb_frag =
 		"#version 440\n"
@@ -52,10 +56,11 @@ tgSpriteRenderingSystem::tgSpriteRenderingSystem(int screen_width, int screen_he
 		"in DATA {"
 		"	vec3 position;"
 		"	vec2 uv;"
+		"	vec4 color;"
 		"} fs_in;"
 		"uniform sampler2D tex0;"
 		"void main() {"
-		"	fragColor = texture(tex0, fs_in.uv);"
+		"	fragColor = texture(tex0, fs_in.uv) * fs_in.color;"
 		"}";
 	m_shader = new tgShaderProgram();
 	m_shader->addShader(sb_vert, tgShaderProgram::tgVERTEX_SHADER);
@@ -96,7 +101,8 @@ void tgSpriteRenderingSystem::render(tgEntitySystemManager *mgr) {
 				sprite->getClipRectangle(),
 				tgVector4(pos.x(), pos.y(), float(tex->getWidth()) * scl.x(), float(tex->getHeight()) * scl.y()),
 				sprite->getOrigin(),
-				rot
+				rot,
+				sprite->getColor()
 			);
 		}
 	}
@@ -223,7 +229,7 @@ static tgVector2 rotatePoint(tgVector2 const& p, float rad) {
 	return tgVector2(c * p.x() - s * p.y(), s * p.x() + c * p.y());
 }
 
-void tgSpriteRenderingSystem::draw(tgTexture *tex, tgVector4 const& uv, tgVector4 const& dst, tgVector2 const& origin, float rotation) {
+void tgSpriteRenderingSystem::draw(tgTexture *tex, tgVector4 const& uv, tgVector4 const& dst, tgVector2 const& origin, float rotation, tgVector4 const& color) {
 	float width = dst.z() * uv.z();
 	float height = dst.w() * uv.w();
 
@@ -249,15 +255,19 @@ void tgSpriteRenderingSystem::draw(tgTexture *tex, tgVector4 const& uv, tgVector
 	tgSprite *spr = new tgSprite();
 	spr->TL.position = tgVector3(tlr, 0);
 	spr->TL.texco = tgVector2(u1, v1);
+	spr->TL.color = color;
 
 	spr->TR.position = tgVector3(trr, 0);
 	spr->TR.texco = tgVector2(u2, v1);
+	spr->TR.color = color;
 
 	spr->BR.position = tgVector3(brr, 0);
 	spr->BR.texco = tgVector2(u2, v2);
+	spr->BR.color = color;
 
 	spr->BL.position = tgVector3(blr, 0);
 	spr->BL.texco = tgVector2(u1, v2);
+	spr->BL.color = color;
 
 	spr->texture = tex->getBindCode();
 
@@ -277,5 +287,5 @@ void tgSpriteRenderingSystem::drawTile(tgTexture *atlas, int tileIndex, int tile
 	float uvy = float(int(tileIndex / cols)) * uvh;
 
 	tgVector4 uv(uvx, uvy, uvw, uvh);
-	draw(atlas, uv, tgVector4(tx, ty, atlas->getWidth() * scale, atlas->getHeight() * scale), tgVector2(0.0f), 0.0f);
+	draw(atlas, uv, tgVector4(tx, ty, atlas->getWidth() * scale, atlas->getHeight() * scale), tgVector2(0.0f), 0.0f, tgVector4(1.0f));
 }

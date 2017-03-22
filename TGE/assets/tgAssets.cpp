@@ -18,7 +18,7 @@ void tgAssets::create() {
 void tgAssets::destroy() {
 	if (PhysFS::isInit()) {
 		for (auto &kv : m_assets) {
-			tgDelete(kv.second->data);
+			tgDelete(kv.second);
 		}
 		m_assets.clear();
 
@@ -38,9 +38,7 @@ void tgAssets::load() {
 	tgLog::log("Asset Manager Is Loading...");
 	for (auto &kv : m_assetQueue) {
 		PhysFS::ifstream stream(kv.second->getPath());
-		tgAsset *asset = new tgAsset();
-		asset->data = kv.second->load(stream);
-		asset->type = kv.second->getType();
+		void *asset = kv.second->load(stream);
 		m_assets[kv.first] = asset;
 		tgLog::log("\tLoaded: ", kv.first);
 	}

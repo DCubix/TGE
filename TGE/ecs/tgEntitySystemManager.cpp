@@ -91,3 +91,9 @@ void tgEntitySystemManager::update(float dt) {
 		system->update(this, dt);
 	}
 }
+
+void tgEntitySystemManager::fixedUpdate(float dt) {
+	for (tgSystem *system : m_systems) {
+		system->fixedUpdate(this, dt);
+	}
+}

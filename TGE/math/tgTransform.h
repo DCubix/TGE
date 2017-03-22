@@ -9,13 +9,13 @@ public:
 	tgTransform();
 	~tgTransform() = default;
 
-	tgVector3 getLocalPosition() const { return m_position; }
+	tgVector3& getLocalPosition() { return m_position; }
 	void setLocalPosition(tgVector3 const& v) { m_position = v; }
 
-	tgVector3 getLocalScaling() const { return m_scale; }
+	tgVector3& getLocalScaling() { return m_scale; }
 	void setLocalScaling(tgVector3 const& v) { m_scale = v; }
 
-	tgQuaternion getLocalRotation() const { return m_rotation; }
+	tgQuaternion& getLocalRotation() { return m_rotation; }
 	void getLocalRotation(tgQuaternion const& v) { m_rotation = v; }
 
 	tgVector3 getWorldPosition();

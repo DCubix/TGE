@@ -21,21 +21,14 @@ public:
 	bool clean();
 	void reset();
 
-	template <typename T>
-	bool search(std::vector<tgEntity*> &vec) {
-		for (tgEntity *en : m_entities) {
-			if (en->contains<T>()) {
-				vec.push_back(en);
-				return true;
-			}
-		}
-		return false;
-	}
-
-	template <typename T, typename... Args>
+	template <typename... Args>
 	std::vector<tgEntity*> search() {
 		std::vector<tgEntity*> ents;
-		search< Args...>(ents);
+		for (tgEntity *en : m_entities) {
+			if (en->contains<Args...>()) {
+				ents.push_back(en);
+			}
+		}
 		return ents;
 	}
 	
@@ -46,6 +39,7 @@ public:
 
 	void render();
 	void update(float dt);
+	void fixedUpdate(float dt);
 
 private:
 	std::vector<tgEntity*> m_entities;
