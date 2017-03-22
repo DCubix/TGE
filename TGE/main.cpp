@@ -227,7 +227,7 @@ int main (int argc, char **argv) {
 
 	///////// Using the ECS
 	tgEntitySystemManager *ecs_world = new tgEntitySystemManager();
-	tgSpriteRenderingSystem *ren = new tgSpriteRenderingSystem(640, 480);
+	tgSpriteRenderingSystem *ren = new tgSpriteRenderingSystem(new tgSpriteBatch(640, 480));
 	ecs_world->addSystem(ren);
 	ecs_world->addSystem(new InputSystem());
 	ecs_world->addSystem(new PaddleMovement());

@@ -37,6 +37,14 @@ public:
 
 	static void load();
 
+	template <typename T>
+	static void* load(std::string const& path) {
+		T* res = new T(path);
+		PhysFS::ifstream stream(path);
+		m_assets[path] = res->load(stream);
+		return m_assets[path];
+	}
+
 private:
 	static std::string resolvePath(std::string const& path);
 	

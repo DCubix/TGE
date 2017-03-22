@@ -11,9 +11,9 @@
 *.iobj
 *.tlog
 *.idb
-/.vs
+*.ipch
+
 /Debug
 Debug
 /Release
-Delease
-.vs
+Release
