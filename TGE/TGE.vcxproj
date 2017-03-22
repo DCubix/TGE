@@ -122,9 +122,11 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClInclude Include="assets\tgFontAsset.h" />
     <ClInclude Include="assets\tgTextAsset.h" />
     <ClInclude Include="assets\tgTextureAsset.h" />
     <ClInclude Include="components\tgSpriteComponent.h" />
+    <ClInclude Include="components\tgFontComponent.h" />
     <ClInclude Include="components\tgTransformComponent.h" />
     <ClInclude Include="assets\PhysFS.h" />
     <ClInclude Include="core\stb.h" />
@@ -132,6 +134,7 @@
     <ClInclude Include="core\stb_image_write.h" />
     <ClInclude Include="assets\tgAsset.h" />
     <ClInclude Include="assets\tgAssets.h" />
+    <ClInclude Include="core\tgFont.h" />
     <ClInclude Include="core\tgImageData.h" />
     <ClInclude Include="core\tgInput.h" />
     <ClInclude Include="core\tgLog.h" />
@@ -147,6 +150,7 @@
     <ClInclude Include="graphics\tgGL.h" />
     <ClInclude Include="graphics\tgRenderer.h" />
     <ClInclude Include="graphics\tgShaderProgram.h" />
+    <ClInclude Include="graphics\tgSpriteBatch.h" />
     <ClInclude Include="graphics\tgTexture.h" />
     <ClInclude Include="graphics\tgVertexArrayObject.h" />
     <ClInclude Include="graphics\tgVertexFormat.h" />
@@ -159,12 +163,15 @@
     <ClInclude Include="nodes\tgSpriteNode.h" />
     <ClInclude Include="scenegraph\tgNode.h" />
     <ClInclude Include="scenegraph\tgSceneTree.h" />
+    <ClInclude Include="systems\tgFontRenderingSystem.h" />
     <ClInclude Include="systems\tgSpriteRenderingSystem.h" />
+    <ClInclude Include="tgTime.h" />
     <ClInclude Include="tween\tgTimer.h" />
     <ClInclude Include="tween\tgTween.h" />
     <ClInclude Include="tween\tgTweens.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="assets\tgFontAsset.cpp" />
     <ClCompile Include="assets\tgTextAsset.cpp" />
     <ClCompile Include="assets\tgTextureAsset.cpp" />
     <ClCompile Include="assets\PhysFS.cpp" />
@@ -179,6 +186,7 @@
     <ClCompile Include="graphics\tgBuffer.cpp" />
     <ClCompile Include="graphics\tgRenderer.cpp" />
     <ClCompile Include="graphics\tgShaderProgram.cpp" />
+    <ClCompile Include="graphics\tgSpriteBatch.cpp" />
     <ClCompile Include="graphics\tgTexture.cpp" />
     <ClCompile Include="graphics\tgVertexArrayObject.cpp" />
     <ClCompile Include="graphics\tgVertexFormat.cpp" />
@@ -190,7 +198,9 @@
     <ClCompile Include="nodes\tgSpriteNode.cpp" />
     <ClCompile Include="scenegraph\tgNode.cpp" />
     <ClCompile Include="scenegraph\tgSceneTree.cpp" />
+    <ClCompile Include="systems\tgFontRenderingSystem.cpp" />
     <ClCompile Include="systems\tgSpriteRenderingSystem.cpp" />
+    <ClCompile Include="tgTime.cpp" />
     <ClCompile Include="tween\tgTimer.cpp" />
     <ClCompile Include="tween\tgTween.cpp" />
     <ClCompile Include="tween\tgTweens.cpp" />

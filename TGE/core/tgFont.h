@@ -19,6 +19,8 @@ typedef struct tgChar {
 	}
 } tgChar;
 
+using tgCharMap = std::unordered_map<int, tgChar>;
+
 class tgFontAsset;
 class tgFont {
 	friend class tgFontAsset;
@@ -31,6 +33,7 @@ public:
 	int getNumChars() const { return m_numChars; }
 	tgVector4 getPadding() const { return m_padding; }
 	tgTexture *getTexture() const { return m_texture; }
+	tgCharMap getCharMap() const { return m_charMap; }
 
 protected:
 	float m_mapWidth, m_mapHeight, m_lineHeight;
@@ -39,7 +42,7 @@ protected:
 
 	tgTexture *m_texture;
 
-	std::unordered_map<int, tgChar> m_charMap;
+	tgCharMap m_charMap;
 };
 
 #endif

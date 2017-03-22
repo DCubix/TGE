@@ -11,7 +11,6 @@ tgSpriteRenderingSystem::tgSpriteRenderingSystem(tgSpriteBatch *spriteBatch) {
 }
 
 tgSpriteRenderingSystem::~tgSpriteRenderingSystem() {
-	tgDelete(m_spriteBatch);
 }
 
 void tgSpriteRenderingSystem::render(tgEntitySystemManager *mgr) {

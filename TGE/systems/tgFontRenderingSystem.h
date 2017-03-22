@@ -1,19 +1,19 @@
-#ifndef SPRITE_RENDERING_SYSTEM_H
-#define SPRITE_RENDERING_SYSTEM_H
+#ifndef FONT_RENDERING_SYSTEM_H
+#define FONT_RENDERING_SYSTEM_H
 
 #include "../graphics/tgSpriteBatch.h"
 #include "../ecs/tgSystem.h"
 
-class tgSpriteRenderingSystem : public tgSystem {
+class tgFontRenderingSystem : public tgSystem {
 public:
-	tgSpriteRenderingSystem(tgSpriteBatch *spriteBatch);
-	~tgSpriteRenderingSystem() override final;
+	tgFontRenderingSystem(tgSpriteBatch *spriteBatch);
+	~tgFontRenderingSystem() override final;
 
 	void render(tgEntitySystemManager *mgr) override final;
-	
+
 	tgSpriteBatch *getSpriteBatch() const { return m_spriteBatch; }
 
-protected:
+private:
 	tgSpriteBatch *m_spriteBatch;
 };
 

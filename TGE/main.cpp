@@ -1,6 +1,6 @@
 #include <string>
 #include <fstream>
-#include <iostream>
+#include <sstream>
 #include <SDL2/SDL.h>
 
 #include "core/tgWindow.h"
@@ -13,17 +13,22 @@
 
 #include "ecs/tgECS.h"
 #include "systems/tgSpriteRenderingSystem.h"
+#include "systems/tgFontRenderingSystem.h"
 #include "components/tgSpriteComponent.h"
+#include "components/tgFontComponent.h"
 #include "components/tgTransformComponent.h"
 
 #include "assets/tgAssets.h"
 #include "assets/tgTextureAsset.h"
+#include "assets/tgFontAsset.h"
 
 #include "tween/tgTweens.h"
 #include "tween/tgTimer.h"
 
 #include <vector>
 #include <cstdlib>
+
+static float score = 0;
 
 float randF(float LO, float HI) {
 	return LO + static_cast<float>(std::rand()) / (static_cast<float>(RAND_MAX / (HI - LO)));
@@ -53,8 +58,8 @@ tgVector4 hsv(float h, float s, float v) {
 class Ball : public tgComponent {
 public:
 	Ball() {
-		direction = tgVector2(0.0f, -1.0f);
-		speed = 200.0f;
+		direction = tgVector2(-1.0f, -1.0f);
+		speed = 250.0f;
 	}
 	tgVector2 direction;
 	float speed;
@@ -78,7 +83,7 @@ public:
 	Paddle() {
 		frictionCoefficient = 0.98f;
 		speed = 0.0f;
-		maxSpeed = 260.0f;
+		maxSpeed = 280.0f;
 	}
 
 	float frictionCoefficient;
@@ -96,18 +101,18 @@ public:
 
 			tgVector3 pos = t->getLocalPosition();
 			if (pos.y() < 9) {
-				ball->direction.y() *= -0.98f;
+				ball->direction.y() *= -1;
 			} else if (pos.y() > 488) {
 				pos.x() = 320;
 				pos.y() = 400;
 				t->setLocalPosition(pos);
-				ball->direction = tgVector2(0, -1);
+				ball->direction = tgVector2(randF(-1.0f, 1.0f), -1);
 			}
 
 			if (pos.x() < 9) {
-				ball->direction.x() *= -0.98f;
+				ball->direction.x() *= -1;
 			} else if (pos.x() > 631) {
-				ball->direction.x() *= -0.98f;
+				ball->direction.x() *= -1;
 			}
 
 			t->setLocalPosition(tgVector3(t->getLocalPosition().xy() + ball->direction * ball->speed * dt, 0));
@@ -126,8 +131,7 @@ public:
 
 				if (bpos.x() + 8 >= ppos.x() - 48 &&
 					bpos.x() - 8 <= ppos.x() + 48 &&
-					bpos.y() + 8 >= ppos.y() &&
-					bpos.y() - 8 <= ppos.y() + 16)
+					bpos.y() + 8 >= ppos.y())
 				{
 					float pad_dir = paddle->speed > 0 ? 1 : -1;
 					if (paddle->speed == 0) {
@@ -135,7 +139,11 @@ public:
 					}
 					float facing = bpos.y() > ppos.y() ? 1 : -1;
 					ball->direction = ball->direction.reflect(tgVector2(0, facing)).normalized();
-					ball->direction.x() += pad_dir * paddle->frictionCoefficient;
+
+					tgTweens::addTween(&paddle_tc->getTransform()->getLocalPosition().y(), 430.0f, 0.2f, nullptr, tgEasing::easeOutElastic);
+					tgTimer::wait(0.06f, [paddle_tc]() {
+						tgTweens::addTween(&paddle_tc->getTransform()->getLocalPosition().y(), 425.0f, 0.8f, nullptr, tgEasing::easeOutElastic);
+					});
 				}
 			}
 		}
@@ -153,22 +161,36 @@ public:
 				tgVector3 bpos = ball_tc->getTransform()->getLocalPosition();
 				tgVector3 blpos = block_tc->getTransform()->getLocalPosition();
 
-				if (bpos.x() + 8 >= blpos.x() - 24 &&
-					bpos.x() - 8 <= blpos.x() + 24 &&
-					bpos.y() + 8 >= blpos.y() - 8 &&
-					bpos.y() - 8 <= blpos.y() + 8)
-				{
+				float w = 0.5 * (16 + 48);
+				float h = 0.5 * (16 + 16);
+				float dx = bpos.x() - blpos.x();
+				float dy = bpos.y() - blpos.y();
+
+				if (std::abs(dx) <= w && std::abs(dy) <= h && !block->killing) {
+					block->killing = true;
+
 					tgVector2 N(0, 1);
-					if (bpos.x() >= blpos.x() && bpos.x() <= blpos.x() + 48 && bpos.y() > blpos.y()) {
-						N.y() = 1;
-					} else if (bpos.x() >= blpos.x() && bpos.x() <= blpos.x() + 48 && bpos.y() < blpos.y()) {
-						N.y() = -1;
-					} else if (bpos.y() >= blpos.y() && bpos.y() <= blpos.y() - 16 && bpos.x() > blpos.x()) {
-						N.x() = 1;
+
+					/* collision! */
+					float wy = w * dy;
+					float hx = h * dx;
+
+					if (wy > hx) {
+						if (wy > -hx) {
+							N.x() = 0; N.y() = -1;
+						} else {
+							N.x() = -1; N.y() = 0;
+						}
 					} else {
-						N.x() = -1;
+						if (wy > -hx) {
+							N.x() = 1; N.y() = 0;
+						} else {
+							N.x() = 0; N.y() = 1;
+						}
 					}
-					ball->direction = ball->direction.reflect(N).normalized() * 0.97f;
+
+					ball->direction = ball->direction.reflect(N).normalized();
+					score += 100;
 					
 					tgTweens::addTween(&block_tc->getTransform()->getLocalScaling().x(), 0.0f, 0.4f, [block_e]() {
 						block_e->kill();
@@ -222,16 +244,19 @@ int main (int argc, char **argv) {
 	tgAssets::add<tgTextureAsset>("ball.png");
 	tgAssets::add<tgTextureAsset>("paddle.png");
 	tgAssets::add<tgTextureAsset>("block.png");
+	tgAssets::add<tgFontAsset>("font.fnt");
 
 	tgAssets::load();
 
 	///////// Using the ECS
+	tgSpriteBatch *sb = new tgSpriteBatch(640, 480);
 	tgEntitySystemManager *ecs_world = new tgEntitySystemManager();
-	tgSpriteRenderingSystem *ren = new tgSpriteRenderingSystem(new tgSpriteBatch(640, 480));
+	tgSpriteRenderingSystem *ren = new tgSpriteRenderingSystem(sb);
 	ecs_world->addSystem(ren);
 	ecs_world->addSystem(new InputSystem());
 	ecs_world->addSystem(new PaddleMovement());
 	ecs_world->addSystem(new BallMovement());
+	ecs_world->addSystem(new tgFontRenderingSystem(sb));
 
 	tgEntity *ball = ecs_world->create();
 	ball->add<Ball>();
@@ -244,6 +269,12 @@ int main (int argc, char **argv) {
 	tgHandler<tgTransformComponent> paddle_t = paddle->add<tgTransformComponent>();
 	paddle_t->getTransform()->setLocalPosition(tgVector3(320, 425, 0));
 	paddle->add<tgSpriteComponent>(tgAssets::get<tgTexture>("paddle.png"), tgVector2(0.5f, 0.0f));
+
+	tgEntity *scoreText = ecs_world->create();
+	tgHandler<tgTransformComponent> score_t = scoreText->add<tgTransformComponent>();
+	score_t->getTransform()->setLocalPosition(tgVector3(10, 10, 0));
+	score_t->getTransform()->setLocalScaling(tgVector3(0.5f, 0.5f, 1.0f));
+	tgHandler<tgFontComponent> score_font = scoreText->add<tgFontComponent>("Score: 0", tgAssets::get<tgFont>("font.fnt"));
 
 	// Create blocks
 	const int spacing = 4;
@@ -313,6 +344,10 @@ int main (int argc, char **argv) {
 			
 			ecs_world->update(timeDelta);
 
+			std::stringstream stm;
+			stm << "Score: " << int(score);
+			score_font->setText(stm.str());
+
 			tgTimer::update(timeDelta);
 			tgTweens::update(timeDelta);
 			
@@ -325,7 +360,7 @@ int main (int argc, char **argv) {
 		}
 
 		if (canRender) {
-			glClearColor(0.1f, 0.25f, 0.5f, 1.0f);
+			glClearColor(0.0f, 0.1f, 0.25f, 1.0f);
 			glClear(GL_COLOR_BUFFER_BIT);
 
 			ecs_world->render();
@@ -339,6 +374,7 @@ int main (int argc, char **argv) {
 
 	tgAssets::destroy();
 
+	delete sb;
 	delete ecs_world;
 	delete win;
 

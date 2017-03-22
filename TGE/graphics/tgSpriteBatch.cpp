@@ -76,6 +76,12 @@ tgSpriteBatch::~tgSpriteBatch() {
 	tgDelete(m_shader);
 }
 
+static tgVector2 rotatePoint(tgVector2 const& p, float rad) {
+	float c = std::cos(rad);
+	float s = std::sin(rad);
+	return tgVector2(c * p.x() - s * p.y(), s * p.x() + c * p.y());
+}
+
 void tgSpriteBatch::draw(tgTexture * tex, tgVector4 const & uv, tgVector4 const & dst, tgVector2 const & origin, float rotation, tgVector4 const & color) {
 	float width = dst.z() * uv.z();
 	float height = dst.w() * uv.w();
@@ -247,10 +253,4 @@ void tgSpriteBatch::render() {
 		glBindTexture(GL_TEXTURE_2D, 0);
 	}
 	m_vao->unbind();
-}
-
-static tgVector2 rotatePoint(tgVector2 const& p, float rad) {
-	float c = std::cos(rad);
-	float s = std::sin(rad);
-	return tgVector2(c * p.x() - s * p.y(), s * p.x() + c * p.y());
 }

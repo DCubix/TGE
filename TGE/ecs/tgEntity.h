@@ -67,7 +67,7 @@ public:
 
 	template <typename T>
 	void remove() {
-		T* comp = _get<T>();
+		T* comp = get_component<T>();
 		if(comp) {
 			m_components.erase(
 				std::remove(m_components.begin(), m_components.end(), comp), m_components.end()
@@ -86,7 +86,7 @@ protected:
 	tgEntity(tgEntitySystemManager *m, tgEntityID id);
 
 	template <typename T>
-	T* _get() const {
+	T* get_component() const {
 		for(tgComponent *comp : m_components) {
 			T* t_comp = dynamic_cast<T*>(comp);
 			if(t_comp != nullptr) {
