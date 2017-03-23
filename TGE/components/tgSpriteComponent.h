@@ -2,22 +2,38 @@
 #define SPRITE_H
 
 #include "../ecs/tgComponent.h"
-#include "../graphics/tgTexture.h"
+#include "../graphics/tgSpriteBatch.h"
 #include "../math/tgMath.h"
 
 class tgSpriteComponent : public tgComponent {
 public:
-	tgSpriteComponent()
-		: m_texture(nullptr), m_origin(tgVector2(0.0f)), m_clipRectangle(tgVector4(0, 0, 1, 1)), m_color(tgVector4(1.0f))
+	tgSpriteComponent(tgSpriteBatch *sb)
+		: m_spriteBatch(sb),
+		m_texture(nullptr),
+		m_origin(tgVector2(0.0f)),
+		m_clipRectangle(tgVector4(0, 0, 1, 1)),
+		m_color(tgVector4(1.0f))
 	{}
-	tgSpriteComponent(tgTexture *texture)
-		: m_texture(texture), m_origin(tgVector2(0.0f)), m_clipRectangle(tgVector4(0, 0, 1, 1)), m_color(tgVector4(1.0f))
+	tgSpriteComponent(tgSpriteBatch *sb, tgTexture *texture)
+		: m_spriteBatch(sb),
+		m_texture(texture),
+		m_origin(tgVector2(0.0f)),
+		m_clipRectangle(tgVector4(0, 0, 1, 1)),
+		m_color(tgVector4(1.0f))
 	{}
-	tgSpriteComponent(tgTexture *texture, tgVector2 const& origin)
-		: m_texture(texture), m_origin(origin), m_clipRectangle(tgVector4(0, 0, 1, 1)), m_color(tgVector4(1.0f))
+	tgSpriteComponent(tgSpriteBatch *sb, tgTexture *texture, tgVector2 const& origin)
+		: m_spriteBatch(sb),
+		m_texture(texture),
+		m_origin(origin),
+		m_clipRectangle(tgVector4(0, 0, 1, 1)),
+		m_color(tgVector4(1.0f))
 	{}
-	tgSpriteComponent(tgTexture *texture, tgVector2 const& origin, tgVector4 const& clip)
-		: m_texture(texture), m_origin(origin), m_clipRectangle(clip), m_color(tgVector4(1.0f))
+	tgSpriteComponent(tgSpriteBatch *sb, tgTexture *texture, tgVector2 const& origin, tgVector4 const& clip)
+		: m_spriteBatch(sb), 
+		m_texture(texture),
+		m_origin(origin),
+		m_clipRectangle(clip),
+		m_color(tgVector4(1.0f))
 	{}
 
 	tgTexture *getTexture() const { return m_texture; }
@@ -32,7 +48,10 @@ public:
 	tgVector4 getColor() const { return m_color; }
 	void setColor(tgVector4 const& color) { m_color = color; }
 
+	void render() override;
+
 private:
+	tgSpriteBatch *m_spriteBatch;
 	tgTexture *m_texture;
 	tgVector2 m_origin;
 	tgVector4 m_clipRectangle;

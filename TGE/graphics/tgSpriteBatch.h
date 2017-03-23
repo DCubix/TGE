@@ -15,10 +15,10 @@ public:
 	void draw(tgTexture *tex,
 		tgVector4 const& uv, tgVector4 const& dst,
 		tgVector2 const& origin, float rotation,
-		tgVector4 const& color);
+		tgVector4 const& color, float z);
 	void drawTile(tgTexture *atlas, int tileIndex,
 		int tileWidth, int tileHeight,
-		int tileX, int tileY, float scale);
+		int tileX, int tileY, float scale, float z);
 
 	void resize(int w, int h);
 

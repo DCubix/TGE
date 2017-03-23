@@ -59,11 +59,12 @@ tgSpriteBatch::tgSpriteBatch(int screen_width, int screen_height)
 	m_shader->addShader(sb_frag, tgShaderProgram::tgFRAGMENT_SHADER);
 	m_shader->link();
 
-	m_projection = tgMatrix4::ortho(0, float(screen_width), float(screen_height), 0, -1, 1);
+	m_projection = tgMatrix4::ortho(0, float(screen_width), float(screen_height), 0, -100, 100);
 	m_view = tgMatrix4::identity();
 
 	glDisable(GL_CULL_FACE);
 	glEnable(GL_BLEND);
+	glEnable(GL_DEPTH_TEST);
 	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
 	updateUniforms();
@@ -82,7 +83,7 @@ static tgVector2 rotatePoint(tgVector2 const& p, float rad) {
 	return tgVector2(c * p.x() - s * p.y(), s * p.x() + c * p.y());
 }
 
-void tgSpriteBatch::draw(tgTexture * tex, tgVector4 const & uv, tgVector4 const & dst, tgVector2 const & origin, float rotation, tgVector4 const & color) {
+void tgSpriteBatch::draw(tgTexture * tex, tgVector4 const & uv, tgVector4 const & dst, tgVector2 const & origin, float rotation, tgVector4 const & color, float z) {
 	float width = dst.z() * uv.z();
 	float height = dst.w() * uv.w();
 
@@ -106,19 +107,19 @@ void tgSpriteBatch::draw(tgTexture * tex, tgVector4 const & uv, tgVector4 const 
 	float v2 = uv.y() + uv.w();
 
 	tgSprite *spr = new tgSprite();
-	spr->TL.position = tgVector3(tlr, 0);
+	spr->TL.position = tgVector3(tlr, z);
 	spr->TL.texco = tgVector2(u1, v1);
 	spr->TL.color = color;
 
-	spr->TR.position = tgVector3(trr, 0);
+	spr->TR.position = tgVector3(trr, z);
 	spr->TR.texco = tgVector2(u2, v1);
 	spr->TR.color = color;
 
-	spr->BR.position = tgVector3(brr, 0);
+	spr->BR.position = tgVector3(brr, z);
 	spr->BR.texco = tgVector2(u2, v2);
 	spr->BR.color = color;
 
-	spr->BL.position = tgVector3(blr, 0);
+	spr->BL.position = tgVector3(blr, z);
 	spr->BL.texco = tgVector2(u1, v2);
 	spr->BL.color = color;
 
@@ -127,7 +128,7 @@ void tgSpriteBatch::draw(tgTexture * tex, tgVector4 const & uv, tgVector4 const 
 	m_sprites.push_back(spr);
 }
 
-void tgSpriteBatch::drawTile(tgTexture * atlas, int tileIndex, int tileWidth, int tileHeight, int tileX, int tileY, float scale) {
+void tgSpriteBatch::drawTile(tgTexture * atlas, int tileIndex, int tileWidth, int tileHeight, int tileX, int tileY, float scale, float z) {
 	int cols = atlas->getWidth() / tileWidth;
 	int rows = atlas->getHeight() / tileHeight;
 
@@ -140,11 +141,11 @@ void tgSpriteBatch::drawTile(tgTexture * atlas, int tileIndex, int tileWidth, in
 	float uvy = float(int(tileIndex / cols)) * uvh;
 
 	tgVector4 uv(uvx, uvy, uvw, uvh);
-	draw(atlas, uv, tgVector4(tx, ty, atlas->getWidth() * scale, atlas->getHeight() * scale), tgVector2(0.0f), 0.0f, tgVector4(1.0f));
+	draw(atlas, uv, tgVector4(tx, ty, atlas->getWidth() * scale, atlas->getHeight() * scale), tgVector2(0.0f), 0.0f, tgVector4(1.0f), z);
 }
 
 void tgSpriteBatch::resize(int w, int h) {
-	m_projection = tgMatrix4::ortho(0, float(w), float(h), 0, -1, 1);
+	m_projection = tgMatrix4::ortho(0, float(w), float(h), 0, -100, 100);
 	updateUniforms();
 }
 

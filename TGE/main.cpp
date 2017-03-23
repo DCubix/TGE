@@ -11,9 +11,8 @@
 
 #include "graphics/tgGL.h"
 
-#include "ecs/tgECS.h"
-#include "systems/tgSpriteRenderingSystem.h"
-#include "systems/tgFontRenderingSystem.h"
+#include "ecs/tgComponentManager.h"
+#include "ecs/tgComponent.h"
 #include "components/tgSpriteComponent.h"
 #include "components/tgFontComponent.h"
 #include "components/tgTransformComponent.h"
@@ -55,15 +54,6 @@ tgVector4 hsv(float h, float s, float v) {
 	return tgVector4(r, g, b, 1.0f);
 }
 
-class Ball : public tgComponent {
-public:
-	Ball() {
-		direction = tgVector2(-1.0f, -1.0f);
-		speed = 250.0f;
-	}
-	tgVector2 direction;
-	float speed;
-};
 
 class Block : public tgComponent {
 public:
@@ -81,158 +71,149 @@ public:
 class Paddle : public tgComponent {
 public:
 	Paddle() {
-		frictionCoefficient = 0.98f;
 		speed = 0.0f;
 		maxSpeed = 280.0f;
 	}
 
-	float frictionCoefficient;
+	void update(float dt) {
+		speed = 0;
+		if (tgInput::isKeyDown(SDLK_LEFT)) {
+			speed = -maxSpeed;
+		} else if (tgInput::isKeyDown(SDLK_RIGHT)) {
+			speed = maxSpeed;
+		}
+
+		auto tc = getManager()->getComponent<tgTransformComponent>(getOwner());
+		tgTransform *t = tc->getTransform();
+		t->setLocalPosition(t->getLocalPosition() + tgVector3(speed, 0, 0) * dt);
+	}
+
 	float speed, maxSpeed;
 };
 
-class BallMovement : public tgSystem {
+
+class Ball : public tgComponent {
 public:
-	void update(tgEntitySystemManager *m, float dt) {
-		for (tgEntity *ent : m->search<Ball, tgTransformComponent>()) {
-			tgHandler<Ball> ball = ent->get<Ball>();
-			tgHandler<tgTransformComponent> tc = ent->get<tgTransformComponent>();
+	Ball() {
+		direction = tgVector2(-1.0f, -1.0f);
+		speed = 250.0f;
+	}
 
-			tgTransform *t = tc->getTransform();
+	void update(float dt) override {
+		auto t_comp = getManager()->getComponent<tgTransformComponent>(getOwner());
+		tgTransform *t = t_comp->getTransform();
 
-			tgVector3 pos = t->getLocalPosition();
-			if (pos.y() < 9) {
-				ball->direction.y() *= -1;
-			} else if (pos.y() > 488) {
-				pos.x() = 320;
-				pos.y() = 400;
-				t->setLocalPosition(pos);
-				ball->direction = tgVector2(randF(-1.0f, 1.0f), -1);
-			}
-
-			if (pos.x() < 9) {
-				ball->direction.x() *= -1;
-			} else if (pos.x() > 631) {
-				ball->direction.x() *= -1;
-			}
-
-			t->setLocalPosition(tgVector3(t->getLocalPosition().xy() + ball->direction * ball->speed * dt, 0));
+		tgVector3 pos = t->getLocalPosition();
+		if (pos.y() < 9) {
+			direction.y() *= -1;
+		} else if (pos.y() > 488) {
+			pos.x() = 320;
+			pos.y() = 400;
+			t->setLocalPosition(pos);
+			direction = tgVector2(randF(-1.0f, 1.0f), -1);
 		}
 
-		for (tgEntity *ball_e : m->search<Ball, tgTransformComponent>()) {
-			tgHandler<Ball> ball = ball_e->get<Ball>();
-			tgHandler<tgTransformComponent> ball_tc = ball_e->get<tgTransformComponent>();
-
-			for (tgEntity *pad_e : m->search<Paddle, tgTransformComponent>()) {
-				tgHandler<Paddle> paddle = pad_e->get<Paddle>();
-				tgHandler<tgTransformComponent> paddle_tc = pad_e->get<tgTransformComponent>();
-
-				tgVector3 bpos = ball_tc->getTransform()->getLocalPosition();
-				tgVector3 ppos = paddle_tc->getTransform()->getLocalPosition();
-
-				if (bpos.x() + 8 >= ppos.x() - 48 &&
-					bpos.x() - 8 <= ppos.x() + 48 &&
-					bpos.y() + 8 >= ppos.y())
-				{
-					float pad_dir = paddle->speed > 0 ? 1 : -1;
-					if (paddle->speed == 0) {
-						pad_dir = 0;
-					}
-					float facing = bpos.y() > ppos.y() ? 1 : -1;
-					ball->direction = ball->direction.reflect(tgVector2(0, facing)).normalized();
-
-					tgTweens::addTween(&paddle_tc->getTransform()->getLocalPosition().y(), 430.0f, 0.2f, nullptr, tgEasing::easeOutElastic);
-					tgTimer::wait(0.06f, [paddle_tc]() {
-						tgTweens::addTween(&paddle_tc->getTransform()->getLocalPosition().y(), 425.0f, 0.8f, nullptr, tgEasing::easeOutElastic);
-					});
-				}
-			}
+		if (pos.x() < 9) {
+			direction.x() *= -1;
+		} else if (pos.x() > 631) {
+			direction.x() *= -1;
 		}
 
-		for (tgEntity *ball_e : m->search<Ball, tgTransformComponent>()) {
-			tgHandler<Ball> ball = ball_e->get<Ball>();
-			tgHandler<tgTransformComponent> ball_tc = ball_e->get<tgTransformComponent>();
+		t->setLocalPosition(tgVector3(t->getLocalPosition().xy() + direction * speed * dt, 0));
 
-			for (tgEntity *block_e : m->search<Block, tgTransformComponent>()) {
-				tgHandler<Block> block = block_e->get<Block>();
-				tgHandler<tgTransformComponent> block_tc = block_e->get<tgTransformComponent>();
-				
-				if (block->killing) { continue; }
+		for (tgEntity ent : getManager()->search<tgTransformComponent, Paddle>()) {
+			Paddle *paddle = getManager()->getComponent<Paddle>(ent);
+			auto paddle_tc = getManager()->getComponent<tgTransformComponent>(ent);
 
-				tgVector3 bpos = ball_tc->getTransform()->getLocalPosition();
-				tgVector3 blpos = block_tc->getTransform()->getLocalPosition();
+			tgVector3 bpos = t->getLocalPosition();
+			tgVector3 ppos = paddle_tc->getTransform()->getLocalPosition();
 
-				float w = 0.5 * (16 + 48);
-				float h = 0.5 * (16 + 16);
-				float dx = bpos.x() - blpos.x();
-				float dy = bpos.y() - blpos.y();
+			float w = 0.5 * (16 + 96);
+			float h = 0.5 * (16 + 16);
+			float dx = bpos.x() - ppos.x();
+			float dy = bpos.y() - (ppos.y() + 8);
 
-				if (std::abs(dx) <= w && std::abs(dy) <= h && !block->killing) {
-					block->killing = true;
+			if (std::abs(dx) <= w && std::abs(dy) <= h) {
+				tgVector2 N(0, 1);
 
-					tgVector2 N(0, 1);
+				/* collision! */
+				float wy = w * dy;
+				float hx = h * dx;
 
-					/* collision! */
-					float wy = w * dy;
-					float hx = h * dx;
-
-					if (wy > hx) {
-						if (wy > -hx) {
-							N.x() = 0; N.y() = -1;
-						} else {
-							N.x() = -1; N.y() = 0;
-						}
+				if (wy > hx) {
+					if (wy > -hx) {
+						N.x() = 0; N.y() = -1;
 					} else {
-						if (wy > -hx) {
-							N.x() = 1; N.y() = 0;
-						} else {
-							N.x() = 0; N.y() = 1;
-						}
+						N.x() = -1; N.y() = 0;
 					}
-
-					ball->direction = ball->direction.reflect(N).normalized();
-					score += 100;
-					
-					tgTweens::addTween(&block_tc->getTransform()->getLocalScaling().x(), 0.0f, 0.4f, [block_e]() {
-						block_e->kill();
-					}, tgEasing::easeInBack);
-
-					break;
+				} else {
+					if (wy > -hx) {
+						N.x() = 1; N.y() = 0;
+					} else {
+						N.x() = 0; N.y() = 1;
+					}
 				}
+
+				direction = direction.reflect(N).normalized();
+
+				tgTweens::addTween(&paddle_tc->getTransform()->getLocalPosition().y(), 430.0f, 0.2f, nullptr, tgEasing::easeOutElastic);
+				tgTimer::wait(0.06f, [paddle_tc]() {
+					tgTweens::addTween(&paddle_tc->getTransform()->getLocalPosition().y(), 425.0f, 0.8f, nullptr, tgEasing::easeOutElastic);
+				});
+			}
+		}
+
+		for (tgEntity ent : getManager()->search<tgTransformComponent, Block>()) {
+			Block *block = getManager()->getComponent<Block>(ent);
+			auto block_tc = getManager()->getComponent<tgTransformComponent>(ent);
+
+			if (block->killing) { continue; }
+
+			tgVector3 bpos = t->getLocalPosition();
+			tgVector3 blpos = block_tc->getTransform()->getLocalPosition();
+
+			float w = 0.5 * (16 + 48);
+			float h = 0.5 * (16 + 16);
+			float dx = bpos.x() - blpos.x();
+			float dy = bpos.y() - blpos.y();
+
+			if (std::abs(dx) <= w && std::abs(dy) <= h && !block->killing) {
+				block->killing = true;
+
+				tgVector2 N(0, 1);
+
+				/* collision! */
+				float wy = w * dy;
+				float hx = h * dx;
+
+				if (wy > hx) {
+					if (wy > -hx) {
+						N.x() = 0; N.y() = -1;
+					} else {
+						N.x() = -1; N.y() = 0;
+					}
+				} else {
+					if (wy > -hx) {
+						N.x() = 1; N.y() = 0;
+					} else {
+						N.x() = 0; N.y() = 1;
+					}
+				}
+
+				direction = direction.reflect(N).normalized();
+				score += 100;
+
+				tgTweens::addTween(&block_tc->getTransform()->getLocalScaling().x(), 0.0f, 0.4f, [&, ent]() {
+					getManager()->destroyEntity(ent);
+				}, tgEasing::easeInBack);
+
+				break;
 			}
 		}
 	}
-};
 
-class PaddleMovement : public tgSystem {
-public:
-	void update(tgEntitySystemManager *m, float dt) {
-		for (tgEntity *ent : m->search<Paddle, tgTransformComponent>()) {
-			tgHandler<Paddle> paddle = ent->get<Paddle>();
-			tgHandler<tgTransformComponent> tc = ent->get<tgTransformComponent>();
-
-			tgTransform *t = tc->getTransform();
-			t->setLocalPosition(t->getLocalPosition() + tgVector3(paddle->speed, 0, 0) * dt);
-		}
-	}
-};
-
-class InputSystem : public tgSystem {
-public:
-	InputSystem() {}
-
-	void fixedUpdate(tgEntitySystemManager *m, float dt) {
-		for (tgEntity *ent : m->search<Paddle>()) {
-			tgHandler<Paddle> paddle = ent->get<Paddle>();
-			
-			paddle->speed = 0;
-			if (tgInput::isKeyDown(SDLK_LEFT)) {
-				paddle->speed = -paddle->maxSpeed;
-			} else if (tgInput::isKeyDown(SDLK_RIGHT)) {
-				paddle->speed = paddle->maxSpeed;
-			}
-		}
-	}
-
+	tgVector2 direction;
+	float speed;
 };
 
 int main (int argc, char **argv) {
@@ -250,31 +231,25 @@ int main (int argc, char **argv) {
 
 	///////// Using the ECS
 	tgSpriteBatch *sb = new tgSpriteBatch(640, 480);
-	tgEntitySystemManager *ecs_world = new tgEntitySystemManager();
-	tgSpriteRenderingSystem *ren = new tgSpriteRenderingSystem(sb);
-	ecs_world->addSystem(ren);
-	ecs_world->addSystem(new InputSystem());
-	ecs_world->addSystem(new PaddleMovement());
-	ecs_world->addSystem(new BallMovement());
-	ecs_world->addSystem(new tgFontRenderingSystem(sb));
+	tgComponentManager *mgr = new tgComponentManager();
 
-	tgEntity *ball = ecs_world->create();
-	ball->add<Ball>();
-	tgHandler<tgTransformComponent> ball_t = ball->add<tgTransformComponent>();
-	ball_t->getTransform()->setLocalPosition(tgVector3(320, 400, 0));
-	ball->add<tgSpriteComponent>(tgAssets::get<tgTexture>("ball.png"), tgVector2(0.5f));
+	tgEntity ball = mgr->createEntity();
+	mgr->addComponent<Ball>(ball);
+	tgTransform *ball_t = mgr->addComponent<tgTransformComponent>(ball)->getTransform();
+	ball_t->setLocalPosition(tgVector3(320, 400, 0));
+	mgr->addComponent<tgSpriteComponent>(ball, sb, tgAssets::get<tgTexture>("ball.png"), tgVector2(0.5f));
 	
-	tgEntity *paddle = ecs_world->create();
-	paddle->add<Paddle>();
-	tgHandler<tgTransformComponent> paddle_t = paddle->add<tgTransformComponent>();
-	paddle_t->getTransform()->setLocalPosition(tgVector3(320, 425, 0));
-	paddle->add<tgSpriteComponent>(tgAssets::get<tgTexture>("paddle.png"), tgVector2(0.5f, 0.0f));
+	tgEntity paddle = mgr->createEntity();
+	mgr->addComponent<Paddle>(paddle);
+	tgTransform *paddle_t = mgr->addComponent<tgTransformComponent>(paddle)->getTransform();
+	paddle_t->setLocalPosition(tgVector3(320, 425, 0));
+	mgr->addComponent<tgSpriteComponent>(paddle, sb, tgAssets::get<tgTexture>("paddle.png"), tgVector2(0.5f, 0.0f));
 
-	tgEntity *scoreText = ecs_world->create();
-	tgHandler<tgTransformComponent> score_t = scoreText->add<tgTransformComponent>();
-	score_t->getTransform()->setLocalPosition(tgVector3(10, 10, 0));
-	score_t->getTransform()->setLocalScaling(tgVector3(0.5f, 0.5f, 1.0f));
-	tgHandler<tgFontComponent> score_font = scoreText->add<tgFontComponent>("Score: 0", tgAssets::get<tgFont>("font.fnt"));
+	tgEntity scoreText = mgr->createEntity();
+	tgTransform *score_t = mgr->addComponent<tgTransformComponent>(scoreText)->getTransform();
+	score_t->setLocalPosition(tgVector3(20, 10, 99));
+	score_t->setLocalScaling(tgVector3(0.55f, 0.55f, 1.0f));
+	tgFontComponent *score_font = mgr->addComponent<tgFontComponent>(scoreText, sb, "Score: 0", tgAssets::get<tgFont>("font.fnt"));
 
 	// Create blocks
 	const int spacing = 4;
@@ -290,14 +265,15 @@ int main (int argc, char **argv) {
 	float step = 1.0f / float(nblockX);
 
 	for (int i = 0; i < nblockX; i++) {
-		tgTimer::wait(0.02f, [&, i, ecs_world, nblockY]() {
+		tgTimer::wait(0.02f, [&, i, mgr, nblockY]() {
 			for (int j = 0; j < nblockY; j++) {
-				tgEntity *block = ecs_world->create();
-				block->add<Block>();
-				tgHandler<tgTransformComponent> block_t = block->add<tgTransformComponent>();
-				block_t->getTransform()->setLocalPosition(tgVector3(padding * 2 + 24 + i * blockWidth, padding * 2 + 8 + j * blockHeight, 0));
-				block_t->getTransform()->setLocalScaling(tgVector3(0, 0, 1));
-				tgHandler<tgSpriteComponent> block_s = block->add<tgSpriteComponent>(block_tex, tgVector2(0.5f));
+				tgEntity block = mgr->createEntity();
+				mgr->addComponent<Block>(block);
+
+				tgTransform *block_t = mgr->addComponent<tgTransformComponent>(block)->getTransform();
+				block_t->setLocalPosition(tgVector3(padding * 2 + 24 + i * blockWidth, padding * 2 + 8 + j * blockHeight, 0));
+				block_t->setLocalScaling(tgVector3(0, 0, 1));
+				tgSpriteComponent *block_s = mgr->addComponent<tgSpriteComponent>(block, sb, block_tex, tgVector2(0.5f));
 
 				block_s->setColor(hsv(h, 0.5f, 1.0f));
 				h += step;
@@ -306,8 +282,8 @@ int main (int argc, char **argv) {
 				}
 
 				tgTween *t = new tgTween(1.0f, tgEasing::easeOutElastic);
-				t->addValue(&block_t->getTransform()->getLocalScaling().x(), 1.0f);
-				t->addValue(&block_t->getTransform()->getLocalScaling().y(), 1.0f);
+				t->addValue(&block_t->getLocalScaling().x(), 1.0f);
+				t->addValue(&block_t->getLocalScaling().y(), 1.0f);
 				tgTweens::addTween(t);
 
 			}
@@ -323,6 +299,8 @@ int main (int argc, char **argv) {
 	int frames = 0;
 	float ft = 0.0f;
 
+	mgr->start();
+
 	bool canRender = false;
 	while (!win->shouldClose()) {
 		canRender = false;
@@ -335,14 +313,12 @@ int main (int argc, char **argv) {
 		if (tgInput::isCloseRequested()) {
 			win->close();
 		}
-
-		ecs_world->fixedUpdate(timeDelta);
-		
+			
 		while (timeAccum >= timeDelta) {
 			timeAccum -= timeDelta;
 			canRender = true;
 			
-			ecs_world->update(timeDelta);
+			mgr->update(timeDelta);
 
 			std::stringstream stm;
 			stm << "Score: " << int(score);
@@ -360,10 +336,12 @@ int main (int argc, char **argv) {
 		}
 
 		if (canRender) {
-			glClearColor(0.0f, 0.1f, 0.25f, 1.0f);
-			glClear(GL_COLOR_BUFFER_BIT);
+			glClearColor(0.168f, 0.168f, 0.16f, 1.0f);
+			glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-			ecs_world->render();
+			sb->begin();
+			mgr->render();
+			sb->end();
 
 			win->swapBuffers();
 			frames++;
@@ -373,7 +351,7 @@ int main (int argc, char **argv) {
 	tgAssets::destroy();
 
 	delete sb;
-	delete ecs_world;
+	delete mgr;
 	delete win;
 
 	return 0;

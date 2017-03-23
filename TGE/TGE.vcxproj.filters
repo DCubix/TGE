@@ -87,31 +87,13 @@
     <ClInclude Include="nodes\tgAnimatedSpriteNode.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="ecs\tgEntity.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="ecs\tgComponent.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="ecs\tgSystem.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="ecs\tgECS.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="ecs\tgComponentHandler.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="ecs\tgEntitySystemManager.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="components\tgTransformComponent.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="components\tgSpriteComponent.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="systems\tgSpriteRenderingSystem.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="assets\tgTextureAsset.h">
@@ -153,7 +135,13 @@
     <ClInclude Include="assets\tgFontAsset.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="systems\tgFontRenderingSystem.h">
+    <ClInclude Include="scripting\sol.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="scripting\tgScript.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="ecs\tgComponentManager.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
@@ -215,15 +203,6 @@
     <ClCompile Include="nodes\tgAnimatedSpriteNode.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="ecs\tgEntity.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="ecs\tgEntitySystemManager.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="systems\tgSpriteRenderingSystem.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="assets\tgTextureAsset.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -254,7 +233,19 @@
     <ClCompile Include="assets\tgFontAsset.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="systems\tgFontRenderingSystem.cpp">
+    <ClCompile Include="scripting\tgScript.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="ecs\tgComponentManager.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="components\tgSpriteComponent.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="components\tgFontComponent.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="core\tgFont.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
