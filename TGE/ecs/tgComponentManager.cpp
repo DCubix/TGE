@@ -1,10 +1,12 @@
 #include "tgComponentManager.h"
 
 #include "../core/tgUtil.h"
+#include "../ecs/tgMessenger.h"
 
 tgComponentManager::tgComponentManager()
 	: m_lastEntity(TG_INITIAL_ID)
 {
+	m_messenger = new tgMessenger();
 }
 
 tgComponentManager::~tgComponentManager() {
@@ -58,6 +60,8 @@ void tgComponentManager::start() {
 
 void tgComponentManager::update(float dt) {
 	cleanup();
+	
+	m_messenger->processQueue(this);
 
 	for (tgComponent *comp : m_components) {
 		if (comp->isEnabled()) {

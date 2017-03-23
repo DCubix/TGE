@@ -144,6 +144,7 @@
     <ClInclude Include="core\tgWindow.h" />
     <ClInclude Include="ecs\tgComponent.h" />
     <ClInclude Include="ecs\tgComponentManager.h" />
+    <ClInclude Include="ecs\tgMessenger.h" />
     <ClInclude Include="graphics\tgBuffer.h" />
     <ClInclude Include="graphics\tgGL.h" />
     <ClInclude Include="graphics\tgRenderer.h" />
@@ -183,6 +184,7 @@
     <ClCompile Include="core\tgUtil.cpp" />
     <ClCompile Include="core\tgWindow.cpp" />
     <ClCompile Include="ecs\tgComponentManager.cpp" />
+    <ClCompile Include="ecs\tgMessenger.cpp" />
     <ClCompile Include="graphics\tgBuffer.cpp" />
     <ClCompile Include="graphics\tgRenderer.cpp" />
     <ClCompile Include="graphics\tgShaderProgram.cpp" />

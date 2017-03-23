@@ -13,6 +13,7 @@
 
 #include "ecs/tgComponentManager.h"
 #include "ecs/tgComponent.h"
+#include "ecs/tgMessenger.h"
 #include "components/tgSpriteComponent.h"
 #include "components/tgFontComponent.h"
 #include "components/tgTransformComponent.h"
@@ -54,13 +55,22 @@ tgVector4 hsv(float h, float s, float v) {
 	return tgVector4(r, g, b, 1.0f);
 }
 
-
 class Block : public tgComponent {
 public:
 	Block() {
 		killing = false;
 		animation_speed = 2.0f;
 		time = 0.0f;
+	}
+
+	void receive(tgMessage const& msg) {
+		if (msg.text == "collided_with_ball") {
+			tgTransform *block_t = getManager()->getComponent<tgTransformComponent>(getOwner())->getTransform();
+
+			tgTweens::addTween(&block_t->getLocalScaling().x(), 0.0f, 0.4f, [&]() {
+				getManager()->destroyEntity(getOwner());
+			}, tgEasing::easeInBack);
+		}
 	}
 
 	float animation_speed;
@@ -86,6 +96,18 @@ public:
 		auto tc = getManager()->getComponent<tgTransformComponent>(getOwner());
 		tgTransform *t = tc->getTransform();
 		t->setLocalPosition(t->getLocalPosition() + tgVector3(speed, 0, 0) * dt);
+	}
+
+	void receive(tgMessage const& msg) {
+		if (msg.text == "collided_with_ball") {
+			auto tc = getManager()->getComponent<tgTransformComponent>(getOwner());
+			tgTransform *t = tc->getTransform();
+
+			tgTweens::addTween(&tc->getTransform()->getLocalPosition().y(), 430.0f, 0.2f, nullptr, tgEasing::easeOutElastic);
+			tgTimer::wait(0.06f, [tc]() {
+				tgTweens::addTween(&tc->getTransform()->getLocalPosition().y(), 425.0f, 0.8f, nullptr, tgEasing::easeOutElastic);
+			});
+		}
 	}
 
 	float speed, maxSpeed;
@@ -156,10 +178,8 @@ public:
 
 				direction = direction.reflect(N).normalized();
 
-				tgTweens::addTween(&paddle_tc->getTransform()->getLocalPosition().y(), 430.0f, 0.2f, nullptr, tgEasing::easeOutElastic);
-				tgTimer::wait(0.06f, [paddle_tc]() {
-					tgTweens::addTween(&paddle_tc->getTransform()->getLocalPosition().y(), 425.0f, 0.8f, nullptr, tgEasing::easeOutElastic);
-				});
+				tgMessenger *msgr = getManager()->getMessenger();
+				msgr->sendMessage(getOwner(), ent, "collided_with_ball");
 			}
 		}
 
@@ -203,9 +223,8 @@ public:
 				direction = direction.reflect(N).normalized();
 				score += 100;
 
-				tgTweens::addTween(&block_tc->getTransform()->getLocalScaling().x(), 0.0f, 0.4f, [&, ent]() {
-					getManager()->destroyEntity(ent);
-				}, tgEasing::easeInBack);
+				tgMessenger *msgr = getManager()->getMessenger();
+				msgr->sendMessage(getOwner(), ent, "collided_with_ball");
 
 				break;
 			}
@@ -289,7 +308,6 @@ int main (int argc, char **argv) {
 			}
 		});
 	}
-	
 	/////////
 
 	float timeDelta = 1.0f / 60.0f;

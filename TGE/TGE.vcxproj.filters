@@ -144,6 +144,9 @@
     <ClInclude Include="ecs\tgComponentManager.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="ecs\tgMessenger.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="core\tgImageData.cpp">
@@ -246,6 +249,9 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="core\tgFont.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="ecs\tgMessenger.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

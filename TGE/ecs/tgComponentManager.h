@@ -14,6 +14,7 @@
 
 using tgEntity = std::size_t;
 
+class tgMessenger;
 class tgComponentManager {
 public:
 	tgComponentManager();
@@ -84,6 +85,9 @@ public:
 
 	void addComponent(std::size_t entity, tgComponent *comp);
 	std::vector<tgComponent*> getComponents(std::size_t entity);
+	std::vector<tgComponent*> getAllComponents() const { return m_components; }
+
+	tgMessenger *getMessenger() const { return m_messenger; }
 
 	void start();
 	void update(float dt);
@@ -93,6 +97,8 @@ private:
 	std::vector<std::size_t> m_entities;
 	std::vector<tgComponent*> m_components;
 	std::size_t m_lastEntity;
+
+	tgMessenger *m_messenger;
 
 	void cleanup();
 };
