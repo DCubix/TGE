@@ -23,7 +23,7 @@ tgImageData::tgImageData(std::istream &stream) {
 
 	int comp;
 	byte *dat = stbi_load_from_memory(data, int(pos), &m_width, &m_height, &comp, STBI_rgb_alpha);
-	if(dat == nullptr) {
+	if(!dat) {
 		tgLog::log("The image failed to load.");
 		return;
 	}

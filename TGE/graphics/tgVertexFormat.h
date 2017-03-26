@@ -12,6 +12,7 @@ public:
 		tgATTR_TEXCOORD,
 		tgATTR_COLOR,
 		tgATTR_FLOAT,
+		tgATTR_FLOAT2,
 		tgATTR_FLOAT3,
 		tgATTR_FLOAT4
 	};

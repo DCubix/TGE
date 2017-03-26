@@ -9,8 +9,8 @@
 #include <utility>
 #include <algorithm>
 
-#define TG_INVALID_ENTITY 0xDEAD
-#define TG_INITIAL_ID 0xBEEF
+#define TG_INVALID_ENTITY -1
+#define TG_INITIAL_ID 0
 
 using tgEntity = std::size_t;
 

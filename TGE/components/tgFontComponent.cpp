@@ -11,7 +11,7 @@ static float computeTextWidth(tgFontComponent *fcomp, tgVector2 const& scale) {
 	float padX = fnt->getPadding().x();
 	float xscale = scale.x();
 	float yscale = scale.y();
-	for (int i = 0; i < fcomp->getText().size(); i++) {
+	for (unsigned i = 0; i < fcomp->getText().size(); i++) {
 		char c = fcomp->getText()[i];
 		tgChar chr;
 		if (fnt->containsChar(c)) {
@@ -37,11 +37,13 @@ void tgFontComponent::render() {
 	tgFont *fnt = m_font;
 	tgTexture *tex = fnt ? fnt->getTexture() : nullptr;
 	if (fnt && tex) {
+		m_spriteBatch->save();
+
 		float xscale = scl.x();
 		float yscale = scl.y();
 		float x = 0;
 
-		for (int i = 0; i < m_text.size(); i++) {
+		for (unsigned i = 0; i < m_text.size(); i++) {
 			char c = m_text[i];
 			tgChar chr;
 			if (fnt->containsChar(c)) {
@@ -50,18 +52,18 @@ void tgFontComponent::render() {
 				chr = fnt->getCharMap()[char(fnt->getNumChars() - 1)];
 			}
 			if (!std::isspace(c)) {
-				m_spriteBatch->draw(
-					fnt->getTexture(),
-					chr.clipRect,
-					tgVector4(pos.x() + (x + chr.xoffset * xscale) - fnt->getPadding()[0], pos.y() + (chr.yoffset * yscale),
-						float(tex->getWidth()) * xscale, float(tex->getHeight()) * yscale),
-					tgVector2(0.0f),
-					0,
-					tgVector4(1.0f), pos.z()
+				m_spriteBatch->setUV(chr.clipRect);
+				m_spriteBatch->setPosition(
+					tgVector3(pos.x() + (x + chr.xoffset * xscale) - fnt->getPadding()[0],
+						pos.y() + (chr.yoffset * yscale), pos.z())
 				);
+				m_spriteBatch->setScale(scl);
+
+				m_spriteBatch->draw(fnt->getTexture());
 			}
 			x += (chr.xadvance - fnt->getPadding()[2]) * xscale;
 		}
-		x = 0;
+		
+		m_spriteBatch->restore();
 	}
 }

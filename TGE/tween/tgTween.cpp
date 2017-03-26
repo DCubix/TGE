@@ -20,38 +20,34 @@ tgTween::tgTween(float duration, float *value, float target, tgEasingFunction co
 }
 
 tgTween::~tgTween() {
-	for (tgValue *val : m_values) {
-		tgDelete(val);
-	}
-	m_values.clear();
 }
 
 void tgTween::addValue(float *value, float target) {
-	m_values.push_back(new tgValue(value, target));
+	m_values.push_back(tgValue(value, target));
 }
 
 void tgTween::update(float dt) {
 	float before = m_time;
 	m_time += dt;
-	for (tgValue *val : m_values) {
+	for (tgValue &val : m_values) {
 		if (before <= FLT_EPSILON) {
-			if (val->value) {
-				val->start = *val->value;
+			if (val.value) {
+				val.start = *val.value;
 			}
 		}
 
-		if (val->value) {
+		if (val.value) {
 			if (m_easing) {
-				*val->value = m_easing(m_time, val->start, val->end - val->start, m_duration);
+				*val.value = m_easing(m_time, val.start, val.end - val.start, m_duration);
 			} else { // Just uses a simple Lerp
 				float t = m_time / m_duration;
-				*val->value = (1.0f - t) * val->start + val->end * t;
+				*val.value = (1.0f - t) * val.start + val.end * t;
 			}
 		}
 
 		if (m_time >= m_duration) {
-			if (val->value) {
-				*val->value = val->end;
+			if (val.value) {
+				*val.value = val.end;
 			}
 			m_finished = true;
 			if (m_onComplete) { m_onComplete(); }

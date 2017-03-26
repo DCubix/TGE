@@ -5,7 +5,7 @@
 #include <functional>
 
 typedef struct tgTimeEvent {
-	float time;
+	float time = -1;
 	std::function<void(void)> onComplete;
 } tgTimeEvent;
 
@@ -16,8 +16,8 @@ public:
 	static void update(float dt);
 
 private:
-	static std::queue<tgTimeEvent*> m_timers;
-	static tgTimeEvent* m_currentTimer;
+	static std::queue<tgTimeEvent> m_timers;
+	static tgTimeEvent m_currentTimer;
 };
 
 #endif

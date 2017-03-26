@@ -16,6 +16,7 @@ int tgVertexFormat::getAttrSize(tgAttributeType t) {
 		case tgATTR_POSITION:
 		case tgATTR_TANGENT:
 		case tgATTR_FLOAT3: return 3;
+		case tgATTR_FLOAT2:
 		case tgATTR_TEXCOORD: return 2;
 	}
 	return 0;

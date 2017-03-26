@@ -15,15 +15,17 @@ void tgSpriteComponent::render() {
 
 	if (m_texture) {
 		float rot = transform->getTransform()->getWorldRotation().toEuler().z();
-		m_spriteBatch->draw(
-			m_texture,
-			m_clipRectangle,
-			tgVector4(pos.x(), pos.y(),
-				float(m_texture->getWidth()) * scl.x(),
-				float(m_texture->getHeight()) * scl.y()),
-			m_origin,
-			rot,
-			m_color, pos.z()
-		);
+		m_spriteBatch->save();
+
+		m_spriteBatch->setUV(m_clipRectangle);
+		m_spriteBatch->setPosition(pos);
+		m_spriteBatch->setScale(scl);
+		m_spriteBatch->setOrigin(m_origin);
+		m_spriteBatch->setRotation(rot);
+		m_spriteBatch->setColor(m_color);
+
+		m_spriteBatch->draw(m_texture);
+
+		m_spriteBatch->restore();
 	}
 }

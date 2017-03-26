@@ -17,6 +17,9 @@ public:
 	bool isEnabled() const { return m_enabled; }
 	void setEnabled(bool enabled) { m_enabled = enabled; }
 
+	float getRenderingOrder() const { return m_renderingOrder; }
+	void setRenderingOrder(float o) { m_renderingOrder = o; }
+
 	virtual void start() {}
 	virtual void update(float dt) {}
 	virtual void render() {}
@@ -27,6 +30,7 @@ protected:
 	std::size_t m_owner;
 	tgComponentManager *m_manager;
 	bool m_enabled;
+	float m_renderingOrder;
 };
 
 #endif

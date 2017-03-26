@@ -36,7 +36,7 @@ protected:
 	std::function<void(void)> m_onComplete;
 	tgEasingFunction m_easing;
 
-	std::vector<tgValue*> m_values;
+	std::vector<tgValue> m_values;
 
 	float m_duration; ///< Duration in seconds
 	float m_time;

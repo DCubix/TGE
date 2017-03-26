@@ -14,13 +14,18 @@
 #include "ecs/tgComponentManager.h"
 #include "ecs/tgComponent.h"
 #include "ecs/tgMessenger.h"
+
 #include "components/tgSpriteComponent.h"
 #include "components/tgFontComponent.h"
 #include "components/tgTransformComponent.h"
+#include "components/tgEmitterComponent.h"
+
+#include "audio/tgAudioSystem.h"
 
 #include "assets/tgAssets.h"
 #include "assets/tgTextureAsset.h"
 #include "assets/tgFontAsset.h"
+#include "assets/tgAudioAsset.h"
 
 #include "tween/tgTweens.h"
 #include "tween/tgTimer.h"
@@ -37,7 +42,7 @@ float randF(float LO, float HI) {
 tgVector4 hsv(float h, float s, float v) {
 	float r, g, b;
 
-	int i = std::floor(h * 6);
+	int i = int(std::floor(h * 6));
 	float f = h * 6 - i;
 	float p = v * (1 - s);
 	float q = v * (1 - f * s);
@@ -66,6 +71,10 @@ public:
 	void receive(tgMessage const& msg) {
 		if (msg.text == "collided_with_ball") {
 			tgTransform *block_t = getManager()->getComponent<tgTransformComponent>(getOwner())->getTransform();
+
+			tgAudioSource *k = tgAudioSystem::getSingleton()->play(tgAssets::get<tgAudioBuffer>("bounce.ogg"));
+			k->setPitch(randF(0.95f, 1.1f));
+			k->setVolume(1.3f);
 
 			tgTweens::addTween(&block_t->getLocalScaling().x(), 0.0f, 0.4f, [&]() {
 				getManager()->destroyEntity(getOwner());
@@ -103,6 +112,10 @@ public:
 			auto tc = getManager()->getComponent<tgTransformComponent>(getOwner());
 			tgTransform *t = tc->getTransform();
 
+			tgAudioSource *k = tgAudioSystem::getSingleton()->play(tgAssets::get<tgAudioBuffer>("knock.ogg"));
+			k->setPitch(randF(0.95f, 1.1f));
+			k->setVolume(1.3f);
+
 			tgTweens::addTween(&tc->getTransform()->getLocalPosition().y(), 430.0f, 0.2f, nullptr, tgEasing::easeOutElastic);
 			tgTimer::wait(0.06f, [tc]() {
 				tgTweens::addTween(&tc->getTransform()->getLocalPosition().y(), 425.0f, 0.8f, nullptr, tgEasing::easeOutElastic);
@@ -112,7 +125,6 @@ public:
 
 	float speed, maxSpeed;
 };
-
 
 class Ball : public tgComponent {
 public:
@@ -238,13 +250,18 @@ public:
 int main (int argc, char **argv) {
 	tgWindow *win = new tgWindow ("Test", 640, 480);
 
+	tgAudioSystem::getSingleton()->create();
+
 	tgAssets::create();
 	tgAssets::addSource(".");
 
 	tgAssets::add<tgTextureAsset>("ball.png");
 	tgAssets::add<tgTextureAsset>("paddle.png");
 	tgAssets::add<tgTextureAsset>("block.png");
+	tgAssets::add<tgTextureAsset>("particle.png");
 	tgAssets::add<tgFontAsset>("font.fnt");
+	tgAssets::add<tgAudioAsset>("knock.ogg");
+	tgAssets::add<tgAudioAsset>("bounce.ogg");
 
 	tgAssets::load();
 
@@ -255,13 +272,31 @@ int main (int argc, char **argv) {
 	tgEntity ball = mgr->createEntity();
 	mgr->addComponent<Ball>(ball);
 	tgTransform *ball_t = mgr->addComponent<tgTransformComponent>(ball)->getTransform();
-	ball_t->setLocalPosition(tgVector3(320, 400, 0));
+	ball_t->setLocalPosition(tgVector3(320, 400, 2));
 	mgr->addComponent<tgSpriteComponent>(ball, sb, tgAssets::get<tgTexture>("ball.png"), tgVector2(0.5f));
+
+	//// Create a simple particle emitter
+	tgEmitterComponent *pemit = new tgEmitterComponent(
+		sb, tgAssets::get<tgTexture>("particle.png"), 100
+	);
+
+	tgEmitterConfiguration conf;
+	conf.startColor = tgVector4(0.8f, 0.45f, 0.2f, 1.0f);
+	conf.endColor = tgVector4(0.0f);
+	conf.emissionRate = 80;
+	conf.life = 1.2f;
+
+	pemit->setAdditive(true);
+	pemit->setConfiguration(conf);
+	pemit->setRenderingOrder(-0.1f);
+
+	mgr->addComponent(ball, pemit);
+	////
 	
 	tgEntity paddle = mgr->createEntity();
 	mgr->addComponent<Paddle>(paddle);
 	tgTransform *paddle_t = mgr->addComponent<tgTransformComponent>(paddle)->getTransform();
-	paddle_t->setLocalPosition(tgVector3(320, 425, 0));
+	paddle_t->setLocalPosition(tgVector3(320, 425, 1));
 	mgr->addComponent<tgSpriteComponent>(paddle, sb, tgAssets::get<tgTexture>("paddle.png"), tgVector2(0.5f, 0.0f));
 
 	tgEntity scoreText = mgr->createEntity();
@@ -284,59 +319,51 @@ int main (int argc, char **argv) {
 	float step = 1.0f / float(nblockX);
 
 	for (int i = 0; i < nblockX; i++) {
-		tgTimer::wait(0.02f, [&, i, mgr, nblockY]() {
-			for (int j = 0; j < nblockY; j++) {
-				tgEntity block = mgr->createEntity();
-				mgr->addComponent<Block>(block);
+		for (int j = 0; j < nblockY; j++) {
+			tgEntity block = mgr->createEntity();
+			mgr->addComponent<Block>(block);
 
-				tgTransform *block_t = mgr->addComponent<tgTransformComponent>(block)->getTransform();
-				block_t->setLocalPosition(tgVector3(padding * 2 + 24 + i * blockWidth, padding * 2 + 8 + j * blockHeight, 0));
-				block_t->setLocalScaling(tgVector3(0, 0, 1));
-				tgSpriteComponent *block_s = mgr->addComponent<tgSpriteComponent>(block, sb, block_tex, tgVector2(0.5f));
+			tgTransform *block_t = mgr->addComponent<tgTransformComponent>(block)->getTransform();
+			block_t->setLocalPosition(tgVector3(padding * 2 + 24 + i * blockWidth, padding * 2 + 8 + j * blockHeight, 0));
+			block_t->setLocalScaling(tgVector3(0, 0, 1));
+			tgSpriteComponent *block_s = mgr->addComponent<tgSpriteComponent>(block, sb, block_tex, tgVector2(0.5f));
 
-				block_s->setColor(hsv(h, 0.5f, 1.0f));
-				h += step;
-				if (h >= 1.0f) {
-					h = 0.0f;
-				}
-
-				tgTween *t = new tgTween(1.0f, tgEasing::easeOutElastic);
-				t->addValue(&block_t->getLocalScaling().x(), 1.0f);
-				t->addValue(&block_t->getLocalScaling().y(), 1.0f);
-				tgTweens::addTween(t);
-
+			block_s->setColor(hsv(h, 0.5f, 1.0f));
+			h += step;
+			if (h >= 1.0f) {
+				h = 0.0f;
 			}
-		});
+
+			tgTween *t = new tgTween(1.0f, tgEasing::easeOutElastic);
+			t->addValue(&block_t->getLocalScaling().x(), 1.0f);
+			t->addValue(&block_t->getLocalScaling().y(), 1.0f);
+			tgTweens::addTween(t);
+		}
 	}
 	/////////
 
-	float timeDelta = 1.0f / 60.0f;
+	const float timeDelta = 1.0f / 60.0f;
 	float timeAccum = 0.0f;
 	float startTime = float (SDL_GetTicks()) / 1000.0f;
-
-	int frames = 0;
-	float ft = 0.0f;
+	float currentTime, delta;
 
 	mgr->start();
 
-	bool canRender = false;
 	while (!win->shouldClose()) {
-		canRender = false;
-		float currentTime = float (SDL_GetTicks()) / 1000.0f;
-		float delta = currentTime - startTime;
+		currentTime = float (SDL_GetTicks()) / 1000.0f;
+		delta = currentTime - startTime;
 		startTime = currentTime;
+
 		timeAccum += delta;
 
-		tgInput::update();
-		if (tgInput::isCloseRequested()) {
-			win->close();
-		}
-			
 		while (timeAccum >= timeDelta) {
-			timeAccum -= timeDelta;
-			canRender = true;
-			
+			tgInput::update();
+			if (tgInput::isCloseRequested()) {
+				win->close();
+			}
+
 			mgr->update(timeDelta);
+			tgAudioSystem::getSingleton()->update();
 
 			std::stringstream stm;
 			stm << "Score: " << int(score);
@@ -345,28 +372,21 @@ int main (int argc, char **argv) {
 			tgTimer::update(timeDelta);
 			tgTweens::update(timeDelta);
 			
-			ft += timeDelta;
-			if(ft >= 1.0f) {
-				ft = 0.0f;
-				tgLog::println(frames);
-				frames = 0;
-			}
+			timeAccum -= timeDelta;
 		}
 
-		if (canRender) {
-			glClearColor(0.168f, 0.168f, 0.16f, 1.0f);
-			glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+		glClearColor(0.168f, 0.168f, 0.16f, 1.0f);
+		glClear(GL_COLOR_BUFFER_BIT);
 
-			sb->begin();
-			mgr->render();
-			sb->end();
+		sb->begin();
+		mgr->render();
+		sb->end();
 
-			win->swapBuffers();
-			frames++;
-		}
+		win->swapBuffers();
 	}
 
 	tgAssets::destroy();
+	tgAudioSystem::getSingleton()->destroy();
 
 	delete sb;
 	delete mgr;

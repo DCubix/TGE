@@ -28,7 +28,7 @@ void tgComponentManager::destroyEntity(std::size_t entity) {
 	}
 }
 
-inline void tgComponentManager::addComponent(std::size_t entity, tgComponent * comp) {
+void tgComponentManager::addComponent(std::size_t entity, tgComponent * comp) {
 	auto pos = std::find(m_entities.begin(), m_entities.end(), entity);
 	if (pos != m_entities.end()) {
 		comp->m_owner = entity;
@@ -37,7 +37,7 @@ inline void tgComponentManager::addComponent(std::size_t entity, tgComponent * c
 	}
 }
 
-inline std::vector<tgComponent*> tgComponentManager::getComponents(std::size_t entity) {
+std::vector<tgComponent*> tgComponentManager::getComponents(std::size_t entity) {
 	std::vector<tgComponent*> ret;
 	auto pos = std::find(m_entities.begin(), m_entities.end(), entity);
 	if (pos != m_entities.end()) {
@@ -89,12 +89,16 @@ void tgComponentManager::cleanup() {
 		}
 	}
 
-	for (tgComponent *comp : rem_components) {
-		m_components.erase(std::remove(m_components.begin(), m_components.end(), comp), m_components.end());
-		tgDelete(comp);
+	if (rem_components.size() > 0) {
+		for (tgComponent *comp : rem_components) {
+			m_components.erase(std::remove(m_components.begin(), m_components.end(), comp), m_components.end());
+			tgDelete(comp);
+		}
 	}
-	for (std::size_t ent : rem_entities) {
-		m_entities.erase(std::remove(m_entities.begin(), m_entities.end(), ent), m_entities.end());
+	if (rem_entities.size() > 0) {
+		for (std::size_t ent : rem_entities) {
+			m_entities.erase(std::remove(m_entities.begin(), m_entities.end(), ent), m_entities.end());
+		}
 	}
 }
  

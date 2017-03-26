@@ -9,7 +9,7 @@ tgSpriteBatch::tgSpriteBatch(int screen_width, int screen_height)
 	m_drawing(false)
 {
 	tgVertexFormat fmt(sizeof(tgVertex2D));
-	fmt.append(tgVertexFormat::tgATTR_POSITION, false);
+	fmt.append(tgVertexFormat::tgATTR_FLOAT2, false);
 	fmt.append(tgVertexFormat::tgATTR_TEXCOORD, false);
 	fmt.append(tgVertexFormat::tgATTR_COLOR, true);
 
@@ -27,17 +27,17 @@ tgSpriteBatch::tgSpriteBatch(int screen_width, int screen_height)
 
 	std::string sb_vert =
 		"#version 440\n"
-		"layout (location = 0) in vec3 v_pos;"
+		"layout (location = 0) in vec2 v_pos;"
 		"layout (location = 1) in vec2 v_uv;"
 		"layout (location = 2) in vec4 v_color;"
 		"out DATA {"
-		"	vec3 position;"
+		"	vec2 position;"
 		"	vec2 uv;"
 		"	vec4 color;"
 		"} vs_out;"
 		"uniform mat4 viewProjection = mat4(1.0);"
 		"void main() {"
-		"	gl_Position = viewProjection * vec4(v_pos, 1.0);"
+		"	gl_Position = viewProjection * vec4(v_pos, 0.0, 1.0);"
 		"	vs_out.position = v_pos;"
 		"	vs_out.uv = v_uv;"
 		"	vs_out.color = v_color;"
@@ -46,13 +46,14 @@ tgSpriteBatch::tgSpriteBatch(int screen_width, int screen_height)
 		"#version 440\n"
 		"out vec4 fragColor;"
 		"in DATA {"
-		"	vec3 position;"
+		"	vec2 position;"
 		"	vec2 uv;"
 		"	vec4 color;"
 		"} fs_in;"
 		"uniform sampler2D tex0;"
 		"void main() {"
-		"	fragColor = texture(tex0, fs_in.uv) * fs_in.color;"
+		"	vec4 col = texture(tex0, fs_in.uv);"
+		"	fragColor = col * fs_in.color;"
 		"}";
 	m_shader = new tgShaderProgram();
 	m_shader->addShader(sb_vert, tgShaderProgram::tgVERTEX_SHADER);
@@ -64,8 +65,12 @@ tgSpriteBatch::tgSpriteBatch(int screen_width, int screen_height)
 
 	glDisable(GL_CULL_FACE);
 	glEnable(GL_BLEND);
-	glEnable(GL_DEPTH_TEST);
 	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+
+	m_currentState = tgSpriteBatchState();
+	m_currentState.scale = tgVector2(1.0f);
+	m_currentState.color = tgVector4(1.0f);
+	m_currentState.uv = tgVector4(0, 0, 1, 1);
 
 	updateUniforms();
 }
@@ -83,7 +88,21 @@ static tgVector2 rotatePoint(tgVector2 const& p, float rad) {
 	return tgVector2(c * p.x() - s * p.y(), s * p.x() + c * p.y());
 }
 
-void tgSpriteBatch::draw(tgTexture * tex, tgVector4 const & uv, tgVector4 const & dst, tgVector2 const & origin, float rotation, tgVector4 const & color, float z) {
+void tgSpriteBatch::draw(tgTexture *tex) {
+	if (!tex) { return; }
+
+	float z = m_currentState.position.z();
+	tgVector4 dst = tgVector4(
+		m_currentState.position.x(),
+		m_currentState.position.y(),
+		m_currentState.scale.x() * float(tex->getWidth()),
+		m_currentState.scale.y() * float(tex->getHeight())
+	);
+	tgVector4 uv = m_currentState.uv;
+	tgVector2 origin = m_currentState.origin;
+	tgVector4 color = m_currentState.color;
+	float rotation = m_currentState.rotation;
+
 	float width = dst.z() * uv.z();
 	float height = dst.w() * uv.w();
 
@@ -107,41 +126,39 @@ void tgSpriteBatch::draw(tgTexture * tex, tgVector4 const & uv, tgVector4 const 
 	float v2 = uv.y() + uv.w();
 
 	tgSprite *spr = new tgSprite();
-	spr->TL.position = tgVector3(tlr, z);
+	spr->TL.position = tlr;
 	spr->TL.texco = tgVector2(u1, v1);
 	spr->TL.color = color;
 
-	spr->TR.position = tgVector3(trr, z);
+	spr->TR.position = trr;
 	spr->TR.texco = tgVector2(u2, v1);
 	spr->TR.color = color;
 
-	spr->BR.position = tgVector3(brr, z);
+	spr->BR.position = brr;
 	spr->BR.texco = tgVector2(u2, v2);
 	spr->BR.color = color;
 
-	spr->BL.position = tgVector3(blr, z);
+	spr->BL.position = blr;
 	spr->BL.texco = tgVector2(u1, v2);
 	spr->BL.color = color;
 
 	spr->texture = tex->getBindCode();
+	spr->blend = m_currentState.blendMode;
+	spr->z = z;
 
 	m_sprites.push_back(spr);
 }
 
-void tgSpriteBatch::drawTile(tgTexture * atlas, int tileIndex, int tileWidth, int tileHeight, int tileX, int tileY, float scale, float z) {
-	int cols = atlas->getWidth() / tileWidth;
-	int rows = atlas->getHeight() / tileHeight;
+void tgSpriteBatch::save() {
+	m_prevState = m_currentState;
+	m_currentState = tgSpriteBatchState();
+	m_currentState.scale = tgVector2(1.0f);
+	m_currentState.color = tgVector4(1.0f);
+	m_currentState.uv = tgVector4(0, 0, 1, 1);
+}
 
-	float tx = tileX * float(tileWidth) * scale;
-	float ty = tileY * float(tileHeight) * scale;
-
-	float uvw = 1.0f / float(cols);
-	float uvh = 1.0f / float(rows);
-	float uvx = float(tileIndex % cols) * uvw;
-	float uvy = float(int(tileIndex / cols)) * uvh;
-
-	tgVector4 uv(uvx, uvy, uvw, uvh);
-	draw(atlas, uv, tgVector4(tx, ty, atlas->getWidth() * scale, atlas->getHeight() * scale), tgVector2(0.0f), 0.0f, tgVector4(1.0f), z);
+void tgSpriteBatch::restore() {
+	m_currentState = m_prevState;
 }
 
 void tgSpriteBatch::resize(int w, int h) {
@@ -196,30 +213,32 @@ void tgSpriteBatch::updateBuffers() {
 	indices.reserve(m_sprites.size() * 6);
 
 	vertices.insert(vertices.end(),
-	{ m_sprites[0]->BL, m_sprites[0]->TL, m_sprites[0]->TR, m_sprites[0]->BR }
+		{ m_sprites[0]->BL, m_sprites[0]->TL, m_sprites[0]->TR, m_sprites[0]->BR }
 	);
 
 	indices.insert(indices.end(), { 0, 1, 2, 2, 3, 0 });
 
-	m_batches.emplace_back(0, 6, m_sprites[0]->texture);
+	m_batches.emplace_back(0, 6, m_sprites[0]->texture, m_sprites[0]->blend, m_sprites[0]->z);
 
 	int indexOffset = 4;
 	int off = 0;
 	for (std::size_t i = 1; i < m_sprites.size(); ++i) {
-		if (m_sprites[i]->texture != m_sprites[i - 1]->texture) {
+		if (m_sprites[i]->texture != m_sprites[i - 1]->texture ||
+			m_sprites[i]->z != m_sprites[i - 1]->z) {
 			off += m_batches.back().numIndices;
-			m_batches.push_back({ off, 6,  m_sprites[i]->texture });
+			m_batches.emplace_back(off, 6,  m_sprites[i]->texture, m_sprites[i]->blend, m_sprites[i]->z);
 		} else {
 			m_batches.back().numIndices += 6;
+			m_batches.back().blend = m_sprites[i]->blend;
 		}
 
 		vertices.insert(vertices.end(),
-		{ m_sprites[i]->BL, m_sprites[i]->TL, m_sprites[i]->TR, m_sprites[i]->BR }
+			{ m_sprites[i]->BL, m_sprites[i]->TL, m_sprites[i]->TR, m_sprites[i]->BR }
 		);
 
 		indices.insert(indices.end(),
-		{ 0 + indexOffset, 1 + indexOffset, 2 + indexOffset,
-			2 + indexOffset, 3 + indexOffset, 0 + indexOffset }
+			{ 0 + indexOffset, 1 + indexOffset, 2 + indexOffset,
+			  2 + indexOffset, 3 + indexOffset, 0 + indexOffset }
 		);
 
 		indexOffset += 4;
@@ -243,11 +262,21 @@ void tgSpriteBatch::updateBuffers() {
 }
 
 void tgSpriteBatch::render() {
+	std::sort(m_batches.begin(), m_batches.end(),
+		[](tgBatch const& a, tgBatch const& b) -> bool {
+		return a.z < b.z;
+	}
+	);
 	m_vao->bind();
 	for (tgBatch &batch : m_batches) {
 		glActiveTexture(GL_TEXTURE0);
 		glBindTexture(GL_TEXTURE_2D, batch.texture);
 		m_shader->setInt("tex0", 0);
+
+		switch (batch.blend) {
+			case tgBLEND_NORMAL: glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA); break;
+			case tgBLEND_ADD: glBlendFunc(GL_ONE, GL_ONE); break;
+		}
 
 		m_vao->drawElements(tgVertexArrayObject::tgPRIM_TRIANGLES, batch.numIndices, batch.offset);
 
