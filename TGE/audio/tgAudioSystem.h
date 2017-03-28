@@ -11,8 +11,8 @@
 
 class tgAudioSystem {
 public:
-	void create();
-	void destroy();
+	tgAudioSystem();
+	~tgAudioSystem();
 
 	tgAudioSource* play(tgAudioBuffer* buff);
 
@@ -20,11 +20,7 @@ public:
 
 	bool isInitialized() const { return m_initialized; }
 
-	static tgAudioSystem* getSingleton();
 private:
-	tgAudioSystem();
-	static tgAudioSystem *m_instance;
-
 	std::vector<tgAudioSource*> m_sources;
 
 	ALCdevice *m_alc_device;

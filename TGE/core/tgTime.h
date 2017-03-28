@@ -5,8 +5,8 @@
 
 class tgTime {
 public:
-	float getTime();
-	void delay(float secs);
+	static float getTime();
+	static void delay(float secs);
 };
 
 #endif

@@ -3,7 +3,10 @@
 #include "../ecs/tgComponentManager.h"
 #include "../components/tgTransformComponent.h"
 
-void tgSpriteComponent::render() {
+void tgSpriteComponent::render(tgRenderer *renderer) {
+	tgSpriteBatch *sb = dynamic_cast<tgSpriteBatch*>(renderer);
+	if (!sb) { return; }
+
 	tgTransformComponent *transform = getManager()->getComponent<tgTransformComponent>(getOwner());
 
 	tgVector3 pos(0.0f);
@@ -15,17 +18,17 @@ void tgSpriteComponent::render() {
 
 	if (m_texture) {
 		float rot = transform->getTransform()->getWorldRotation().toEuler().z();
-		m_spriteBatch->save();
+		sb->save();
 
-		m_spriteBatch->setUV(m_clipRectangle);
-		m_spriteBatch->setPosition(pos);
-		m_spriteBatch->setScale(scl);
-		m_spriteBatch->setOrigin(m_origin);
-		m_spriteBatch->setRotation(rot);
-		m_spriteBatch->setColor(m_color);
+		sb->setUV(m_clipRectangle);
+		sb->setPosition(pos);
+		sb->setScale(scl);
+		sb->setOrigin(m_origin);
+		sb->setRotation(rot);
+		sb->setColor(m_color);
 
-		m_spriteBatch->draw(m_texture);
+		sb->draw(m_texture);
 
-		m_spriteBatch->restore();
+		sb->restore();
 	}
 }

@@ -1,19 +1,11 @@
 #ifndef SPRITE_BATCH_H
 #define SPRITE_BATCH_H
 
-#include "../graphics/tgGL.h"
-#include "../graphics/tgBuffer.h"
-#include "../graphics/tgVertexArrayObject.h"
-#include "../graphics/tgShaderProgram.h"
-#include "../graphics/tgTexture.h"
+#include "tgGL.h"
+#include "tgRenderer.h"
 
-class tgSpriteBatch {
+class tgSpriteBatch : public tgRenderer {
 public:
-	enum tgBlendMode {
-		tgBLEND_NORMAL = 0,
-		tgBLEND_ADD
-	};
-
 	tgSpriteBatch(int screen_width, int screen_height);
 	~tgSpriteBatch();
 
@@ -34,15 +26,18 @@ public:
 	void begin();
 	void end();
 
+	void render();
+	void renderGeometry(tgShaderProgram *shader);
+
 private:
 	typedef struct tgSpriteBatchState {
-		tgVector3 position		= tgVector3();
-		tgVector2 scale			= tgVector2(1.0f);
-		tgVector4 uv			= tgVector4(0, 0, 1, 1);
-		tgVector2 origin		= tgVector2();
-		tgVector4 color			= tgVector4(1.0f);
-		tgBlendMode blendMode	= tgBlendMode::tgBLEND_NORMAL;
-		float rotation			= 0;
+		tgVector3 position = tgVector3();
+		tgVector2 scale = tgVector2(1.0f);
+		tgVector4 uv = tgVector4(0, 0, 1, 1);
+		tgVector2 origin = tgVector2();
+		tgVector4 color = tgVector4(1.0f);
+		tgBlendMode blendMode = tgBlendMode::tgBLEND_NORMAL;
+		float rotation = 0;
 
 		tgSpriteBatchState *clone() {
 			tgSpriteBatchState *st = new tgSpriteBatchState();
@@ -57,19 +52,6 @@ private:
 		}
 	} tgSpriteBatchState;
 
-	typedef struct tgVertex2D {
-		tgVector2 position;
-		tgVector2 texco;
-		tgVector4 color;
-	} tgVertex2D;
-
-	typedef struct tgSprite {
-		int texture;
-		tgVertex2D TL, TR, BL, BR;
-		tgBlendMode blend;
-		float z;
-	} tgSprite;
-
 	typedef struct tgBatch {
 		int offset, numIndices, texture;
 		float z;
@@ -83,7 +65,6 @@ private:
 	tgBuffer *m_vbo, *m_ibo;
 	tgVertexArrayObject *m_vao;
 
-	std::vector<tgSprite*> m_sprites;
 	std::vector<tgBatch> m_batches;
 
 	tgSpriteBatchState m_prevState;
@@ -98,8 +79,6 @@ private:
 
 	void updateUniforms();
 	void updateBuffers();
-
-	void render();
 };
 
 #endif

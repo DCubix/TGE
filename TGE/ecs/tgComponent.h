@@ -4,6 +4,7 @@
 #include <cstddef>
 
 struct tgMessage;
+class tgRenderer;
 class tgComponentManager;
 class tgComponent {
 	friend class tgComponentManager;
@@ -22,7 +23,7 @@ public:
 
 	virtual void start() {}
 	virtual void update(float dt) {}
-	virtual void render() {}
+	virtual void render(tgRenderer *renderer) {}
 	virtual void receive(tgMessage const& msg) {}
 	virtual void collided() {} // TODO: Box2D
 

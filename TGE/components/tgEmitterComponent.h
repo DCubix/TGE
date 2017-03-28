@@ -53,12 +53,12 @@ typedef struct tgEmitterConfiguration {
 
 class tgEmitterComponent : public tgComponent {
 public:
-	tgEmitterComponent(tgSpriteBatch *sb);
-	tgEmitterComponent(tgSpriteBatch *sb, tgTexture *texture, std::size_t const& maxParticles=100);
+	tgEmitterComponent();
+	tgEmitterComponent(tgTexture *texture, std::size_t const& maxParticles=100);
 	virtual ~tgEmitterComponent() override;
 
 	void update(float dt) override;
-	void render() override;
+	void render(tgRenderer *renderer) override;
 
 	void restart();
 
@@ -92,7 +92,6 @@ private:
 	void initParticle(tgParticle *p);
 	void updateParticle(tgParticle *p, float delta, int i);
 
-	tgSpriteBatch *m_spriteBatch;
 	tgTexture *m_texture;
 
 	bool m_additive;

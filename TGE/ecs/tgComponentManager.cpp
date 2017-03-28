@@ -3,8 +3,9 @@
 #include "../core/tgUtil.h"
 #include "../ecs/tgMessenger.h"
 
-tgComponentManager::tgComponentManager()
-	: m_lastEntity(TG_INITIAL_ID)
+tgComponentManager::tgComponentManager(tgEngine *engine)
+	: m_lastEntity(TG_INITIAL_ID),
+	m_engine(engine)
 {
 	m_messenger = new tgMessenger();
 }
@@ -70,10 +71,10 @@ void tgComponentManager::update(float dt) {
 	}
 }
 
-void tgComponentManager::render() {
+void tgComponentManager::render(tgRenderer *renderer) {
 	for (tgComponent *comp : m_components) {
 		if (comp->isEnabled()) {
-			comp->render();
+			comp->render(renderer);
 		}
 	}
 }

@@ -15,9 +15,8 @@ tgEmitterComponent::tgParticle::tgParticle() {
 	this->life = 0;
 }
 
-tgEmitterComponent::tgEmitterComponent(tgSpriteBatch *sb, tgTexture *texture, std::size_t const& maxParticles)
-	: m_spriteBatch(sb),
-	m_texture(texture),
+tgEmitterComponent::tgEmitterComponent(tgTexture *texture, std::size_t const& maxParticles)
+	: m_texture(texture),
 	m_maxParticles(maxParticles),
 	m_particleCount(0)
 {
@@ -28,9 +27,8 @@ tgEmitterComponent::tgEmitterComponent(tgSpriteBatch *sb, tgTexture *texture, st
 	restart();
 }
 
-tgEmitterComponent::tgEmitterComponent(tgSpriteBatch *sb)
-	: m_spriteBatch(sb),
-	m_texture(nullptr),
+tgEmitterComponent::tgEmitterComponent()
+	: m_texture(nullptr),
 	m_maxParticles(100),
 	m_particleCount(0)
 {
@@ -81,7 +79,10 @@ void tgEmitterComponent::update(float dt) {
 	}
 }
 
-void tgEmitterComponent::render() {
+void tgEmitterComponent::render(tgRenderer *renderer) {
+	tgSpriteBatch *sb = dynamic_cast<tgSpriteBatch*>(renderer);
+	if (!sb) { return; }
+
 	tgTransformComponent *transform = getManager()->getComponent<tgTransformComponent>(getOwner());
 
 	tgVector2 scl(1.0f);
@@ -90,21 +91,21 @@ void tgEmitterComponent::render() {
 		scl = transform->getTransform()->getWorldScaling().xy();
 	}
 
-	m_spriteBatch->save();
+	sb->save();
 	for (tgParticle *p : m_particlePool) {
 		if (p->life > 0.0f) {
-			m_spriteBatch->setPosition(tgVector3(p->position, m_position.z() + getRenderingOrder()));
-			m_spriteBatch->setScale(scl * p->scale);
-			m_spriteBatch->setOrigin(tgVector2(0.5f));
-			m_spriteBatch->setColor(p->color);
+			sb->setPosition(tgVector3(p->position, m_position.z() + getRenderingOrder()));
+			sb->setScale(scl * p->scale);
+			sb->setOrigin(tgVector2(0.5f));
+			sb->setColor(p->color);
 			if (m_additive) {
-				m_spriteBatch->setBlendMode(tgSpriteBatch::tgBLEND_ADD);
+				sb->setBlendMode(tgBlendMode::tgBLEND_ADD);
 			}
 
-			m_spriteBatch->draw(getTexture());
+			sb->draw(getTexture());
 		}
 	}
-	m_spriteBatch->restore();
+	sb->restore();
 }
 
 void tgEmitterComponent::restart() {

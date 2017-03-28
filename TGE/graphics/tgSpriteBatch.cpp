@@ -8,10 +8,12 @@ tgSpriteBatch::tgSpriteBatch(int screen_width, int screen_height)
 	m_prevIBOSize(0),
 	m_drawing(false)
 {
-	tgVertexFormat fmt(sizeof(tgVertex2D));
-	fmt.append(tgVertexFormat::tgATTR_FLOAT2, false);
-	fmt.append(tgVertexFormat::tgATTR_TEXCOORD, false);
+	tgVertexFormat fmt(sizeof(tgVertex));
+	fmt.append(tgVertexFormat::tgATTR_POSITION, false);
+	fmt.append(tgVertexFormat::tgATTR_NORMAL, false);
+	fmt.append(tgVertexFormat::tgATTR_TANGENT, false);
 	fmt.append(tgVertexFormat::tgATTR_COLOR, true);
+	fmt.append(tgVertexFormat::tgATTR_TEXCOORD, false);
 
 	m_vao = new tgVertexArrayObject();
 	m_vbo = new tgBuffer(tgBuffer::tgTARG_ARRAY_BUFFER, tgBuffer::tgUSAGE_DYNAMIC);
@@ -20,16 +22,16 @@ tgSpriteBatch::tgSpriteBatch(int screen_width, int screen_height)
 	m_vao->bind();
 	m_vbo->bind();
 	fmt.bind();
-
 	m_ibo->bind();
-
 	m_vao->unbind();
 
 	std::string sb_vert =
 		"#version 440\n"
-		"layout (location = 0) in vec2 v_pos;"
-		"layout (location = 1) in vec2 v_uv;"
-		"layout (location = 2) in vec4 v_color;"
+		"layout (location = 0) in vec3 v_pos;"
+		"layout (location = 1) in vec3 v_nrm;"
+		"layout (location = 2) in vec3 v_tan;"
+		"layout (location = 3) in vec4 v_color;"
+		"layout (location = 4) in vec2 v_uv;"
 		"out DATA {"
 		"	vec2 position;"
 		"	vec2 uv;"
@@ -37,8 +39,8 @@ tgSpriteBatch::tgSpriteBatch(int screen_width, int screen_height)
 		"} vs_out;"
 		"uniform mat4 viewProjection = mat4(1.0);"
 		"void main() {"
-		"	gl_Position = viewProjection * vec4(v_pos, 0.0, 1.0);"
-		"	vs_out.position = v_pos;"
+		"	gl_Position = viewProjection * vec4(v_pos,  1.0);"
+		"	vs_out.position = v_pos.xy;"
 		"	vs_out.uv = v_uv;"
 		"	vs_out.color = v_color;"
 		"}";
@@ -125,28 +127,36 @@ void tgSpriteBatch::draw(tgTexture *tex) {
 	float u2 = uv.x() + uv.z();
 	float v2 = uv.y() + uv.w();
 
-	tgSprite *spr = new tgSprite();
-	spr->TL.position = tlr;
-	spr->TL.texco = tgVector2(u1, v1);
-	spr->TL.color = color;
+	tgMesh *msh = new tgMesh();
 
-	spr->TR.position = trr;
-	spr->TR.texco = tgVector2(u2, v1);
-	spr->TR.color = color;
+	tgVertex TL;
+	TL.position = tgVector3(tlr, z);
+	TL.texCoord = tgVector2(u1, v1);
+	TL.color = color;
 
-	spr->BR.position = brr;
-	spr->BR.texco = tgVector2(u2, v2);
-	spr->BR.color = color;
+	tgVertex TR;
+	TR.position = tgVector3(trr, z);
+	TR.texCoord = tgVector2(u2, v1);
+	TR.color = color;
 
-	spr->BL.position = blr;
-	spr->BL.texco = tgVector2(u1, v2);
-	spr->BL.color = color;
+	tgVertex BR;
+	BR.position = tgVector3(brr, z);
+	BR.texCoord = tgVector2(u2, v2);
+	BR.color = color;
 
-	spr->texture = tex->getBindCode();
-	spr->blend = m_currentState.blendMode;
-	spr->z = z;
+	tgVertex BL;
+	BL.position = tgVector3(blr, z);
+	BL.texCoord = tgVector2(u1, v2);
+	BL.color = color;
 
-	m_sprites.push_back(spr);
+	msh->vertices.insert(msh->vertices.end(), { TL, TR, BR, BL });
+	msh->indices.insert(msh->indices.end(), { 0, 1, 2, 2, 3, 0 });
+
+	msh->texture = { (int)tex->getBindCode(), tgTextureSlotType::tgALBEDO_TEXTURE };
+	msh->blendMode = m_currentState.blendMode;
+	msh->modelMatrix = tgMatrix4::identity();
+
+	submit(msh);
 }
 
 void tgSpriteBatch::save() {
@@ -167,26 +177,15 @@ void tgSpriteBatch::resize(int w, int h) {
 }
 
 void tgSpriteBatch::begin() {
-	if (!m_drawing) {
-		m_drawing = true;
-		m_shader->bind();
+	m_shader->bind();
 
-		for (tgSprite *spr : m_sprites) {
-			tgDelete(spr);
-		}
-		m_sprites.clear();
+	tgRenderer::begin();
 
-		m_batches.clear();
-	}
+	m_batches.clear();
 }
 
 void tgSpriteBatch::end() {
-	if (m_drawing) {
-		m_drawing = false;
-		updateBuffers();
-		render();
-		m_shader->unbind();
-	}
+	updateBuffers();
 }
 
 void tgSpriteBatch::updateUniforms() {
@@ -196,56 +195,49 @@ void tgSpriteBatch::updateUniforms() {
 }
 
 void tgSpriteBatch::updateBuffers() {
-	if (m_sprites.size() == 0) {
+	if (m_meshes.empty()) {
 		return;
 	}
 
-	std::sort(m_sprites.begin(), m_sprites.end(),
-		[](tgSprite const* a, tgSprite const* b) -> bool {
-		return a->texture < b->texture;
+	std::sort(m_meshes.begin(), m_meshes.end(),
+		[](tgMesh *a, tgMesh *b) -> bool {
+		return a->texture.id < b->texture.id;
 	}
 	);
 
-	std::vector<tgVertex2D> vertices;
-	vertices.reserve(m_sprites.size() * 4);
+	std::vector<tgVertex> vertices;
+	vertices.reserve(m_meshes.size() * 4);
 
 	std::vector<int> indices;
-	indices.reserve(m_sprites.size() * 6);
+	indices.reserve(m_meshes.size() * 6);
 
-	vertices.insert(vertices.end(),
-		{ m_sprites[0]->BL, m_sprites[0]->TL, m_sprites[0]->TR, m_sprites[0]->BR }
-	);
-
+	vertices.insert(vertices.end(), m_meshes[0]->vertices.begin(), m_meshes[0]->vertices.end());
 	indices.insert(indices.end(), { 0, 1, 2, 2, 3, 0 });
 
-	m_batches.emplace_back(0, 6, m_sprites[0]->texture, m_sprites[0]->blend, m_sprites[0]->z);
+	m_batches.emplace_back(0, 6, m_meshes[0]->texture.id, m_meshes[0]->blendMode, m_meshes[0]->vertices[0].position.z());
 
 	int indexOffset = 4;
 	int off = 0;
-	for (std::size_t i = 1; i < m_sprites.size(); ++i) {
-		if (m_sprites[i]->texture != m_sprites[i - 1]->texture ||
-			m_sprites[i]->z != m_sprites[i - 1]->z) {
+	for (std::size_t i = 1; i < m_meshes.size(); ++i) {
+		if (m_meshes[i]->texture.id != m_meshes[i - 1]->texture.id ||
+			m_meshes[i]->vertices[0].position.z() != m_meshes[i - 1]->vertices[0].position.z()) {
 			off += m_batches.back().numIndices;
-			m_batches.emplace_back(off, 6,  m_sprites[i]->texture, m_sprites[i]->blend, m_sprites[i]->z);
+			m_batches.emplace_back(off, 6, m_meshes[i]->texture.id, m_meshes[i]->blendMode, m_meshes[i]->vertices[0].position.z());
 		} else {
 			m_batches.back().numIndices += 6;
-			m_batches.back().blend = m_sprites[i]->blend;
+			m_batches.back().blend = m_meshes[i]->blendMode;
 		}
 
-		vertices.insert(vertices.end(),
-			{ m_sprites[i]->BL, m_sprites[i]->TL, m_sprites[i]->TR, m_sprites[i]->BR }
-		);
-
-		indices.insert(indices.end(),
-			{ 0 + indexOffset, 1 + indexOffset, 2 + indexOffset,
-			  2 + indexOffset, 3 + indexOffset, 0 + indexOffset }
-		);
+		vertices.insert(vertices.end(), m_meshes[i]->vertices.begin(), m_meshes[i]->vertices.end());
+		indices.insert(indices.end(), {
+			0 + indexOffset, 1 + indexOffset, 2 + indexOffset, 2 + indexOffset, 3 + indexOffset, 0 + indexOffset
+		});
 
 		indexOffset += 4;
 	}
 
 	m_vbo->bind();
-	int vboSize = vertices.size() * sizeof(tgVertex2D);
+	int vboSize = vertices.size() * sizeof(tgVertex);
 	if (vboSize > m_prevVBOSize) {
 		m_vbo->resize(vboSize);
 		m_prevVBOSize = vboSize;
@@ -262,6 +254,10 @@ void tgSpriteBatch::updateBuffers() {
 }
 
 void tgSpriteBatch::render() {
+	renderGeometry(m_shader);
+}
+
+void tgSpriteBatch::renderGeometry(tgShaderProgram *shader) {
 	std::sort(m_batches.begin(), m_batches.end(),
 		[](tgBatch const& a, tgBatch const& b) -> bool {
 		return a.z < b.z;
@@ -283,4 +279,5 @@ void tgSpriteBatch::render() {
 		glBindTexture(GL_TEXTURE_2D, 0);
 	}
 	m_vao->unbind();
+	shader->unbind();
 }

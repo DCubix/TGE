@@ -14,10 +14,12 @@
 
 using tgEntity = std::size_t;
 
+class tgEngine;
+class tgRenderer;
 class tgMessenger;
 class tgComponentManager {
 public:
-	tgComponentManager();
+	tgComponentManager(tgEngine *engine);
 	~tgComponentManager();
 
 	std::size_t createEntity();
@@ -87,17 +89,19 @@ public:
 	std::vector<tgComponent*> getComponents(std::size_t entity);
 	std::vector<tgComponent*> getAllComponents() const { return m_components; }
 
-	tgMessenger *getMessenger() const { return m_messenger; }
+	tgMessenger* getMessenger() { return m_messenger; }
+	tgEngine* getEngine() { return m_engine; }
 
 	void start();
 	void update(float dt);
-	void render();
+	void render(tgRenderer *renderer);
 
 private:
 	std::vector<std::size_t> m_entities;
 	std::vector<tgComponent*> m_components;
 	std::size_t m_lastEntity;
 
+	tgEngine *m_engine;
 	tgMessenger *m_messenger;
 
 	void cleanup();

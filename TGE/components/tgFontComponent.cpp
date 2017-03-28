@@ -24,7 +24,10 @@ static float computeTextWidth(tgFontComponent *fcomp, tgVector2 const& scale) {
 	return w;
 }
 
-void tgFontComponent::render() {
+void tgFontComponent::render(tgRenderer *renderer) {
+	tgSpriteBatch *sb = dynamic_cast<tgSpriteBatch*>(renderer);
+	if (!sb) { return; }
+
 	tgTransformComponent *transform = getManager()->getComponent<tgTransformComponent>(getOwner());
 
 	tgVector3 pos(0.0f);
@@ -37,7 +40,7 @@ void tgFontComponent::render() {
 	tgFont *fnt = m_font;
 	tgTexture *tex = fnt ? fnt->getTexture() : nullptr;
 	if (fnt && tex) {
-		m_spriteBatch->save();
+		sb->save();
 
 		float xscale = scl.x();
 		float yscale = scl.y();
@@ -52,18 +55,17 @@ void tgFontComponent::render() {
 				chr = fnt->getCharMap()[char(fnt->getNumChars() - 1)];
 			}
 			if (!std::isspace(c)) {
-				m_spriteBatch->setUV(chr.clipRect);
-				m_spriteBatch->setPosition(
+				sb->setUV(chr.clipRect);
+				sb->setPosition(
 					tgVector3(pos.x() + (x + chr.xoffset * xscale) - fnt->getPadding()[0],
 						pos.y() + (chr.yoffset * yscale), pos.z())
 				);
-				m_spriteBatch->setScale(scl);
-
-				m_spriteBatch->draw(fnt->getTexture());
+				sb->setScale(scl);
+				sb->draw(fnt->getTexture());
 			}
 			x += (chr.xadvance - fnt->getPadding()[2]) * xscale;
 		}
 		
-		m_spriteBatch->restore();
+		sb->restore();
 	}
 }

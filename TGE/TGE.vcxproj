@@ -131,6 +131,7 @@
     <ClInclude Include="audio\tgAudioBuffer.h" />
     <ClInclude Include="audio\tgAudioSource.h" />
     <ClInclude Include="audio\tgSampleData.h" />
+    <ClInclude Include="core\picojson.h" />
     <ClInclude Include="core\stb_vorbis.h" />
     <ClInclude Include="audio\tgAudioSystem.h" />
     <ClInclude Include="components\tgEmitterComponent.h" />
@@ -143,7 +144,9 @@
     <ClInclude Include="core\stb_image_write.h" />
     <ClInclude Include="assets\tgAsset.h" />
     <ClInclude Include="assets\tgAssets.h" />
+    <ClInclude Include="core\tgEngine.h" />
     <ClInclude Include="core\tgFont.h" />
+    <ClInclude Include="core\tgGame.h" />
     <ClInclude Include="core\tgImageData.h" />
     <ClInclude Include="core\tgInput.h" />
     <ClInclude Include="core\tgLog.h" />
@@ -190,6 +193,7 @@
     <ClCompile Include="components\tgEmitterComponent.cpp" />
     <ClCompile Include="components\tgFontComponent.cpp" />
     <ClCompile Include="components\tgSpriteComponent.cpp" />
+    <ClCompile Include="core\tgEngine.cpp" />
     <ClCompile Include="core\tgFont.cpp" />
     <ClCompile Include="core\tgImageData.cpp" />
     <ClCompile Include="core\tgInput.cpp" />
