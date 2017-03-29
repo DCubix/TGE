@@ -4,7 +4,9 @@
 #include "../math/tgMath.h"
 
 #include "tgTexture.h"
+#include "tgFrameBuffer.h"
 #include "tgShaderProgram.h"
+#include "tgPostEffect.h"
 #include "tgVertexArrayObject.h"
 #include "tgVertexFormat.h"
 #include "tgBuffer.h"
@@ -73,7 +75,7 @@ class tgRenderer {
 public:
 	tgRenderer() {}
 	tgRenderer(int screen_width, int screen_height);
-	virtual ~tgRenderer() = default;
+	virtual ~tgRenderer();
 	
 	void submit(tgMesh *mesh);
 
@@ -82,11 +84,28 @@ public:
 
 	virtual void render() {}
 	virtual void renderGeometry(tgShaderProgram *shader) {}
+	void beginPostFX();
+	void renderPostFX();
+	void endPostFX();
+
+	void addPostEffect(tgPostEffect *fx);
+	void removePostEffect(int passIndex);
 
 	void clear(int flags);
 protected:
 	std::vector<tgMesh*> m_meshes;
+	
+	std::vector<tgPostEffect*> m_postfx;
+	tgTexture *m_pingpong[2];
+	tgTexture *m_finalTexture;
+	tgFrameBuffer *m_pingPongBuffer, *m_finalBuffer;
+	tgShaderProgram *m_defaultShader;
+	tgVertexArrayObject *m_qvao;
+	tgBuffer *m_qvbo;
+
 	tgMatrix4 m_projection, m_view;
+
+	int w, h;
 };
 
 #endif

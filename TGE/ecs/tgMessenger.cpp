@@ -42,3 +42,7 @@ void tgMessenger::processQueue(tgComponentManager* manager) {
 		}
 	}
 }
+
+void tgMessenger::reset() {
+	m_messages.clear();
+}

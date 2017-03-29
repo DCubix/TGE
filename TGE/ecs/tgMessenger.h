@@ -36,6 +36,7 @@ public:
 		void *userdata = nullptr);
 
 	void processQueue(tgComponentManager *manager);
+	void reset();
 private:
 	std::deque<tgMessage> m_messages;
 };

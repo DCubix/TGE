@@ -1,10 +1,8 @@
 #include <string>
 #include <fstream>
 #include <sstream>
-#include <SDL2/SDL.h>
 
 #include "core/tgEngine.h"
-#include "core/tgGame.h"
 #include "core/tgLog.h"
 #include "core/tgInput.h"
 
@@ -17,11 +15,13 @@
 #include "components/tgFontComponent.h"
 #include "components/tgTransformComponent.h"
 #include "components/tgEmitterComponent.h"
+#include "components/tgAudioSourceComponent.h"
 
 #include "assets/tgAssets.h"
 #include "assets/tgTextureAsset.h"
 #include "assets/tgFontAsset.h"
 #include "assets/tgAudioAsset.h"
+#include "assets/tgTextAsset.h"
 
 #include "tween/tgTweens.h"
 #include "tween/tgTimer.h"
@@ -68,7 +68,8 @@ public:
 		if (msg.text == "collided_with_ball") {
 			tgTransform *block_t = getManager()->getComponent<tgTransformComponent>(getOwner())->getTransform();
 
-			tgAudioSource *k = getManager()->getEngine()->getAudioSystem()->play(tgAssets::get<tgAudioBuffer>("bounce.ogg"));
+			tgAudioSourceComponent *ascomp = getManager()->getComponent<tgAudioSourceComponent>(getOwner());
+			tgAudioSource *k = ascomp->play("bounce");
 			k->setPitch(randF(0.95f, 1.1f));
 			k->setVolume(1.3f);
 
@@ -101,10 +102,6 @@ public:
 		auto tc = getManager()->getComponent<tgTransformComponent>(getOwner());
 		tgTransform *t = tc->getTransform();
 		t->setLocalPosition(t->getLocalPosition() + tgVector3(speed, 0, 0) * dt);
-
-		if (tgInput::isCloseRequested()) {
-			getManager()->getEngine()->stop();
-		}
 	}
 
 	void receive(tgMessage const& msg) {
@@ -112,7 +109,8 @@ public:
 			auto tc = getManager()->getComponent<tgTransformComponent>(getOwner());
 			tgTransform *t = tc->getTransform();
 
-			tgAudioSource *k = getManager()->getEngine()->getAudioSystem()->play(tgAssets::get<tgAudioBuffer>("knock.ogg"));
+			tgAudioSourceComponent *ascomp = getManager()->getComponent<tgAudioSourceComponent>(getOwner());
+			tgAudioSource *k = ascomp->play("knock");
 			k->setPitch(randF(0.95f, 1.1f));
 			k->setVolume(1.3f);
 
@@ -247,24 +245,16 @@ public:
 	float speed;
 };
 
-class Breakout : public tgGame {
+class Breakout : public tgGameState {
 public:
-	void start(tgEngine* engine) {
-		tgAssets::create();
-		tgAssets::addSource(".");
+	Breakout() : tgGameState() {
+		audioSystem = new tgAudioSystem();
+	}
 
-		tgAssets::add<tgTextureAsset>("ball.png");
-		tgAssets::add<tgTextureAsset>("paddle.png");
-		tgAssets::add<tgTextureAsset>("block.png");
-		tgAssets::add<tgTextureAsset>("particle.png");
-		tgAssets::add<tgFontAsset>("font.fnt");
-		tgAssets::add<tgAudioAsset>("knock.ogg");
-		tgAssets::add<tgAudioAsset>("bounce.ogg");
-
-		tgAssets::load();
-
+	void start(tgEngine* engine) override {
+		this->engine = engine;
 		tgWindow *win = engine->getWindow();
-		tgComponentManager *mgr = engine->getEntityComponentManager();
+		tgComponentManager *mgr = getManager();
 
 		tgEntity ball = mgr->createEntity();
 		mgr->addComponent<Ball>(ball);
@@ -279,9 +269,12 @@ public:
 
 		tgEmitterConfiguration conf;
 		conf.startColor = tgVector4(0.8f, 0.45f, 0.2f, 1.0f);
+		conf.startColorVar = conf.startColor;
 		conf.endColor = tgVector4(0.0f);
-		conf.emissionRate = 80;
+		conf.endColorVar = conf.endColor;
+		conf.emissionRate = 50;
 		conf.life = 1.2f;
+		conf.startScale = 2.0f;
 
 		pemit->setAdditive(true);
 		pemit->setConfiguration(conf);
@@ -291,6 +284,10 @@ public:
 		////
 
 		tgEntity paddle = mgr->createEntity();
+		
+		tgAudioSourceComponent* ascomp = mgr->addComponent<tgAudioSourceComponent>(paddle, audioSystem);
+		ascomp->add("knock", tgAssets::get<tgAudioBuffer>("knock.ogg"));
+
 		mgr->addComponent<Paddle>(paddle);
 		tgTransform *paddle_t = mgr->addComponent<tgTransformComponent>(paddle)->getTransform();
 		paddle_t->setLocalPosition(tgVector3(320, 425, 1));
@@ -300,7 +297,7 @@ public:
 		tgTransform *score_t = mgr->addComponent<tgTransformComponent>(scoreText)->getTransform();
 		score_t->setLocalPosition(tgVector3(20, 10, 99));
 		score_t->setLocalScaling(tgVector3(0.55f, 0.55f, 1.0f));
-		tgFontComponent *score_font = mgr->addComponent<tgFontComponent>(scoreText, "Score: 0", tgAssets::get<tgFont>("font.fnt"));
+		score_font = mgr->addComponent<tgFontComponent>(scoreText, "Score: 0", tgAssets::get<tgFont>("font.fnt"));
 
 		// Create blocks
 		const int spacing = 4;
@@ -324,6 +321,8 @@ public:
 				block_t->setLocalPosition(tgVector3(padding * 2 + 24 + i * blockWidth, padding * 2 + 8 + j * blockHeight, 0));
 				block_t->setLocalScaling(tgVector3(0, 0, 1));
 				tgSpriteComponent *block_s = mgr->addComponent<tgSpriteComponent>(block, block_tex, tgVector2(0.5f));
+				tgAudioSourceComponent *ascomp = mgr->addComponent<tgAudioSourceComponent>(block, audioSystem);
+				ascomp->add("bounce", tgAssets::get<tgAudioBuffer>("bounce.ogg"));
 
 				block_s->setColor(hsv(h, 0.5f, 1.0f));
 				h += step;
@@ -340,9 +339,45 @@ public:
 		/////////
 	}
 
-	void exit() {
-		tgAssets::destroy();
+	void update(float dt) override {
+		std::stringstream stm;
+		stm << "Score: " << score;
+		score_font->setText(stm.str());
+
+		if (tgInput::isCloseRequested()) {
+			engine->stop();
+		}
+
+		audioSystem->update();
 	}
+
+	tgFontComponent *score_font;
+	tgAudioSystem *audioSystem;
+	tgEngine* engine;
+};
+
+class Menu : public tgGameState {
+public:
+	void start(tgEngine* engine) override {
+		this->engine = engine;
+		tgWindow *win = engine->getWindow();
+		tgComponentManager *mgr = getManager();
+
+		tgEntity mtext = mgr->createEntity();
+		tgTransform *t = mgr->addComponent<tgTransformComponent>(mtext)->getTransform();
+		t->setLocalPosition(tgVector3(66, 232, 99));
+		mgr->addComponent<tgFontComponent>(mtext, "Press [ENTER] to Start", tgAssets::get<tgFont>("font.fnt"));
+	}
+
+	void update(float dt) override {
+		if (tgInput::isKeyPressed(SDLK_RETURN)) {
+			engine->setState("play");
+		}
+		if (tgInput::isCloseRequested()) {
+			engine->stop();
+		}
+	}
+	tgEngine* engine;
 };
 
 int main (int argc, char **argv) {
@@ -351,9 +386,29 @@ int main (int argc, char **argv) {
 
 	tgSpriteBatch *sb = new tgSpriteBatch(640, 480);
 	engine->setRenderer(sb);
-	engine->setGame(new Breakout());
+
+	engine->setAssetPreloadFunction([&]() {
+		tgAssets::addSource(".");
+
+		tgAssets::add<tgTextureAsset>("ball.png");
+		tgAssets::add<tgTextureAsset>("paddle.png");
+		tgAssets::add<tgTextureAsset>("block.png");
+		tgAssets::add<tgTextureAsset>("particle.png");
+		tgAssets::add<tgFontAsset>("font.fnt");
+		tgAssets::add<tgAudioAsset>("knock.ogg");
+		tgAssets::add<tgAudioAsset>("bounce.ogg");
+
+		std::string src = *static_cast<std::string*>(tgAssets::loadSingle<tgTextAsset>("bloom.glsl"));
+		tgPostEffect *fx = new tgPostEffect();
+		fx->setShader(src);
+
+		sb->addPostEffect(fx);
+	});
+
+	engine->registerState("menu", new Menu());
+	engine->registerState("play", new Breakout());
+
 	engine->start();
-	delete engine;
 
 	return 0;
 }

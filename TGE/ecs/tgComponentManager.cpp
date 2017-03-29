@@ -3,9 +3,8 @@
 #include "../core/tgUtil.h"
 #include "../ecs/tgMessenger.h"
 
-tgComponentManager::tgComponentManager(tgEngine *engine)
-	: m_lastEntity(TG_INITIAL_ID),
-	m_engine(engine)
+tgComponentManager::tgComponentManager()
+	: m_lastEntity(TG_INITIAL_ID)
 {
 	m_messenger = new tgMessenger();
 }
@@ -29,7 +28,7 @@ void tgComponentManager::destroyEntity(std::size_t entity) {
 	}
 }
 
-void tgComponentManager::addComponent(std::size_t entity, tgComponent * comp) {
+void tgComponentManager::addComponent(std::size_t entity, tgComponent* comp) {
 	auto pos = std::find(m_entities.begin(), m_entities.end(), entity);
 	if (pos != m_entities.end()) {
 		comp->m_owner = entity;
@@ -77,6 +76,16 @@ void tgComponentManager::render(tgRenderer *renderer) {
 			comp->render(renderer);
 		}
 	}
+}
+
+void tgComponentManager::reset() {
+	for (tgComponent *comp : m_components) {
+		tgDelete(comp);
+	}
+	m_components.clear();
+	m_entities.clear();
+	m_messenger->reset();
+	m_lastEntity = TG_INITIAL_ID;
 }
 
 void tgComponentManager::cleanup() {

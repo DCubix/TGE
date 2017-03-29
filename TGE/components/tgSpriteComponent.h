@@ -5,6 +5,8 @@
 #include "../graphics/tgSpriteBatch.h"
 #include "../math/tgMath.h"
 
+#include <unordered_map>
+
 class tgSpriteComponent : public tgComponent {
 public:
 	tgSpriteComponent()
@@ -45,12 +47,31 @@ public:
 	void setColor(tgVector4 const& color) { m_color = color; }
 
 	void render(tgRenderer *renderer) override;
+	void update(float dt) override;
+
+	tgSpriteComponent* setup(int nOfRows, int nOfCols);
+	tgSpriteComponent* addAnimation(std::string const& name, std::vector<int> const& frames);
+
+	tgSpriteComponent* play(std::string const& name, float speed, bool loop);
 
 private:
 	tgTexture *m_texture;
 	tgVector2 m_origin;
 	tgVector4 m_clipRectangle;
 	tgVector4 m_color;
+
+	typedef struct tgAnimation {
+		int frameIndex;
+		float time;
+		float speed;
+		bool loop;
+		std::vector<int> frames;
+	} tgAnimation;
+
+	int m_rows, m_columns;
+	std::vector<tgVector4> m_clipRects;
+	std::unordered_map<std::string, tgAnimation*> m_animations;
+	std::string m_currentAnimation;
 };
 
 #endif

@@ -27,15 +27,19 @@ tgAudioSystem::~tgAudioSystem() {
 }
 
 void tgAudioSystem::cleanup() {
-	std::vector<tgAudioSource*> rem;
+	std::vector<int> rem;
+	int i = 0;
 	for (tgAudioSource *src : m_sources) {
 		if (!src->isPlaying() && !src->isPaused()) {
-			rem.push_back(src);
+			rem.push_back(i);
 		}
+		i++;
 	}
-	for (tgAudioSource *src : rem) {
+	for (int idx : rem) {
+		tgAudioSource *src = m_sources[idx];
 		src->stop();
-		m_sources.erase(std::remove(m_sources.begin(), m_sources.end(), src), m_sources.end());
+		m_sources[idx] = m_sources.back();
+		m_sources.pop_back();
 		tgDelete(src);
 	}
 }
@@ -44,7 +48,7 @@ tgAudioSource* tgAudioSystem::play(tgAudioBuffer* buff) {
 	tgAudioSource* src = new tgAudioSource(buff);
 	src->play();
 	m_sources.push_back(src);
-	return src;
+	return m_sources.back();
 }
 
 void tgAudioSystem::update() {

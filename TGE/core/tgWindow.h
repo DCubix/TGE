@@ -36,12 +36,11 @@ public:
 	const std::string& getTitle() const { return m_title; }
 
 	bool shouldClose() const { return m_shouldClose; }
-
 	void close() { m_shouldClose = true; }
-
 	void setFullScreen(bool enable);
-
 	void swapBuffers();
+	void show();
+	void hide();
 
 private:
 	std::string m_title;

@@ -39,9 +39,9 @@ typedef struct tgEmitterConfiguration {
 	float endScaleVar = 0.0f;
 
 	tgVector4 startColor = tgVector4(1.0f),
-		startColorVar = tgVector4(0.0f),
-		endColor = tgVector4(1.0f, 1.0f, 1.0f, 0.0f),
-		endColorVar = tgVector4(0.0f);
+		startColorVar = tgVector4(1.0f),
+		endColor = tgVector4(1.0f),
+		endColorVar = tgVector4(1.0f);
 
 	tgVector2 gravity = tgVector2();
 

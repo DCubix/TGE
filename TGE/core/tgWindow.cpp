@@ -36,7 +36,7 @@ tgWindow::tgWindow(std::string const &title, int width, int height, tgOpenGLConf
 			SDL_WINDOWPOS_CENTERED,
 			m_width,
 			m_height,
-			SDL_WINDOW_OPENGL | SDL_WINDOW_SHOWN
+			SDL_WINDOW_OPENGL | SDL_WINDOW_HIDDEN
 		);
 		if (m_sdlWindow == nullptr) {
 			tgLog::log("Could not create a window. ", SDL_GetError());
@@ -75,5 +75,17 @@ void tgWindow::setFullScreen(bool enable) {
 void tgWindow::swapBuffers() {
 	if(m_sdlWindow) {
 		SDL_GL_SwapWindow(m_sdlWindow);
+	}
+}
+
+void tgWindow::show() {
+	if (m_sdlWindow) {
+		SDL_ShowWindow(m_sdlWindow);
+	}
+}
+
+void tgWindow::hide() {
+	if (m_sdlWindow) {
+		SDL_HideWindow(m_sdlWindow);
 	}
 }

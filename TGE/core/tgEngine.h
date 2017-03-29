@@ -6,9 +6,12 @@
 #include "../audio/tgAudioSystem.h"
 #include "../ecs/tgComponentManager.h"
 #include "../graphics/tgRenderer.h"
-#include "tgGame.h"
+#include "tgGameState.h"
 #include "tgWindow.h"
 #include "tgTime.h"
+
+#include <unordered_map>
+#include <functional>
 
 class tgEngine {
 public:
@@ -17,21 +20,24 @@ public:
 	void start();
 	void stop();
 
-	tgAudioSystem* getAudioSystem() { return m_audioSystem; }
-	tgComponentManager* getEntityComponentManager() { return m_entityComponentManager; }
 	tgRenderer* getRenderer() { return m_renderer; }
 	tgWindow* getWindow() { return m_window; }
 
 	void setRenderer(tgRenderer *renderer) { m_renderer = renderer; }
+	
+	void registerState(std::string const& name, tgGameState *state);
+	void setState(std::string const& name);
+	void reloadState(std::string const& name);
 
-	void setGame(tgGame *game) { m_game = game; }
+	void setAssetPreloadFunction(std::function<void(void)> const& fun) { m_assetPreLoadFunction = fun; }
 
 private:
-	tgGame *m_game;
-	tgWindow *m_window;
+	std::function<void(void)> m_assetPreLoadFunction;
+	std::unordered_map<std::string, tgGameState*> m_states;
+	std::string m_currentState, m_nextState;
+	bool m_changingStates;
 
-	tgAudioSystem *m_audioSystem;
-	tgComponentManager *m_entityComponentManager;
+	tgWindow *m_window;
 	tgRenderer *m_renderer;
 
 	bool m_running;

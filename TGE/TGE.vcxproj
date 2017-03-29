@@ -131,6 +131,7 @@
     <ClInclude Include="audio\tgAudioBuffer.h" />
     <ClInclude Include="audio\tgAudioSource.h" />
     <ClInclude Include="audio\tgSampleData.h" />
+    <ClInclude Include="components\tgAudioSourceComponent.h" />
     <ClInclude Include="core\picojson.h" />
     <ClInclude Include="core\stb_vorbis.h" />
     <ClInclude Include="audio\tgAudioSystem.h" />
@@ -146,7 +147,7 @@
     <ClInclude Include="assets\tgAssets.h" />
     <ClInclude Include="core\tgEngine.h" />
     <ClInclude Include="core\tgFont.h" />
-    <ClInclude Include="core\tgGame.h" />
+    <ClInclude Include="core\tgGameState.h" />
     <ClInclude Include="core\tgImageData.h" />
     <ClInclude Include="core\tgInput.h" />
     <ClInclude Include="core\tgLog.h" />
@@ -156,7 +157,9 @@
     <ClInclude Include="ecs\tgComponentManager.h" />
     <ClInclude Include="ecs\tgMessenger.h" />
     <ClInclude Include="graphics\tgBuffer.h" />
+    <ClInclude Include="graphics\tgFrameBuffer.h" />
     <ClInclude Include="graphics\tgGL.h" />
+    <ClInclude Include="graphics\tgPostEffect.h" />
     <ClInclude Include="graphics\tgRenderer.h" />
     <ClInclude Include="graphics\tgShaderProgram.h" />
     <ClInclude Include="graphics\tgSpriteBatch.h" />
@@ -168,10 +171,6 @@
     <ClInclude Include="math\tgQuaternion.h" />
     <ClInclude Include="math\tgTransform.h" />
     <ClInclude Include="math\tgVectorBase.h" />
-    <ClInclude Include="nodes\tgAnimatedSpriteNode.h" />
-    <ClInclude Include="nodes\tgSpriteNode.h" />
-    <ClInclude Include="scenegraph\tgNode.h" />
-    <ClInclude Include="scenegraph\tgSceneTree.h" />
     <ClInclude Include="scripting\sol.hpp" />
     <ClInclude Include="scripting\tgScript.h" />
     <ClInclude Include="core\tgTime.h" />
@@ -190,11 +189,13 @@
     <ClCompile Include="audio\tgAudioSource.cpp" />
     <ClCompile Include="audio\tgAudioSystem.cpp" />
     <ClCompile Include="audio\tgSampleData.cpp" />
+    <ClCompile Include="components\tgAudioSourceComponent.cpp" />
     <ClCompile Include="components\tgEmitterComponent.cpp" />
     <ClCompile Include="components\tgFontComponent.cpp" />
     <ClCompile Include="components\tgSpriteComponent.cpp" />
     <ClCompile Include="core\tgEngine.cpp" />
     <ClCompile Include="core\tgFont.cpp" />
+    <ClCompile Include="core\tgGameState.cpp" />
     <ClCompile Include="core\tgImageData.cpp" />
     <ClCompile Include="core\tgInput.cpp" />
     <ClCompile Include="core\tgLog.cpp" />
@@ -203,6 +204,8 @@
     <ClCompile Include="ecs\tgComponentManager.cpp" />
     <ClCompile Include="ecs\tgMessenger.cpp" />
     <ClCompile Include="graphics\tgBuffer.cpp" />
+    <ClCompile Include="graphics\tgFrameBuffer.cpp" />
+    <ClCompile Include="graphics\tgPostEffect.cpp" />
     <ClCompile Include="graphics\tgRenderer.cpp" />
     <ClCompile Include="graphics\tgShaderProgram.cpp" />
     <ClCompile Include="graphics\tgSpriteBatch.cpp" />
@@ -213,10 +216,6 @@
     <ClCompile Include="math\tgMath.cpp" />
     <ClCompile Include="math\tgQuaternion.cpp" />
     <ClCompile Include="math\tgTransform.cpp" />
-    <ClCompile Include="nodes\tgAnimatedSpriteNode.cpp" />
-    <ClCompile Include="nodes\tgSpriteNode.cpp" />
-    <ClCompile Include="scenegraph\tgNode.cpp" />
-    <ClCompile Include="scenegraph\tgSceneTree.cpp" />
     <ClCompile Include="scripting\tgScript.cpp" />
     <ClCompile Include="core\tgTime.cpp" />
     <ClCompile Include="tween\tgTimer.cpp" />

@@ -6,7 +6,8 @@ tgSpriteBatch::tgSpriteBatch(int screen_width, int screen_height)
 	m_vao(nullptr),
 	m_prevVBOSize(0),
 	m_prevIBOSize(0),
-	m_drawing(false)
+	m_drawing(false),
+	tgRenderer(screen_width, screen_height)
 {
 	tgVertexFormat fmt(sizeof(tgVertex));
 	fmt.append(tgVertexFormat::tgATTR_POSITION, false);
@@ -78,6 +79,7 @@ tgSpriteBatch::tgSpriteBatch(int screen_width, int screen_height)
 }
 
 tgSpriteBatch::~tgSpriteBatch() {
+	tgRenderer::~tgRenderer();
 	tgDelete(m_ibo);
 	tgDelete(m_vbo);
 	tgDelete(m_vao);
@@ -254,7 +256,11 @@ void tgSpriteBatch::updateBuffers() {
 }
 
 void tgSpriteBatch::render() {
+	beginPostFX();
 	renderGeometry(m_shader);
+	endPostFX();
+
+	renderPostFX();
 }
 
 void tgSpriteBatch::renderGeometry(tgShaderProgram *shader) {
@@ -280,4 +286,6 @@ void tgSpriteBatch::renderGeometry(tgShaderProgram *shader) {
 	}
 	m_vao->unbind();
 	shader->unbind();
+
+	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 }
