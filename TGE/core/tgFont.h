@@ -3,6 +3,7 @@
 
 #include "../math/tgMath.h"
 #include "../graphics/tgTexture.h"
+#include "../assets/tgAssetData.h"
 
 #include <unordered_map>
 
@@ -26,13 +27,14 @@ class tgFont {
 	friend class tgFontAsset;
 public:
 	tgFont() {}
+	tgFont(tgAssetData *data);
 
 	float getMapWidth() const { return m_mapWidth; }
 	float getMapHeight() const { return m_mapHeight; }
 	float getLineHeight() const { return m_lineHeight; }
 	int getNumChars() const { return m_numChars; }
 	tgVector4 getPadding() const { return m_padding; }
-	tgTexture *getTexture() const { return m_texture; }
+	tgTexture* getTexture() const { return m_texture; }
 	tgCharMap getCharMap() const { return m_charMap; }
 
 	bool containsChar(char c) const;
@@ -42,7 +44,7 @@ protected:
 	int m_numChars;
 	tgVector4 m_padding;
 
-	tgTexture *m_texture;
+	tgTexture* m_texture;
 
 	tgCharMap m_charMap;
 };

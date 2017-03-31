@@ -3,21 +3,10 @@
 #include "../core/stb_vorbis.h"
 #include "../core/tgLog.h"
 
-tgSampleData::tgSampleData(std::istream& stream) {
-	if (stream.bad()) {
-		tgLog::log("The input stream is not open.");
-		return;
-	}
-	stream.seekg(0, std::ios::end);
-	std::istream::pos_type pos = stream.tellg();
-
-	byte *data = new byte[pos];
-	stream.seekg(0, std::ios::beg);
-	stream.read((char*)(data), pos);
-
+tgSampleData::tgSampleData(tgAssetData *data) {
 	int chan, srate;
 	short *sdata;
-	int samples = stb_vorbis_decode_memory(data, int(pos), &chan, &srate, &sdata);
+	int samples = stb_vorbis_decode_memory(data->data, data->size, &chan, &srate, &sdata);
 	if (!sdata) {
 		return;
 	}

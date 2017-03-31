@@ -3,53 +3,36 @@
 
 #include <string>
 #include <unordered_map>
-#include <algorithm>
 
-#include "tgAsset.h"
+#include "../graphics/tgTexture.h"
+#include "../core/tgFont.h"
+#include "../audio/tgAudioBuffer.h"
 
-using tgRawAssetQueue = std::unordered_map<std::string, tgRawAsset*>;
-using tgAssetQueue = std::unordered_map<std::string, void*>;
+#include "tgAssetData.h"
+
+template <typename T>
+using tgAssetList = std::unordered_map<std::string, T>;
+
 class tgAssets {
 public:
 	static void create();
 	static void destroy();
 
 	static void addSource(std::string const& path);
-	static void removeSource(std::string const& path);
 
-	template <typename T>
-	static void add(std::string const& path) {
-		std::string name = path.substr(path.find_last_of("/\\") + 1);
-		auto pos = m_assetQueue.find(name);
-		if (pos == m_assetQueue.end()) {
-			m_assetQueue[name] = new T(path);
-		}
-	}
-
-	template <typename T>
-	static T* get(std::string const& name) {
-		auto pos = m_assets.find(name);
-		if (pos != m_assets.end()) {
-			return static_cast<T*>(m_assets[name]);
-		}
-		return nullptr;
-	}
-
-	static void load();
-
-	template <typename T>
-	static void* loadSingle(std::string const& path) {
-		T* res = new T(path);
-		PhysFS::ifstream stream(path);
-		m_assets[path] = res->load(stream);
-		return m_assets[path];
-	}
+	static tgTexture* getTexture(std::string const& file);
+	static tgFont* getFont(std::string const& file);
+	static tgAudioBuffer* getSound(std::string const& file);
+	static std::string getText(std::string const& file);
 
 private:
 	static std::string resolvePath(std::string const& path);
+	static tgAssetData* loadRawAsset(std::string const& path);
 	
-	static tgRawAssetQueue m_assetQueue;	///< Assets that are waiting to be loaded
-	static tgAssetQueue m_assets;			///< Assets that have been loaded
+	static tgAssetList<tgTexture*> m_textures;
+	static tgAssetList<tgFont*> m_fonts;
+	static tgAssetList<tgAudioBuffer*> m_sounds;
+	static tgAssetList<std::string> m_texts;
 };
 
 #endif

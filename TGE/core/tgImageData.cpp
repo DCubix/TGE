@@ -9,20 +9,9 @@ tgImageData::tgImageData(int width, int height)
 	m_data.reserve(width * height * 4);
 }
 
-tgImageData::tgImageData(std::istream &stream) {
-	if(stream.bad()) {
-		tgLog::log("The input stream is not open.");
-		return;
-	}
-	stream.seekg(0, std::ios::end);
-	std::istream::pos_type pos = stream.tellg();
-
-	byte *data = new byte[pos];
-	stream.seekg(0, std::ios::beg);
-	stream.read((char*) (data), pos);
-
+tgImageData::tgImageData(tgAssetData *data) {
 	int comp;
-	byte *dat = stbi_load_from_memory(data, int(pos), &m_width, &m_height, &comp, STBI_rgb_alpha);
+	byte *dat = stbi_load_from_memory(data->data, data->size, &m_width, &m_height, &comp, STBI_rgb_alpha);
 	if(!dat) {
 		tgLog::log("The image failed to load.");
 		return;

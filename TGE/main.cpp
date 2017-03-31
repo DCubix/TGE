@@ -18,10 +18,6 @@
 #include "components/tgAudioSourceComponent.h"
 
 #include "assets/tgAssets.h"
-#include "assets/tgTextureAsset.h"
-#include "assets/tgFontAsset.h"
-#include "assets/tgAudioAsset.h"
-#include "assets/tgTextAsset.h"
 
 #include "tween/tgTweens.h"
 #include "tween/tgTimer.h"
@@ -260,11 +256,11 @@ public:
 		mgr->addComponent<Ball>(ball);
 		tgTransform *ball_t = mgr->addComponent<tgTransformComponent>(ball)->getTransform();
 		ball_t->setLocalPosition(tgVector3(320, 400, 2));
-		mgr->addComponent<tgSpriteComponent>(ball, tgAssets::get<tgTexture>("ball.png"), tgVector2(0.5f));
+		mgr->addComponent<tgSpriteComponent>(ball, tgAssets::getTexture("ball.png"), tgVector2(0.5f));
 
 		//// Create a simple particle emitter
 		tgEmitterComponent *pemit = new tgEmitterComponent(
-			tgAssets::get<tgTexture>("particle.png"), 100
+			tgAssets::getTexture("particle.png"), 100
 		);
 
 		tgEmitterConfiguration conf;
@@ -286,18 +282,18 @@ public:
 		tgEntity paddle = mgr->createEntity();
 		
 		tgAudioSourceComponent* ascomp = mgr->addComponent<tgAudioSourceComponent>(paddle, audioSystem);
-		ascomp->add("knock", tgAssets::get<tgAudioBuffer>("knock.ogg"));
+		ascomp->add("knock", tgAssets::getSound("knock.ogg"));
 
 		mgr->addComponent<Paddle>(paddle);
 		tgTransform *paddle_t = mgr->addComponent<tgTransformComponent>(paddle)->getTransform();
 		paddle_t->setLocalPosition(tgVector3(320, 425, 1));
-		mgr->addComponent<tgSpriteComponent>(paddle, tgAssets::get<tgTexture>("paddle.png"), tgVector2(0.5f, 0.0f));
+		mgr->addComponent<tgSpriteComponent>(paddle, tgAssets::getTexture("paddle.png"), tgVector2(0.5f, 0.0f));
 
 		tgEntity scoreText = mgr->createEntity();
 		tgTransform *score_t = mgr->addComponent<tgTransformComponent>(scoreText)->getTransform();
 		score_t->setLocalPosition(tgVector3(20, 10, 99));
 		score_t->setLocalScaling(tgVector3(0.55f, 0.55f, 1.0f));
-		score_font = mgr->addComponent<tgFontComponent>(scoreText, "Score: 0", tgAssets::get<tgFont>("font.fnt"));
+		score_font = mgr->addComponent<tgFontComponent>(scoreText, "Score: 0", tgAssets::getFont("font.fnt"));
 
 		// Create blocks
 		const int spacing = 4;
@@ -308,7 +304,7 @@ public:
 		int nblockX = (win->getWidth() - padding * 2) / blockWidth;
 		int nblockY = (win->getHeight() / 3 - padding) / blockHeight;
 
-		tgTexture *block_tex = tgAssets::get<tgTexture>("block.png");
+		tgTexture* block_tex = tgAssets::getTexture("block.png");
 		float h = 0;
 		float step = 1.0f / float(nblockX);
 
@@ -322,7 +318,7 @@ public:
 				block_t->setLocalScaling(tgVector3(0, 0, 1));
 				tgSpriteComponent *block_s = mgr->addComponent<tgSpriteComponent>(block, block_tex, tgVector2(0.5f));
 				tgAudioSourceComponent *ascomp = mgr->addComponent<tgAudioSourceComponent>(block, audioSystem);
-				ascomp->add("bounce", tgAssets::get<tgAudioBuffer>("bounce.ogg"));
+				ascomp->add("bounce", tgAssets::getSound("bounce.ogg"));
 
 				block_s->setColor(hsv(h, 0.5f, 1.0f));
 				h += step;
@@ -366,7 +362,7 @@ public:
 		tgEntity mtext = mgr->createEntity();
 		tgTransform *t = mgr->addComponent<tgTransformComponent>(mtext)->getTransform();
 		t->setLocalPosition(tgVector3(66, 232, 99));
-		mgr->addComponent<tgFontComponent>(mtext, "Press [ENTER] to Start", tgAssets::get<tgFont>("font.fnt"));
+		mgr->addComponent<tgFontComponent>(mtext, "Press [ENTER] to Start", tgAssets::getFont("font.fnt"));
 	}
 
 	void update(float dt) override {
@@ -386,10 +382,8 @@ int main (int argc, char **argv) {
 
 	tgSpriteBatch *sb = new tgSpriteBatch(640, 480);
 	engine->setRenderer(sb);
-
+/*
 	engine->setAssetPreloadFunction([&]() {
-		tgAssets::addSource(".");
-
 		tgAssets::add<tgTextureAsset>("ball.png");
 		tgAssets::add<tgTextureAsset>("paddle.png");
 		tgAssets::add<tgTextureAsset>("block.png");
@@ -404,7 +398,7 @@ int main (int argc, char **argv) {
 
 		sb->addPostEffect(fx);
 	});
-
+*/
 	engine->registerState("menu", new Menu());
 	engine->registerState("play", new Breakout());
 

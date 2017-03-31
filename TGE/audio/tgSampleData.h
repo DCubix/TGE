@@ -8,11 +8,11 @@
 
 #include <AL/al.h>
 
-using byte = unsigned char;
+#include "../assets/tgAssetData.h"
 
 class tgSampleData {
 public:
-	tgSampleData(std::istream &stream);
+	tgSampleData(tgAssetData *data);
 
 	ALenum getFormat() const { return m_format; }
 	short* getData() { return &m_data[0]; }

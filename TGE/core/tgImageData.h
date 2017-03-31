@@ -1,11 +1,9 @@
 #ifndef IMAGE_DATA_H
 #define IMAGE_DATA_H
 
-#include <iostream>
-#include <fstream>
 #include <vector>
-
-using byte = unsigned char;
+#include <fstream>
+#include "../assets/tgAssetData.h"
 
 class tgImageData {
 public:
@@ -14,7 +12,7 @@ public:
 	} Byte4;
 
 	tgImageData(int width, int height);
-	tgImageData(std::istream &stream);
+	tgImageData(tgAssetData *data);
 
 	std::vector<byte>& getData() { return m_data; }
 	tgImageData getSubData(int x, int y, int w, int h);

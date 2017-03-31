@@ -84,19 +84,7 @@
     <ClInclude Include="components\tgSpriteComponent.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="assets\tgTextureAsset.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="assets\tgAsset.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="assets\tgAssets.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="assets\PhysFS.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="assets\tgTextAsset.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="tween\tgTweens.h">
@@ -115,9 +103,6 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="core\tgFont.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="assets\tgFontAsset.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="scripting\sol.hpp">
@@ -153,9 +138,6 @@
     <ClInclude Include="core\tgTime.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="assets\tgAudioAsset.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="core\tgEngine.h">
       <Filter>Header Files</Filter>
     </ClInclude>
@@ -172,6 +154,12 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="graphics\tgPostEffect.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="assets\tgAssetData.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="core\tgTypes.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
@@ -221,16 +209,7 @@
     <ClCompile Include="graphics\tgRenderer.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="assets\tgTextureAsset.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="assets\tgAssets.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="assets\PhysFS.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="assets\tgTextAsset.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="tween\tgTweens.cpp">
@@ -243,9 +222,6 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="graphics\tgSpriteBatch.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="assets\tgFontAsset.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="scripting\tgScript.cpp">
@@ -282,9 +258,6 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="core\tgTime.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="assets\tgAudioAsset.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="core\tgEngine.cpp">

@@ -124,10 +124,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClInclude Include="assets\tgAudioAsset.h" />
-    <ClInclude Include="assets\tgFontAsset.h" />
-    <ClInclude Include="assets\tgTextAsset.h" />
-    <ClInclude Include="assets\tgTextureAsset.h" />
+    <ClInclude Include="assets\tgAssetData.h" />
     <ClInclude Include="audio\tgAudioBuffer.h" />
     <ClInclude Include="audio\tgAudioSource.h" />
     <ClInclude Include="audio\tgSampleData.h" />
@@ -139,11 +136,9 @@
     <ClInclude Include="components\tgSpriteComponent.h" />
     <ClInclude Include="components\tgFontComponent.h" />
     <ClInclude Include="components\tgTransformComponent.h" />
-    <ClInclude Include="assets\PhysFS.h" />
     <ClInclude Include="core\stb.h" />
     <ClInclude Include="core\stb_image.h" />
     <ClInclude Include="core\stb_image_write.h" />
-    <ClInclude Include="assets\tgAsset.h" />
     <ClInclude Include="assets\tgAssets.h" />
     <ClInclude Include="core\tgEngine.h" />
     <ClInclude Include="core\tgFont.h" />
@@ -151,6 +146,7 @@
     <ClInclude Include="core\tgImageData.h" />
     <ClInclude Include="core\tgInput.h" />
     <ClInclude Include="core\tgLog.h" />
+    <ClInclude Include="core\tgTypes.h" />
     <ClInclude Include="core\tgUtil.h" />
     <ClInclude Include="core\tgWindow.h" />
     <ClInclude Include="ecs\tgComponent.h" />
@@ -179,11 +175,6 @@
     <ClInclude Include="tween\tgTweens.h" />
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="assets\tgAudioAsset.cpp" />
-    <ClCompile Include="assets\tgFontAsset.cpp" />
-    <ClCompile Include="assets\tgTextAsset.cpp" />
-    <ClCompile Include="assets\tgTextureAsset.cpp" />
-    <ClCompile Include="assets\PhysFS.cpp" />
     <ClCompile Include="assets\tgAssets.cpp" />
     <ClCompile Include="audio\tgAudioBuffer.cpp" />
     <ClCompile Include="audio\tgAudioSource.cpp" />

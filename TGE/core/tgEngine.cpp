@@ -15,6 +15,7 @@ tgEngine::tgEngine(tgWindow *window) {
 void tgEngine::start() {
 	m_running = true;
 
+	tgAssets::create();
 	mainloop();
 
 	for (auto &kv : m_states) {
@@ -63,11 +64,7 @@ void tgEngine::mainloop() {
 	float startTime = tgTime::getTime();
 	float currentTime, delta;
 	
-	tgAssets::create();
-	if (m_assetPreLoadFunction) {
-		m_assetPreLoadFunction();
-	}
-	tgAssets::load();
+	tgAssets::addSource("."); // Adds current directory to the sources list.
 
 	m_window->show();
 
