@@ -9,7 +9,7 @@ class tgRenderer;
 class tgGameState {
 public:
 	tgGameState();
-	~tgGameState();
+	virtual ~tgGameState();
 
 	virtual void start(tgEngine* engine) {}
 	virtual void update(float dt) {}

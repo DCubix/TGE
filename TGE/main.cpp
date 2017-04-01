@@ -252,6 +252,12 @@ public:
 		tgWindow *win = engine->getWindow();
 		tgComponentManager *mgr = getManager();
 
+		std::string src = tgAssets::getText("bloom.glsl");
+		fx = new tgPostEffect();
+		fx->setShader(src);
+
+		engine->getRenderer()->addPostEffect(fx);
+
 		tgEntity ball = mgr->createEntity();
 		mgr->addComponent<Ball>(ball);
 		tgTransform *ball_t = mgr->addComponent<tgTransformComponent>(ball)->getTransform();
@@ -347,9 +353,15 @@ public:
 		audioSystem->update();
 	}
 
+	~Breakout() override {
+		tgGameState::~tgGameState();
+		tgDelete(audioSystem);
+	}
+
 	tgFontComponent *score_font;
 	tgAudioSystem *audioSystem;
 	tgEngine* engine;
+	tgPostEffect *fx;
 };
 
 class Menu : public tgGameState {
@@ -382,23 +394,7 @@ int main (int argc, char **argv) {
 
 	tgSpriteBatch *sb = new tgSpriteBatch(640, 480);
 	engine->setRenderer(sb);
-/*
-	engine->setAssetPreloadFunction([&]() {
-		tgAssets::add<tgTextureAsset>("ball.png");
-		tgAssets::add<tgTextureAsset>("paddle.png");
-		tgAssets::add<tgTextureAsset>("block.png");
-		tgAssets::add<tgTextureAsset>("particle.png");
-		tgAssets::add<tgFontAsset>("font.fnt");
-		tgAssets::add<tgAudioAsset>("knock.ogg");
-		tgAssets::add<tgAudioAsset>("bounce.ogg");
 
-		std::string src = *static_cast<std::string*>(tgAssets::loadSingle<tgTextAsset>("bloom.glsl"));
-		tgPostEffect *fx = new tgPostEffect();
-		fx->setShader(src);
-
-		sb->addPostEffect(fx);
-	});
-*/
 	engine->registerState("menu", new Menu());
 	engine->registerState("play", new Breakout());
 
