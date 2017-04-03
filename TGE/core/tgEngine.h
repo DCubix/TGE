@@ -4,7 +4,6 @@
 #include <fstream>
 
 #include "../audio/tgAudioSystem.h"
-#include "../ecs/tgComponentManager.h"
 #include "../graphics/tgRenderer.h"
 #include "tgGameState.h"
 #include "tgWindow.h"

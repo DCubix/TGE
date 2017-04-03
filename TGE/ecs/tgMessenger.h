@@ -1,8 +1,6 @@
 #ifndef MESSENGER_H
 #define MESSENGER_H
 
-#include "tgComponentManager.h"
-
 #include <string>
 #include <deque>
 
@@ -12,9 +10,11 @@ enum tgMessagePriority {
 	tgPRIORITY_HIGH = 1
 };
 
+class tgECS;
+class tgEntity;
+
 typedef struct tgMessage {
-	tgEntity sender;
-	tgEntity addressee;
+	tgEntity* sender;
 	tgMessagePriority priority;
 	std::string text;
 	void *userdata;
@@ -25,18 +25,14 @@ public:
 	tgMessenger() {}
 
 	void sendMessage(
-		tgEntity from, tgEntity to,
-		std::string const& text,
-		tgMessagePriority priority = tgPRIORITY_NORMAL,
-		void *userdata = nullptr);
-	void sendMessage(
-		tgEntity from,
+		tgEntity* from,
 		std::string const& text,
 		tgMessagePriority priority = tgPRIORITY_NORMAL,
 		void *userdata = nullptr);
 
-	void processQueue(tgComponentManager *manager);
+	void processQueue(tgECS *manager);
 	void reset();
+
 private:
 	std::deque<tgMessage> m_messages;
 };

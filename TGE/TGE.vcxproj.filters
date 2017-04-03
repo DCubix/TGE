@@ -66,9 +66,6 @@
     <ClInclude Include="core\tgLog.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="math\tgTransform.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="math\tgQuaternion.h">
       <Filter>Header Files</Filter>
     </ClInclude>
@@ -76,12 +73,6 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="ecs\tgComponent.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="components\tgTransformComponent.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="components\tgSpriteComponent.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="assets\tgAssets.h">
@@ -99,9 +90,6 @@
     <ClInclude Include="graphics\tgSpriteBatch.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="components\tgFontComponent.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="core\tgFont.h">
       <Filter>Header Files</Filter>
     </ClInclude>
@@ -111,13 +99,7 @@
     <ClInclude Include="scripting\tgScript.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="ecs\tgComponentManager.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="ecs\tgMessenger.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="components\tgEmitterComponent.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="audio\tgAudioSystem.h">
@@ -147,9 +129,6 @@
     <ClInclude Include="core\tgGameState.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="components\tgAudioSourceComponent.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="graphics\tgFrameBuffer.h">
       <Filter>Header Files</Filter>
     </ClInclude>
@@ -160,6 +139,27 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="core\tgTypes.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="ecs\tgECS.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="components\tgSprite.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="components\tgTransform.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="systems\tgSpriteSystem.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="ecs\tgSystem.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="components\tgText.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="systems\tgTextSystem.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
@@ -200,9 +200,6 @@
     <ClCompile Include="core\tgLog.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="math\tgTransform.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="math\tgQuaternion.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -227,22 +224,10 @@
     <ClCompile Include="scripting\tgScript.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="ecs\tgComponentManager.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="components\tgSpriteComponent.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="components\tgFontComponent.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="core\tgFont.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="ecs\tgMessenger.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="components\tgEmitterComponent.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="audio\tgAudioSystem.cpp">
@@ -266,13 +251,25 @@
     <ClCompile Include="core\tgGameState.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="components\tgAudioSourceComponent.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="graphics\tgFrameBuffer.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="graphics\tgPostEffect.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="ecs\tgECS.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="components\tgTransform.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="components\tgSprite.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="systems\tgSpriteSystem.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="systems\tgTextSystem.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

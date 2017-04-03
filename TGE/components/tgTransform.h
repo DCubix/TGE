@@ -1,11 +1,11 @@
 #ifndef TRANSFORM_H
 #define TRANSFORM_H
 
-#include "tgMath.h"
-#include "tgQuaternion.h"
+#include "../math/tgMath.h"
+#include "../math/tgQuaternion.h"
+#include "../ecs/tgComponent.h"
 
-class tgTransform {
-public:
+typedef struct tgTransform : public tgComponent {
 	tgTransform();
 	~tgTransform() = default;
 
@@ -42,6 +42,6 @@ private:
 
 	tgTransform *m_parent;
 	tgMatrix4 getParentTransformationMatrix();
-};
+} tgTransform;
 
 #endif

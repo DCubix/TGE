@@ -1,26 +1,30 @@
 #ifndef GAME_STATE_H
 #define GAME_STATE_H
 
-#include "../ecs/tgComponentManager.h"
+#include "../ecs/tgECS.h"
 #include "tgUtil.h"
 
 class tgEngine;
 class tgRenderer;
 class tgGameState {
+	friend class tgEngine;
 public:
 	tgGameState();
 	virtual ~tgGameState();
 
-	virtual void start(tgEngine* engine) {}
+	virtual void start() {}
 	virtual void update(float dt) {}
 	virtual void render(tgRenderer*) {}
 	virtual void destroy() {}
 
-	void reset(tgEngine* engine);
+	void reset();
 
-	tgComponentManager* getManager() { return m_manager; }
+	tgECS* getECS();
+	tgEngine* getEngine() { return m_engine; }
+
 protected:
-	tgComponentManager *m_manager;
+	tgECS *m_ecs;
+	tgEngine *m_engine;
 };
 
 #endif
