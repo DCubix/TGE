@@ -9,19 +9,16 @@ typedef struct tgComponent {
 	tgComponent() = default;
 	virtual ~tgComponent() = default;
 
-	uint getOwner() const { return owner; }
 	uint getID() const { return id; }
-
-	float getRenderingOrder() const { return renderingOrder; }
-	void setRenderingOrder(float v) { renderingOrder = v; }
+	bool isValid() const { return valid; }
 
 	operator bool() {
-		return owner != -1;
+		return valid;
 	}
 
 protected:
-	uint owner, id;
-	float renderingOrder;
+	uint id;
+	bool valid;
 } tgComponent;
 
 #endif

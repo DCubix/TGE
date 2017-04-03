@@ -99,9 +99,6 @@
     <ClInclude Include="scripting\tgScript.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="ecs\tgMessenger.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="audio\tgAudioSystem.h">
       <Filter>Header Files</Filter>
     </ClInclude>
@@ -160,6 +157,15 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="systems\tgTextSystem.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="core\tgParticleEngine.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="core\tgParticleConfiguration.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="core\tgEmitter.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
@@ -227,9 +233,6 @@
     <ClCompile Include="core\tgFont.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="ecs\tgMessenger.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="audio\tgAudioSystem.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -270,6 +273,9 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="systems\tgTextSystem.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="core\tgParticleEngine.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

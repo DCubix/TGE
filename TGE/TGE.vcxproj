@@ -128,6 +128,7 @@
     <ClInclude Include="audio\tgAudioBuffer.h" />
     <ClInclude Include="audio\tgAudioSource.h" />
     <ClInclude Include="audio\tgSampleData.h" />
+    <ClInclude Include="core\tgEmitter.h" />
     <ClInclude Include="components\tgSprite.h" />
     <ClInclude Include="components\tgText.h" />
     <ClInclude Include="core\picojson.h" />
@@ -143,12 +144,13 @@
     <ClInclude Include="core\tgImageData.h" />
     <ClInclude Include="core\tgInput.h" />
     <ClInclude Include="core\tgLog.h" />
+    <ClInclude Include="core\tgParticleConfiguration.h" />
+    <ClInclude Include="core\tgParticleEngine.h" />
     <ClInclude Include="core\tgTypes.h" />
     <ClInclude Include="core\tgUtil.h" />
     <ClInclude Include="core\tgWindow.h" />
     <ClInclude Include="ecs\tgComponent.h" />
     <ClInclude Include="ecs\tgECS.h" />
-    <ClInclude Include="ecs\tgMessenger.h" />
     <ClInclude Include="ecs\tgSystem.h" />
     <ClInclude Include="graphics\tgBuffer.h" />
     <ClInclude Include="graphics\tgFrameBuffer.h" />
@@ -187,10 +189,10 @@
     <ClCompile Include="core\tgImageData.cpp" />
     <ClCompile Include="core\tgInput.cpp" />
     <ClCompile Include="core\tgLog.cpp" />
+    <ClCompile Include="core\tgParticleEngine.cpp" />
     <ClCompile Include="core\tgUtil.cpp" />
     <ClCompile Include="core\tgWindow.cpp" />
     <ClCompile Include="ecs\tgECS.cpp" />
-    <ClCompile Include="ecs\tgMessenger.cpp" />
     <ClCompile Include="graphics\tgBuffer.cpp" />
     <ClCompile Include="graphics\tgFrameBuffer.cpp" />
     <ClCompile Include="graphics\tgPostEffect.cpp" />

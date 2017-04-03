@@ -2,7 +2,6 @@
 #define COMPONENT_MANAGER_H
 
 #include "tgComponent.h"
-#include "tgMessenger.h"
 #include "tgSystem.h"
 
 #include <cstddef>
@@ -12,9 +11,6 @@
 #include <algorithm>
 
 #define ECS_INVALID_ENTITY -1
-#define ECS_INVALID_COMPONENT -1
-#define ECS_VALID_COMPONENT 1
-#define ECS_INITIAL_ID 0xE
 
 class tgECS;
 class tgEntity {
@@ -25,6 +21,8 @@ public:
 	template <typename T, typename... Args> T* add(Args&&... args);
 	template <typename T> T* get();
 	template <typename... Ts> bool has();
+
+	void destroy();
 
 	uint getID() const { return m_id; }
 
@@ -61,7 +59,8 @@ public:
 	T* getComponent(tgEntity* entity) {
 		if (validEntity(entity)) {
 			for (tgComponent *comp : m_components) {
-				if (comp->owner == entity->m_id) {
+				auto pos = std::find(entity->m_components.begin(), entity->m_components.end(), comp->id);
+				if (pos != entity->m_components.end()) {
 					T* t_comp = dynamic_cast<T*>(comp);
 					if (t_comp) { return t_comp; }
 				}
@@ -97,8 +96,6 @@ public:
 	std::vector<tgComponent*> getComponents() const { return m_components; }
 	std::vector<tgSystem*> getSystems() const { return m_systems; }
 
-	tgMessenger* getMessenger() { return m_messenger; }
-
 	void start();
 	void update(float dt);
 	void render(tgRenderer *renderer);
@@ -113,8 +110,6 @@ private:
 	std::vector<tgSystem*> m_systems;
 	uint m_lastEntityID;
 
-	tgMessenger *m_messenger;
-
 	void cleanup();
 
 	bool validEntity(tgEntity* entity) { return valid(entity->m_id); }
@@ -124,10 +119,9 @@ private:
 	template <typename T>
 	T* addComponent(tgEntity* entity, T *comp) {
 		if (validEntity(entity)) {
-			comp->owner = entity->m_id;
 			m_components.push_back(comp);
 
-			comp->id = ECS_VALID_COMPONENT;
+			comp->id = m_components.size() - 1;
 			entity->m_components.push_back(comp->id);
 
 			return dynamic_cast<T*>(m_components.back());

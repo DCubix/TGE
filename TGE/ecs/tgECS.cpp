@@ -3,10 +3,8 @@
 #include "../core/tgUtil.h"
 
 tgECS::tgECS()
-	: m_lastEntityID(ECS_INITIAL_ID)
-{
-	m_messenger = new tgMessenger();
-}
+	: m_lastEntityID(0)
+{}
 
 tgECS::~tgECS() {
 	for (tgComponent *comp : m_components) {
@@ -37,7 +35,7 @@ void tgECS::destroy(tgEntity* entity) {
 		uint id = pos - m_entities.begin();
 		m_entities[id]->m_id = ECS_INVALID_ENTITY;
 		for (uint comp : m_entities[id]->m_components) {
-			m_components[comp]->id = ECS_INVALID_COMPONENT;
+			m_components[comp]->valid = false;
 		}
 	}
 }
@@ -68,8 +66,6 @@ void tgECS::start() {
 void tgECS::update(float dt) {
 	cleanup();
 
-	m_messenger->processQueue(this);
-
 	for (tgSystem *sys : m_systems) {
 		sys->update(dt);
 	}
@@ -90,8 +86,7 @@ void tgECS::reset() {
 	}
 	m_components.clear();
 	m_entities.clear();
-	m_messenger->reset();
-	m_lastEntityID = ECS_INITIAL_ID;
+	m_lastEntityID = 0;
 
 	for (tgSystem *sys : m_systems) {
 		sys->reset();
@@ -132,8 +127,14 @@ bool tgECS::valid(uint id) {
 
 std::vector<tgComponent*> tgECS::getInvalidComponents() {
 	std::vector<tgComponent*> ret;
-	std::copy_if(m_components.begin(), m_components.end(), ret.begin(), [&, this](tgComponent* c) {
-		return c->getID() == ECS_INVALID_COMPONENT;
-	});
+	for (tgComponent *comp : m_components) {
+		if (comp->valid) {
+			ret.push_back(comp);
+		}
+	}
 	return ret;
+}
+
+void tgEntity::destroy() {
+	m_ecs->destroy(this);
 }

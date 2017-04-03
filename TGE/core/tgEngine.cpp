@@ -35,6 +35,7 @@ void tgEngine::stop() {
 
 void tgEngine::registerState(std::string const& name, tgGameState* state) {
 	if (state) {
+		state->m_engine = this;
 		m_states[name] = state;
 	}
 }

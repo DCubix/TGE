@@ -3,7 +3,6 @@
 
 class tgECS;
 class tgRenderer;
-struct tgMessage;
 class tgSystem {
 	friend class tgECS;
 public:
@@ -13,7 +12,6 @@ public:
 	virtual void start() {}
 	virtual void update(float) {}
 	virtual void render(tgRenderer*) {}
-	virtual void receive(tgMessage const&) {}
 	virtual void reset() {}
 
 	tgECS* getECS() { return m_ecs; }
