@@ -6,10 +6,10 @@
 typedef struct tgComponent {
 	friend class tgECS;
 
-	tgComponent() = default;
+	tgComponent() : valid(true), owner(-1) {}
 	virtual ~tgComponent() = default;
 
-	uint getID() const { return id; }
+	uint getOwner() const { return owner; }
 	bool isValid() const { return valid; }
 
 	operator bool() {
@@ -17,7 +17,7 @@ typedef struct tgComponent {
 	}
 
 protected:
-	uint id;
+	uint owner;
 	bool valid;
 } tgComponent;
 

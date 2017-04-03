@@ -65,6 +65,7 @@ void tgParticleEngine::update(float dt) {
 }
 
 void tgParticleEngine::render(tgSpriteBatch *sb) {
+	sb->save();
 	for (int i = 0; i < m_particleCount; i++) {
 		tgParticle *p = m_particlePool[i];
 
@@ -81,15 +82,13 @@ void tgParticleEngine::render(tgSpriteBatch *sb) {
 
 		sb->draw(p->texture);
 	}
+	sb->restore();
 }
 
-void tgParticleEngine::emit(tgTexture* texture, tgVector2 const& position, tgParticleConfiguration config, tgParticleTransformCallback cb) {
+void tgParticleEngine::emit(tgTexture* texture, tgVector2 const& position, tgParticleConfiguration const& config, tgParticleTransformCallback cb) {
 	if (texture) {
-		tgParticle *p = addParticle();
+		tgParticle *p = addParticle(position, config, cb);
 		p->texture = texture;
-		p->position = position;
-		p->config = config;
-		p->transformFunction = cb;
 	}
 }
 
@@ -143,7 +142,7 @@ void tgParticleEngine::initParticle(tgParticle *p) {
 	);
 
 	if (p->transformFunction) {
-		posv = p->transformFunction(posv);
+		posv = p->transformFunction(tgVector2(randF(0, M_PI*2), 0));
 	}
 	p->position = posv + p->position.xy();
 
@@ -190,12 +189,18 @@ void tgParticleEngine::cleanup() {
 	}
 }
 
-tgParticle* tgParticleEngine::addParticle() {
+tgParticle* tgParticleEngine::addParticle(tgVector2 const& position,
+										  tgParticleConfiguration const& config,
+										  tgParticleTransformCallback cb)
+{
 	if (isFull()) {
 		return nullptr;
 	}
 
 	tgParticle *p = m_particlePool[m_particleCount];
+	p->position = position;
+	p->config = config;
+	p->transformFunction = cb;
 	initParticle(p);
 	++m_particleCount;
 

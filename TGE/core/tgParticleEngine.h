@@ -8,6 +8,7 @@
 #include "tgEmitter.h"
 
 #include <cmath>
+
 #include <vector>
 #include <functional>
 
@@ -42,7 +43,7 @@ public:
 	void emit(
 		tgTexture *texture,
 		tgVector2 const& position,
-		tgParticleConfiguration config,
+		tgParticleConfiguration const& config,
 		tgParticleTransformCallback cb = nullptr
 	);
 
@@ -58,7 +59,11 @@ private:
 
 	uint m_particleCount, m_particleIndex, m_maxParticles;
 
-	tgParticle* addParticle();
+	tgParticle* addParticle(
+		tgVector2 const& position,
+		tgParticleConfiguration const& config,
+		tgParticleTransformCallback cb = nullptr
+	);
 	void initParticle(tgParticle *p);
 	void updateParticle(tgParticle *p, int i, float dt);
 	bool isFull() const;

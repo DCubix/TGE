@@ -16,9 +16,7 @@ public:
 	virtual void update(float dt) {}
 	virtual void render(tgRenderer*) {}
 	virtual void destroy() {}
-
-	void reset();
-
+	
 	tgECS* getECS();
 	tgEngine* getEngine() { return m_engine; }
 

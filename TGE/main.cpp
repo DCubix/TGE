@@ -30,23 +30,11 @@
 class Test : public tgGameState {
 public:
 	void start() override {
-		getECS()->registerSystem(new tgSpriteSystem());
 		getECS()->registerSystem(new tgTextSystem());
-
-		e = getECS()->create();
-		e->add<tgSprite>(tgAssets::getTexture("ball.png"));
-		e->add<tgTransform>()->setLocalPosition(tgVector3(100, 100, 0));
 
 		t = getECS()->create();
 		t->add<tgText>("Hello World 1234567890", tgAssets::getFont("font.fnt"));
-		auto transform = t->add<tgTransform>();
-		transform->setLocalPosition(tgVector3(10, 40, 0));
-		transform->setLocalScaling(tgVector3(0, 0, 1));
-
-		tgTween *t = new tgTween(2.0f, tgEasing::easeInOutBack);
-		t->addValue(&transform->getLocalScaling().x(), 1.0f);
-		t->addValue(&transform->getLocalScaling().y(), 1.0f);
-		tgTweens::addTween(t);
+		t->add<tgTransform>()->setLocalPosition(tgVector3(10, 40, 0));
 
 		pe = new tgParticleEngine();
 	}
@@ -54,15 +42,31 @@ public:
 	void update(float dt) override {
 		if (tgInput::isKeyDown(SDLK_a)) {
 			tgParticleConfiguration conf;
-			conf.angleVar = float(M_PI * 2);
-			conf.speed = 50.0f;
-			conf.startColor = tgVector4(1.0f, 0.6f, 0.0f, 1.0f);
-			conf.endColor = tgVector4(0.0f, 0.6f, 1.0f, 1.0f);
-			pe->emit(tgAssets::getTexture("ball.png"), tgVector2(200, 200), conf);
-		}
-		if (tgInput::isKeyPressed(SDLK_SPACE)) {
-			e->destroy();
-			t->get<tgText>()->setText("Deleted the Ball");
+			conf.additive = true;
+			conf.angle = float(-M_PI / 2);
+			conf.speed = 30.0f;
+			conf.startScale = 4.0f;
+			conf.endScale = 0.5f;
+			conf.startColor = tgVector4(0.60f, 0.2f, 0.05f, 1.0f);
+			conf.startColorVar = conf.startColor;
+			conf.endColor = tgVector4(0.0f, 0.0f, 0.0f, 1.0f);
+			conf.endColorVar = conf.endColor;
+			
+			pe->emit(tgAssets::getTexture("particle.png"), tgVector2(320, 240), conf, [](tgVector2 const& v) {
+				const float r = 100.0f;
+				float d = r * 2.0f;
+
+				float x = std::cos(v.x()) * d;
+				float y = std::sin(v.x()) * d;
+
+				float s = std::sqrt((d * d) / 2.0f);
+
+				if (x > s) { x = s; }
+				if (x < -s) { x = -s; }
+				if (y > s) { y = s; }
+				if (y < -s) { y = -s; }
+				return tgVector2(x, y);
+			});
 		}
 
 		if (tgInput::isCloseRequested()) {
@@ -76,7 +80,12 @@ public:
 		pe->render(dynamic_cast<tgSpriteBatch*>(r));
 	}
 
-	tgEntity *e, *t;
+	~Test() {
+		tgGameState::~tgGameState();
+		tgDelete(pe);
+	}
+
+	tgEntity *t;
 	tgParticleEngine *pe;
 };
 

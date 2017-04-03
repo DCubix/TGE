@@ -50,7 +50,9 @@ void tgEngine::setState(std::string const& name) {
 
 void tgEngine::reloadState(std::string const& name) {
 	if (!m_currentState.empty()) {
-		m_states[m_currentState]->reset();
+		m_states[m_currentState]->destroy();
+		m_states[m_currentState]->getECS()->reset();
+		m_states[m_currentState]->start();
 	}
 }
 
@@ -78,7 +80,8 @@ void tgEngine::mainloop() {
 	while (m_running) {
 		if (m_changingStates) {
 			state = m_states[m_nextState];
-			state->reset();
+			state->getECS()->reset();
+			state->start();
 			state->getECS()->start();
 			m_changingStates = false;
 		}
@@ -111,7 +114,6 @@ void tgEngine::mainloop() {
 			state->render(m_renderer);
 		}
 		m_renderer->end();
-
 		m_renderer->render();
 
 		m_window->swapBuffers();

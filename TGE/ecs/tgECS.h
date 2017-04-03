@@ -59,8 +59,7 @@ public:
 	T* getComponent(tgEntity* entity) {
 		if (validEntity(entity)) {
 			for (tgComponent *comp : m_components) {
-				auto pos = std::find(entity->m_components.begin(), entity->m_components.end(), comp->id);
-				if (pos != entity->m_components.end()) {
+				if (comp->owner == entity->m_id) {
 					T* t_comp = dynamic_cast<T*>(comp);
 					if (t_comp) { return t_comp; }
 				}
@@ -121,8 +120,8 @@ private:
 		if (validEntity(entity)) {
 			m_components.push_back(comp);
 
-			comp->id = m_components.size() - 1;
-			entity->m_components.push_back(comp->id);
+			comp->owner = entity->m_id;
+			entity->m_components.push_back(m_components.size() - 1);
 
 			return dynamic_cast<T*>(m_components.back());
 		}

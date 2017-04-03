@@ -86,12 +86,13 @@ void tgECS::reset() {
 	}
 	m_components.clear();
 	m_entities.clear();
-	m_lastEntityID = 0;
 
 	for (tgSystem *sys : m_systems) {
-		sys->reset();
-		sys->start();
+		tgDelete(sys);
 	}
+	m_systems.clear();
+
+	m_lastEntityID = 0;
 }
 
 void tgECS::cleanup() {
@@ -128,7 +129,7 @@ bool tgECS::valid(uint id) {
 std::vector<tgComponent*> tgECS::getInvalidComponents() {
 	std::vector<tgComponent*> ret;
 	for (tgComponent *comp : m_components) {
-		if (comp->valid) {
+		if (!comp->valid) {
 			ret.push_back(comp);
 		}
 	}
