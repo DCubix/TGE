@@ -22,6 +22,7 @@ typedef struct tgParticle {
 
 	float life = 0;
 	float scale, deltaScale;
+	float rotation, angularSpeed;
 
 	tgParticleTransformCallback transformFunction;
 

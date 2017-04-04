@@ -76,7 +76,7 @@ void tgParticleEngine::render(tgSpriteBatch *sb) {
 		sb->setColor(p->color);
 		sb->setOrigin(tgVector2(0.5f));
 		sb->setPosition(tgVector3(p->position, 0));
-		sb->setRotation(0);
+		sb->setRotation(p->rotation);
 		sb->setScale(tgVector2(p->scale));
 		sb->setUV(tgVector4(0, 0, 1, 1));
 
@@ -124,6 +124,11 @@ void tgParticleEngine::updateParticle(tgParticle *p, int i, float dt) {
 		p->scale += p->deltaScale * dt;
 		p->color += p->deltaColor * dt;
 
+		p->rotation += p->angularSpeed * dt;
+		if (p->rotation >= M_PI * 2.0f) {
+			p->rotation = 0;
+		}
+
 		p->life -= dt;
 
 		++m_particleIndex;
@@ -142,9 +147,11 @@ void tgParticleEngine::initParticle(tgParticle *p) {
 	);
 
 	if (p->transformFunction) {
-		posv = p->transformFunction(tgVector2(randF(0, M_PI*2), 0));
+		posv = p->transformFunction(tgVector2(randF(0.0f, 1.0f), randF(-1.0f, 1.0f)));
 	}
 	p->position = posv + p->position.xy();
+
+	p->angularSpeed = p->config.angularSpeed + p->config.angularSpeedVar * randF(0.0f, 1.0f);
 
 	float angle = p->config.angle + p->config.angleVar * randF(-1.0f, 1.0f);
 	float speed = p->config.speed + p->config.speedVar * randF(-1.0f, 1.0f);

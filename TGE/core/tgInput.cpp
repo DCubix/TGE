@@ -1,6 +1,8 @@
 #include "tgInput.h"
 #include "tgUtil.h"
 
+#include "tgLog.h"
+
 SDL_Event tgInput::m_sdlEvent;
 std::unordered_map<int, tgState> tgInput::m_keyboard;
 std::unordered_map<int, tgState> tgInput::m_mouse;

@@ -7,7 +7,7 @@
 #include "../tween/tgTweens.h"
 #include "../assets/tgAssets.h"
 
-tgEngine::tgEngine(tgWindow *window) {
+tgEngine::tgEngine(tgWindow *window) : m_timeScale(1.0f){
 	m_running = false;
 	m_window = window;
 }
@@ -93,15 +93,20 @@ void tgEngine::mainloop() {
 		timeAccum += delta;
 
 		while (timeAccum >= timeDelta) {
+			float dt = m_timeScale * timeDelta;
+
 			tgInput::update();
+			if (tgInput::isCloseRequested()) {
+				stop();
+			}
 			
 			if (!m_changingStates) {
-				state->getECS()->update(timeDelta);
-				state->update(timeDelta);
+				state->getECS()->update(dt);
+				state->update(dt);
 			}
 
-			tgTimer::update(timeDelta);
-			tgTweens::update(timeDelta);
+			tgTimer::update(dt);
+			tgTweens::update(dt);
 
 			timeAccum -= timeDelta;
 		}
@@ -114,6 +119,7 @@ void tgEngine::mainloop() {
 			state->render(m_renderer);
 		}
 		m_renderer->end();
+
 		m_renderer->render();
 
 		m_window->swapBuffers();

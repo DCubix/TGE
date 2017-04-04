@@ -30,47 +30,33 @@
 class Test : public tgGameState {
 public:
 	void start() override {
-		getECS()->registerSystem(new tgTextSystem());
-
-		t = getECS()->create();
-		t->add<tgText>("Hello World 1234567890", tgAssets::getFont("font.fnt"));
-		t->add<tgTransform>()->setLocalPosition(tgVector3(10, 40, 0));
-
 		pe = new tgParticleEngine();
 	}
 
 	void update(float dt) override {
-		if (tgInput::isKeyDown(SDLK_a)) {
-			tgParticleConfiguration conf;
-			conf.additive = true;
-			conf.angle = float(-M_PI / 2);
-			conf.speed = 30.0f;
-			conf.startScale = 4.0f;
-			conf.endScale = 0.5f;
-			conf.startColor = tgVector4(0.60f, 0.2f, 0.05f, 1.0f);
-			conf.startColorVar = conf.startColor;
-			conf.endColor = tgVector4(0.0f, 0.0f, 0.0f, 1.0f);
-			conf.endColorVar = conf.endColor;
-			
-			pe->emit(tgAssets::getTexture("particle.png"), tgVector2(320, 240), conf, [](tgVector2 const& v) {
-				const float r = 100.0f;
-				float d = r * 2.0f;
+		tgParticleConfiguration conf;
+		conf.additive = true;
+		conf.angle = float(-M_PI / 2);
+		conf.speed = 300.0f;
+		conf.life = 0.5f;
+		conf.startScale = 1.0f;
+		conf.startScaleVar = 1.0f;
+		conf.endScale = 0.0f;
+		conf.endScaleVar = 0.5f;
+		conf.positionVar = tgVector2(10.0f);
+		conf.startColor = tgVector4(0.05f, 0.2f, 0.5f, 1.0f);
+		conf.startColorVar = conf.startColor;
+		conf.endColor = tgVector4(0.5f, 0.2f, 0.05f, 1.0f);
+		conf.endColorVar = conf.endColor;
+		conf.angularSpeed = 10.0f;
+		conf.angularSpeedVar = -20.0f;
 
-				float x = std::cos(v.x()) * d;
-				float y = std::sin(v.x()) * d;
+		pe->emit(tgAssets::getTexture("fire.png"), tgVector2(tgInput::getMouseX(), tgInput::getMouseY()), conf);
 
-				float s = std::sqrt((d * d) / 2.0f);
-
-				if (x > s) { x = s; }
-				if (x < -s) { x = -s; }
-				if (y > s) { y = s; }
-				if (y < -s) { y = -s; }
-				return tgVector2(x, y);
-			});
-		}
-
-		if (tgInput::isCloseRequested()) {
-			getEngine()->stop();
+		if (tgInput::isMouseButtonDown(SDL_BUTTON_LEFT)) {
+			getEngine()->setTimeScale(0.2f);
+		} else {
+			getEngine()->setTimeScale(1.0f);
 		}
 
 		pe->update(dt);
@@ -85,7 +71,6 @@ public:
 		tgDelete(pe);
 	}
 
-	tgEntity *t;
 	tgParticleEngine *pe;
 };
 

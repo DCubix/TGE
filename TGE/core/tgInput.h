@@ -8,7 +8,6 @@ typedef struct tgState {
 	bool pressed, released, down;
 } tgState;
 
-
 class tgInput {
 public:
 	static void update();

@@ -19,6 +19,9 @@ public:
 	void start();
 	void stop();
 
+	float getTimeScale() const { return m_timeScale; }
+	void setTimeScale(float v) { m_timeScale = tgMathUtil::clamp(v, 0.01f, 1.0f); }
+
 	tgRenderer* getRenderer() { return m_renderer; }
 	tgWindow* getWindow() { return m_window; }
 
@@ -38,6 +41,8 @@ private:
 
 	tgWindow *m_window;
 	tgRenderer *m_renderer;
+
+	float m_timeScale;
 
 	bool m_running;
 

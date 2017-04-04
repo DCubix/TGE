@@ -14,6 +14,9 @@ typedef struct tgParticleConfiguration {
 	float angle = 0;
 	float angleVar = 0.0f;
 
+	float angularSpeed = 0.0f;
+	float angularSpeedVar = 0.0f;
+
 	float life = 1.0f;
 	float lifeVar = 0.0f;
 
