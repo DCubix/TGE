@@ -66,7 +66,7 @@ void tgParticleEngine::update(float dt) {
 
 void tgParticleEngine::render(tgSpriteBatch *sb) {
 	sb->save();
-	for (int i = 0; i < m_particleCount; i++) {
+	for (uint i = 0; i < m_particleCount; i++) {
 		tgParticle *p = m_particlePool[i];
 
 		sb->setBlendMode(
@@ -151,7 +151,7 @@ void tgParticleEngine::initParticle(tgParticle *p) {
 	}
 	p->position = posv + p->position.xy();
 
-	p->angularSpeed = p->config.angularSpeed + p->config.angularSpeedVar * randF(0.0f, 1.0f);
+	p->angularSpeed = p->config.angularSpeed + p->config.angularSpeedVar * randF(-1.0f, 1.0f);
 
 	float angle = p->config.angle + p->config.angleVar * randF(-1.0f, 1.0f);
 	float speed = p->config.speed + p->config.speedVar * randF(-1.0f, 1.0f);

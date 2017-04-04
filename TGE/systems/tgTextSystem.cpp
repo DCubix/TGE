@@ -7,21 +7,35 @@
 
 #include <cctype>
 
-static float computeTextWidth(tgText *fcomp, tgVector2 const& scale) {
-	tgFont *fnt = fcomp->getFont();
+template<typename Out>
+static void split(const std::string &s, char delim, Out result) {
+	std::stringstream ss;
+	ss.str(s);
+	std::string item;
+	while (std::getline(ss, item, delim)) {
+		*(result++) = item;
+	}
+}
+
+static std::vector<std::string> split(const std::string &s, char delim) {
+	std::vector<std::string> elems;
+	split(s, delim, std::back_inserter(elems));
+	return elems;
+}
+
+static float computeTextWidth(std::string const& text, tgFont *fnt, tgVector2 const& scale) {
 	float w = 0;
-	float padX = fnt->getPadding().x();
+	float padX = fnt->getPadding()[2];
 	float xscale = scale.x();
-	float yscale = scale.y();
-	for (unsigned i = 0; i < fcomp->getText().size(); i++) {
-		char c = fcomp->getText()[i];
+	for (unsigned i = 0; i < text.size(); i++) {
+		char c = text[i];
 		tgChar chr;
 		if (fnt->containsChar(c)) {
 			chr = fnt->getCharMap()[c];
 		} else {
 			chr = fnt->getCharMap()[char(fnt->getNumChars() - 1)];
 		}
-		w += ((chr.xadvance - padX) * xscale) + (chr.xoffset * xscale);
+		w += float(chr.xadvance - fnt->getPadding()[2]) * xscale;
 	}
 	return w;
 }
@@ -49,27 +63,52 @@ void tgTextSystem::render(tgRenderer *renderer) {
 			float xscale = scl.x();
 			float yscale = scl.y();
 			float x = 0;
+			float y = 0;
 
-			for (unsigned i = 0; i < t->m_text.size(); i++) {
-				char c = t->m_text[i];
-				tgChar chr;
-				if (fnt->containsChar(c)) {
-					chr = fnt->getCharMap()[c];
-				} else {
-					chr = fnt->getCharMap()[char(fnt->getNumChars() - 1)];
+			std::vector<std::string> lines = split(t->m_text, '\n');
+
+			int char_index = 0;
+			for (std::string text : lines) {
+				switch (t->getTextAlign()) {
+					case tgTextAlign::tgALIGN_LEFT: x = 0; break;
+					case tgTextAlign::tgALIGN_CENTER: x = -computeTextWidth(text, fnt, scl) / 2; break;
+					case tgTextAlign::tgALIGN_RIGHT: x = -computeTextWidth(text, fnt, scl); break;
 				}
-				if (!std::isspace(c)) {
-					sb->setUV(chr.clipRect);
-					sb->setPosition(
-						tgVector3(pos.x() + (x + chr.xoffset * xscale) - fnt->getPadding()[0],
-								  pos.y() + (chr.yoffset * yscale), pos.z())
-					);
-					sb->setScale(scl);
-					sb->draw(fnt->getTexture());
+
+				for (unsigned i = 0; i < text.size(); i++) {
+					char c = text[i];
+					tgChar chr;
+
+					if (fnt->containsChar(c)) {
+						chr = fnt->getCharMap()[c];
+					} else {
+						chr = fnt->getCharMap()[char(fnt->getNumChars() - 1)];
+					}
+					if (!std::isspace(c)) {
+						sb->setUV(chr.clipRect);
+						sb->setPosition(
+							tgVector3(pos.x() + (x + chr.xoffset * xscale) - fnt->getPadding()[0],
+									  pos.y() + (y + chr.yoffset * yscale) - fnt->getPadding()[1],
+									  pos.z())
+						);
+						sb->setScale(scl);
+
+						sb->setColor(tgVector4(1.0f));
+						for (tgTextRange &tr : t->getRangeProperties()) {
+							if (char_index >= tr.start && char_index <= tr.start + tr.length - 1) {
+								sb->setColor(tr.color);
+							}
+						}
+
+						sb->draw(fnt->getTexture());
+					}
+					if (c != '\n') {
+						char_index++;
+					}
+					x += (chr.xadvance - fnt->getPadding()[2]) * xscale;
 				}
-				x += (chr.xadvance - fnt->getPadding()[2]) * xscale;
+				y += (fnt->getLineHeight() - fnt->getPadding()[3]) * yscale;
 			}
-
 			sb->restore();
 		}
 	}

@@ -12,14 +12,14 @@ using tgParticleTransformCallback = std::function<tgVector2(tgVector2 const&)>;
 typedef struct tgEmitter {
 	friend class tgParticleEngine;
 
-	tgEmitter(tgTexture *texture, uint max = 100)
-		: m_texture(texture), m_maxParticles(max),
+	tgEmitter(tgTexture *texture)
+		: m_texture(texture),
 		m_loop(true), m_enabled(true),
 		m_elapsed(0), m_duration(0), m_emitCounter(0),
 		m_emissionRate(25)
 	{}
-	tgEmitter(tgTexture *texture, float duration, uint max = 100)
-		: m_texture(texture), m_maxParticles(max),
+	tgEmitter(tgTexture *texture, float duration)
+		: m_texture(texture),
 		m_loop(false), m_enabled(true),
 		m_elapsed(0), m_duration(duration), m_emitCounter(0),
 		m_emissionRate(25)
@@ -53,7 +53,7 @@ protected:
 	tgTexture *m_texture;
 	bool m_loop, m_enabled;
 	float m_elapsed, m_duration, m_emitCounter;
-	uint m_emissionRate, m_maxParticles;
+	uint m_emissionRate;
 	tgParticleConfiguration m_config;
 	tgVector2 m_position;
 	tgParticleTransformCallback m_cb;

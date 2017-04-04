@@ -183,6 +183,7 @@
     <ClCompile Include="audio\tgAudioSystem.cpp" />
     <ClCompile Include="audio\tgSampleData.cpp" />
     <ClCompile Include="components\tgSprite.cpp" />
+    <ClCompile Include="components\tgText.cpp" />
     <ClCompile Include="core\tgEngine.cpp" />
     <ClCompile Include="core\tgFont.cpp" />
     <ClCompile Include="core\tgGameState.cpp" />

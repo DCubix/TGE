@@ -3,6 +3,8 @@
 
 #include <iostream>
 #include <memory>
+#include <vector>
+#include <sstream>
 
 unsigned int checkError();
 unsigned int checkALError();

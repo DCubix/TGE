@@ -147,6 +147,28 @@ namespace tgEasing {
 		if ((t /= d / 2) < 1.0f) return c / 2 * (t*t*(((s *= (1.525f)) + 1.0f)*t - s)) + b;
 		return c / 2 * ((t -= 2.0f)*t*(((s *= (1.525f)) + 1.0f)*t + s) + 2.0f) + b;
 	}
+
+	// Bounce
+	TG_EASE_FUNC_DEF(Out, Bounce) {
+		if ((t /= d) < (1.0f / 2.75f)) {
+			return c*(7.5625f*t*t) + b;
+		} else if (t < (2.0f / 2.75f)) {
+			return c*(7.5625f*(t -= (1.5f / 2.75f))*t + 0.75f) + b;
+		} else if (t < (2.5f / 2.75f)) {
+			return c*(7.5625f*(t -= (2.25f / 2.75f))*t + 0.9375f) + b;
+		} else {
+			return c*(7.5625f*(t -= (2.625f / 2.75f))*t + 0.984375f) + b;
+		}
+	}
+
+	TG_EASE_FUNC_DEF(In, Bounce) {
+		return c - easeOutBounce(d - t, 0.0f, c, d) + b;
+	}
+
+	TG_EASE_FUNC_DEF(InOut, Bounce) {
+		if (t < d * 0.5f) return easeInBounce(t * 2.0f, 0.0f, c, d) * 0.5f + b;
+		return easeOutBounce(t * 2.0f - d, 0.0f, c, d) * 0.5f + c*0.5f + b;
+	}
 }
 
 #endif

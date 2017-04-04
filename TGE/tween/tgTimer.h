@@ -1,8 +1,8 @@
 #ifndef TIMER_H
 #define TIMER_H
 
-#include <queue>
 #include <functional>
+#include <queue>
 
 typedef struct tgTimeEvent {
 	float time = -1;
@@ -16,8 +16,8 @@ public:
 	static void update(float dt);
 
 private:
-	static std::queue<tgTimeEvent> m_timers;
-	static tgTimeEvent m_currentTimer;
+	static std::queue<tgTimeEvent*> m_timers;
+	static tgTimeEvent* m_currentTimer;
 };
 
 #endif
