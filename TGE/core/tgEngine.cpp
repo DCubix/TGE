@@ -16,6 +16,10 @@ void tgEngine::start() {
 	m_running = true;
 
 	tgAssets::create();
+
+	m_audioSystem = new tgAudioSystem();
+	m_particleEngine = new tgParticleEngine(100000);
+
 	mainloop();
 
 	for (auto &kv : m_states) {
@@ -25,6 +29,8 @@ void tgEngine::start() {
 
 	tgAssets::destroy();
 
+	tgDelete(m_audioSystem);
+	tgDelete(m_particleEngine);
 	tgDelete(m_renderer);
 	tgDelete(m_window);
 }
@@ -80,6 +86,7 @@ void tgEngine::mainloop() {
 	while (m_running) {
 		if (m_changingStates) {
 			state = m_states[m_nextState];
+			m_particleEngine->restart();
 			state->getECS()->reset();
 			state->start();
 			state->getECS()->start();
@@ -103,6 +110,8 @@ void tgEngine::mainloop() {
 			if (!m_changingStates) {
 				state->getECS()->update(dt);
 				state->update(dt);
+				m_particleEngine->update(dt);
+				m_audioSystem->update();
 			}
 
 			tgTimer::update(dt);
@@ -116,10 +125,14 @@ void tgEngine::mainloop() {
 		m_renderer->begin();
 		if (!m_changingStates) {
 			state->getECS()->render(m_renderer);
+
+			tgSpriteBatch *sb = dynamic_cast<tgSpriteBatch*>(m_renderer);
+			if (sb)
+				m_particleEngine->render(sb);
+
 			state->render(m_renderer);
 		}
 		m_renderer->end();
-
 		m_renderer->render();
 
 		m_window->swapBuffers();

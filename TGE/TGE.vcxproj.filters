@@ -168,6 +168,9 @@
     <ClInclude Include="core\tgEmitter.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="scripting\tgScriptEngine.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="core\tgImageData.cpp">
@@ -279,6 +282,9 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="components\tgText.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="scripting\tgScriptEngine.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

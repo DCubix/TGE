@@ -23,6 +23,7 @@ typedef struct tgParticle {
 	float life = 0;
 	float scale, deltaScale;
 	float rotation, angularSpeed;
+	int z = 0;
 
 	tgParticleTransformCallback transformFunction;
 
@@ -45,12 +46,11 @@ public:
 		tgTexture *texture,
 		tgVector2 const& position,
 		tgParticleConfiguration const& config,
-		tgParticleTransformCallback cb = nullptr
+		tgParticleTransformCallback cb = nullptr,
+		int z = 0
 	);
 
-	void emit(
-		tgEmitter* emitter
-	);
+	tgEmitter* createEmitter(tgTexture* tex);
 
 	void restart();
 

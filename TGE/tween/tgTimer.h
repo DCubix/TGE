@@ -16,8 +16,8 @@ public:
 	static void update(float dt);
 
 private:
-	static std::queue<tgTimeEvent*> m_timers;
-	static tgTimeEvent* m_currentTimer;
+	static std::queue<tgTimeEvent> m_timers;
+	static tgTimeEvent m_currentTimer;
 };
 
 #endif

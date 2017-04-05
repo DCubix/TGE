@@ -230,8 +230,23 @@ public:
 		text_text->colorize(tgVector4(0.0f, 0.2f, 1.0f, 1.0f), 61, 4);
 
 		tgTransform* text_t = text->add<tgTransform>();
-		text_t->setLocalPosition(tgVector3(320, 20, 0));
+		text_t->setLocalPosition(tgVector3(320, 20, 99));
 		text_t->setLocalScaling(tgVector3(2.0f));
+
+		// Fire particle config
+		fire.angle = -M_PI / 2.0f;
+		fire.angleVar = M_PI / 6;
+		fire.additive = true;
+		fire.angularSpeed = 1.0f;
+		fire.angularSpeedVar = -2.0f;
+		fire.endColor = fire.endColorVar = tgVector4(1.0f, 0.9f, 0.1f, 1.0f);
+		fire.startColor = fire.startColorVar = tgVector4(1.0f, 0.1f, 0.1f, 1.0f);
+		fire.startScale = 2.0f;
+		fire.startScaleVar = 1.0f;
+		fire.endScale = 0.1f;
+		fire.endScaleVar = 0.0f;
+		fire.speed = 100.0f;
+		//
 
 		clearBoard();
 		canMakeMove = true;
@@ -284,6 +299,12 @@ public:
 	}
 
 	void addPiece(int type, int x, int y) {
+		tgEmitter *femit = getEngine()->getParticleEngine()->createEmitter(tgAssets::getTexture("fire.png"));
+		femit->setConfig(fire);
+		femit->setLoop(false);
+		femit->setDuration(0.3f);
+		femit->setRenderOrder(10);
+		
 		tgEntity *piece = getECS()->create();
 		tgTransform *piece_t = piece->add<tgTransform>();
 
@@ -291,6 +312,8 @@ public:
 		float py = pos.y();
 		piece_t->setLocalPosition(tgVector3(pos, 0.0f));
 		piece_t->setLocalScaling(tgVector3(2.0f));
+
+		femit->setPosition(pos + tgVector2(56, 33));
 
 		tgTweens::addTween(&piece_t->getLocalPosition().y(), py + 20, 0.4f, nullptr, tgEasing::easeOutBounce);
 
@@ -330,6 +353,8 @@ public:
 			tgLog::println("");
 		}
 	}
+
+	tgParticleConfiguration fire;
 
 	AI ai;
 	Board board;

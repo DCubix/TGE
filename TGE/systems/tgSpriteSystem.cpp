@@ -59,6 +59,7 @@ void tgSpriteSystem::render(tgRenderer *renderer) {
 
 		if (s->m_texture) {
 			float rot = transform->getWorldRotation().toEuler().z();
+			pos.z() = s->m_renderOrder;
 			sb->save();
 
 			sb->setUV(s->m_clipRectangle);

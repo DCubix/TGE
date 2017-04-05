@@ -77,9 +77,6 @@ public:
 	tgVectorBase<3> str() {
 		return tgVectorBase<3>(m_data[0], m_data[1], m_data[2]);
 	}
-	tgVectorBase<4> xyzw() {
-		return tgVectorBase<4>(m_data[0], m_data[1], m_data[2], m_data[3]);
-	}
 	tgVectorBase<4> xyww() {
 		return tgVectorBase<4>(m_data[0], m_data[1], m_data[3], m_data[3]);
 	}

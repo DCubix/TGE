@@ -9,7 +9,6 @@
 
 #include "tgTween.h"
 
-#define TG_MAX_TWEENS 5
 #define TG_EASE_FUNC_PARAMS float t, float b, float c, float d
 #define TG_EASE_FUNC_DEF(inout, name) \
 	static float ease##inout##name(TG_EASE_FUNC_PARAMS)

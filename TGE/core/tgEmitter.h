@@ -24,6 +24,7 @@ typedef struct tgEmitter {
 		m_elapsed(0), m_duration(duration), m_emitCounter(0),
 		m_emissionRate(25)
 	{}
+	~tgEmitter() = default;
 
 	tgTexture* getTexture() { return m_texture; }
 	void setTexture(tgTexture *tex) { m_texture = tex; }
@@ -49,6 +50,11 @@ typedef struct tgEmitter {
 	tgParticleTransformCallback getTransformCallback() const { m_cb; }
 	void setTransformCallback(tgParticleTransformCallback const& cb) { m_cb = cb; }
 
+	void reset() { m_elapsed = 0; }
+
+	int getRenderOrder() const { return m_renderOrder; }
+	void setRenderOrder(int v) { m_renderOrder = v; }
+
 protected:
 	tgTexture *m_texture;
 	bool m_loop, m_enabled;
@@ -57,6 +63,8 @@ protected:
 	tgParticleConfiguration m_config;
 	tgVector2 m_position;
 	tgParticleTransformCallback m_cb;
+
+	int m_renderOrder;
 } tgEmitter;
 
 #endif

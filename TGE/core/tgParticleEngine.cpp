@@ -51,7 +51,7 @@ void tgParticleEngine::update(float dt) {
 			e->m_emitCounter += dt;
 
 			while (!isFull() && e->m_emitCounter > rate) {
-				emit(e->m_texture, e->m_position, e->m_config, e->m_cb);
+				emit(e->m_texture, e->m_position, e->m_config, e->m_cb, e->m_renderOrder);
 				e->m_emitCounter -= rate;
 			}
 		}
@@ -75,7 +75,7 @@ void tgParticleEngine::render(tgSpriteBatch *sb) {
 		);
 		sb->setColor(p->color);
 		sb->setOrigin(tgVector2(0.5f));
-		sb->setPosition(tgVector3(p->position, 0));
+		sb->setPosition(tgVector3(p->position, p->z));
 		sb->setRotation(p->rotation);
 		sb->setScale(tgVector2(p->scale));
 		sb->setUV(tgVector4(0, 0, 1, 1));
@@ -85,20 +85,18 @@ void tgParticleEngine::render(tgSpriteBatch *sb) {
 	sb->restore();
 }
 
-void tgParticleEngine::emit(tgTexture* texture, tgVector2 const& position, tgParticleConfiguration const& config, tgParticleTransformCallback cb) {
+void tgParticleEngine::emit(tgTexture* texture, tgVector2 const& position, tgParticleConfiguration const& config, tgParticleTransformCallback cb, int z) {
 	if (texture) {
 		tgParticle *p = addParticle(position, config, cb);
+		p->z = z;
 		p->texture = texture;
 	}
 }
 
-void tgParticleEngine::emit(tgEmitter *emitter) {
-	if (emitter) {
-		auto pos = std::find(m_emitters.begin(), m_emitters.end(), emitter);
-		if (pos == m_emitters.end()) {
-			m_emitters.push_back(emitter);
-		}
-	}
+tgEmitter* tgParticleEngine::createEmitter(tgTexture* tex) {
+	tgEmitter *emitter = new tgEmitter(tex);
+	m_emitters.push_back(emitter);
+	return m_emitters.back();
 }
 
 void tgParticleEngine::restart() {

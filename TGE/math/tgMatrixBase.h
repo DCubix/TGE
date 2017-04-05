@@ -55,6 +55,9 @@ public:
 		return ret;
 	}
 
+	float get(int x, int y) { return m[y][x]; }
+	float set(int x, int y, float val) { m[y][x] = val; }
+
 	float determinant() {
 		if(C == 1) {
 			return (*this) [0][0];
@@ -81,15 +84,15 @@ public:
 		MBASE ret;
 		for(unsigned i = 0; i < C; i++) {
 			for(unsigned j = 0; j < C; j++) {
-				ret(i, j) = inv_det *
-					(a[(i + 1) % C][(j + 1) % C] * a[(i + 2) % C][(j + 2) % C)] -
-					(a[(i + 1) % C][(j + 2) % C] * a[(i + 2) % C][(j + 1) % C)];
+				ret[i][j] = inv_det *
+					(a[(i + 1) % C][(j + 1) % C] * a[(i + 2) % C][(j + 2) % C]) -
+					(a[(i + 1) % C][(j + 2) % C] * a[(i + 2) % C][(j + 1) % C]);
 			}
 		}
 		return ret;
 	}
 
-	MBASE trasposed() {
+	MBASE transposed() {
 		MBASE ret;
 		for(unsigned i = 0; i < C; i++) {
 			for(unsigned j = 0; j < C; j++) {
