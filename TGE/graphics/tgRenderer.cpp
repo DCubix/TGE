@@ -101,7 +101,7 @@ void tgRenderer::beginPostFX() {
 	clear(GL_COLOR_BUFFER_BIT);
 }
 
-void tgRenderer::renderPostFX() {
+void tgRenderer::postProcess() {
 	if (!m_postfx.empty()) {
 		m_pingPongBuffer->bind();
 		clear(GL_COLOR_BUFFER_BIT);
@@ -157,24 +157,28 @@ void tgRenderer::renderPostFX() {
 		m_pingpong[prevSrc]->unbind();
 		m_defaultShader->unbind();
 	} else {
-		glViewport(0, 0, w, h);
-
-		m_defaultShader->bind();
-		m_finalTexture->bind(0);
-		m_defaultShader->setInt("tex0", 0);
-
-		m_qvao->bind();
-		m_qvao->drawArrays(tgVertexArrayObject::tgPRIM_TRIANGLES, 0, 6);
-		m_qvao->unbind();
-
-		m_finalTexture->unbind();
-		m_defaultShader->unbind();
+		basicPostProcess();
 	}
 }
 
 void tgRenderer::endPostFX() {
 	m_finalBuffer->unbind();
 	m_finalTexture->generateMipMaps();
+}
+
+void tgRenderer::basicPostProcess() {
+	glViewport(0, 0, w, h);
+
+	m_defaultShader->bind();
+	m_finalTexture->bind(0);
+	m_defaultShader->setInt("tex0", 0);
+
+	m_qvao->bind();
+	m_qvao->drawArrays(tgVertexArrayObject::tgPRIM_TRIANGLES, 0, 6);
+	m_qvao->unbind();
+
+	m_finalTexture->unbind();
+	m_defaultShader->unbind();
 }
 
 void tgRenderer::addPostEffect(tgPostEffect *fx) {
@@ -184,11 +188,16 @@ void tgRenderer::addPostEffect(tgPostEffect *fx) {
 }
 
 void tgRenderer::removePostEffect(int passIndex) {
-	tgDelete(m_postfx[passIndex]);
+	tgPostEffect *fx = m_postfx[passIndex];
 	m_postfx[passIndex] = m_postfx.back();
 	m_postfx.pop_back();
+	tgDelete(fx);
 }
 
 void tgRenderer::clear(int flags) {
 	glClear(flags);
+}
+
+void tgRenderer::setClearColor(tgVector4 const& color) {
+	glClearColor(color.x(), color.y(), color.z(), color.w());
 }

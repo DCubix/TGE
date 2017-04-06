@@ -1,16 +1,16 @@
 #ifndef GAME_STATE_H
 #define GAME_STATE_H
 
-#include "../ecs/tgECS.h"
 #include "tgUtil.h"
 
+class tgECS;
 class tgEngine;
 class tgRenderer;
 class tgGameState {
 	friend class tgEngine;
 public:
-	tgGameState();
-	virtual ~tgGameState();
+	tgGameState() = default;
+	virtual ~tgGameState() = default;
 
 	virtual void start() {}
 	virtual void update(float dt) {}
@@ -21,7 +21,6 @@ public:
 	tgEngine* getEngine() { return m_engine; }
 
 protected:
-	tgECS *m_ecs;
 	tgEngine *m_engine;
 };
 

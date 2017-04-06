@@ -259,8 +259,6 @@ void tgSpriteBatch::render() {
 	beginPostFX();
 	renderGeometry(m_shader);
 	endPostFX();
-
-	renderPostFX();
 }
 
 void tgSpriteBatch::renderGeometry(tgShaderProgram *shader) {

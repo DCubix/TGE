@@ -1,16 +1,5 @@
 #include "tgGameState.h"
 
-tgGameState::tgGameState() {
-	m_ecs = new tgECS();
-}
+#include "tgEngine.h"
 
-tgGameState::~tgGameState() {
-	tgDelete(m_ecs);
-}
-
-tgECS* tgGameState::getECS() {
-	if (!m_ecs) {
-		m_ecs = new tgECS();
-	}
-	return m_ecs;
-}
+tgECS* tgGameState::getECS() { return getEngine()->getECS(); }

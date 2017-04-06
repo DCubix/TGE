@@ -42,7 +42,7 @@ public:
 
 	tgEntity* create();
 	void destroy(tgEntity* entity);
-
+	
 	void registerSystem(tgSystem *system);
 
 	template <typename T>

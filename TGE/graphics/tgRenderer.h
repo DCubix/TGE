@@ -85,13 +85,16 @@ public:
 	virtual void render() {}
 	virtual void renderGeometry(tgShaderProgram *shader) {}
 	void beginPostFX();
-	void renderPostFX();
+	void postProcess();
 	void endPostFX();
+
+	void basicPostProcess();
 
 	void addPostEffect(tgPostEffect *fx);
 	void removePostEffect(int passIndex);
 
 	void clear(int flags);
+	void setClearColor(tgVector4 const& color);
 protected:
 	std::vector<tgMesh*> m_meshes;
 	

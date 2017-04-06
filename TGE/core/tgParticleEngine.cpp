@@ -109,7 +109,10 @@ void tgParticleEngine::restart() {
 	for (std::size_t i = 0; i < m_maxParticles; i++) {
 		m_particlePool.push_back(new tgParticle());
 	}
-
+	for (tgEmitter *e : m_emitters) {
+		tgDelete(e);
+	}
+	m_emitters.clear();
 	m_particleCount = 0;
 	m_particleIndex = 0;
 }
