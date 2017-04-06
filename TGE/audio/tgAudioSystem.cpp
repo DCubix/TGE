@@ -44,7 +44,7 @@ void tgAudioSystem::cleanup() {
 	}
 }
 
-tgAudioSource* tgAudioSystem::play(tgAudioBuffer* buff) {
+tgAudioSource* tgAudioSystem::play(tgAudioBuffer *buff) {
 	tgAudioSource* src = new tgAudioSource(buff);
 	src->play();
 	m_sources.push_back(src);

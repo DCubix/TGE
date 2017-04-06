@@ -5,7 +5,7 @@
 
 class tgAudioBuffer {
 public:
-	tgAudioBuffer(tgSampleData& data);
+	tgAudioBuffer(tgSampleData &data);
 	~tgAudioBuffer();
 
 	ALuint getBuffer() const { return m_buffer; }

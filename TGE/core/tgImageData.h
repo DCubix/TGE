@@ -15,13 +15,13 @@ public:
 	tgImageData(tgAssetData *data);
 
 	std::vector<byte>& getData() { return m_data; }
-	tgImageData getSubData(int x, int y, int w, int h);
+	tgImageData* getSubData(int x, int y, int w, int h);
 
 	int getWidth() const { return m_width; }
 	int getHeight() const { return m_height; }
 
-	tgImageData& flipX();
-	tgImageData& flipY();
+	tgImageData* flipX();
+	tgImageData* flipY();
 
 	bool saveAs(std::ostream &stream);
 

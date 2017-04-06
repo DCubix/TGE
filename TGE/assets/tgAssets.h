@@ -8,6 +8,9 @@
 #include "../core/tgFont.h"
 #include "../audio/tgAudioBuffer.h"
 
+#include "../core/tgImageData.h"
+#include "../audio/tgSampleData.h"
+
 #include "tgAssetData.h"
 
 template <typename T>

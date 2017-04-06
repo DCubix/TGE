@@ -17,5 +17,4 @@ tgSampleData::tgSampleData(tgAssetData *data) {
 	m_data = std::vector<short>(sdata, sdata + samples);
 
 	free(sdata);
-	delete[] data;
 }

@@ -58,7 +58,7 @@ void tgTransform::rotate(tgVector3 const& axis, float angle) {
 	m_rotation = m_rotation * tgQuaternion(axis, angle);
 }
 
-void tgTransform::setParent(tgTransform * parent) {
+void tgTransform::setParent(tgTransform *parent) {
 	if (m_parent == nullptr) {
 		if (parent != nullptr) {
 			m_parent = parent;

@@ -50,10 +50,10 @@ typedef struct tgEmitter {
 	tgParticleTransformCallback getTransformCallback() const { m_cb; }
 	void setTransformCallback(tgParticleTransformCallback const& cb) { m_cb = cb; }
 
-	void reset() { m_elapsed = 0; }
-
 	int getRenderOrder() const { return m_renderOrder; }
 	void setRenderOrder(int v) { m_renderOrder = v; }
+
+	void reset() { m_elapsed = 0; }
 
 protected:
 	tgTexture *m_texture;

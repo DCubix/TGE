@@ -26,10 +26,10 @@ typedef struct tgOpenGLConfiguration {
 
 class tgWindow {
 public:
-	tgWindow(std::string const &title, int width, int height, tgOpenGLConfiguration ogl=DEFAULT_OGL_CONFIG);
+	tgWindow(std::string const& title, int width, int height, tgOpenGLConfiguration ogl=DEFAULT_OGL_CONFIG);
 	~tgWindow();
 
-	void setTitle(std::string const &title) { m_title = title; }
+	void setTitle(std::string const& title) { m_title = title; }
 
 	int getWidth() const { return m_width; }
 	int getHeight() const { return m_height; }

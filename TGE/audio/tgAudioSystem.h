@@ -14,7 +14,7 @@ public:
 	tgAudioSystem();
 	~tgAudioSystem();
 
-	tgAudioSource* play(tgAudioBuffer* buff);
+	tgAudioSource* play(tgAudioBuffer *buff);
 	void update();
 
 	bool isInitialized() const { return m_initialized; }

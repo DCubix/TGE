@@ -2,7 +2,7 @@
 #define PARTICLE_ENGINE_H
 
 #include "../graphics/tgTexture.h"
-#include "../graphics/tgSpriteBatch.h"
+#include "../graphics/tgRenderer.h"
 
 #include "tgParticleConfiguration.h"
 #include "tgEmitter.h"
@@ -40,7 +40,7 @@ public:
 	~tgParticleEngine();
 
 	void update(float dt);
-	void render(tgSpriteBatch *sb);
+	void render(tgRenderer *ren);
 
 	void emit(
 		tgTexture *texture,

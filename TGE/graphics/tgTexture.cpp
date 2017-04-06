@@ -11,7 +11,7 @@ tgTexture::tgTexture(int width, int height, tgTextureType ttype)
 	setFilter(GL_LINEAR_MIPMAP_LINEAR, GL_LINEAR);
 }
 
-tgTexture::tgTexture(tgImageData& data, tgTextureType ttype)
+tgTexture::tgTexture(tgImageData &data, tgTextureType ttype)
 	: m_bindCode(0),
 	m_width(data.getWidth()),
 	m_height(data.getHeight()),

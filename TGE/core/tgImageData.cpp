@@ -35,21 +35,21 @@ tgImageData::tgImageData(tgAssetData *data) {
 	delete[] data;
 }
 
-tgImageData tgImageData::getSubData(int x, int y, int w, int h) {
-	tgImageData ndata(w, h);
+tgImageData* tgImageData::getSubData(int x, int y, int w, int h) {
+	tgImageData* ndata = new tgImageData(w, h);
 	for(int py = y; py < y + h; py++) {
 		for(int px = x; px < x + w; px++) {
 			Byte4 b = getByteAt(px, py);
-			ndata.m_data.push_back(b.r);
-			ndata.m_data.push_back(b.g);
-			ndata.m_data.push_back(b.b);
-			ndata.m_data.push_back(b.a);
+			ndata->m_data.push_back(b.r);
+			ndata->m_data.push_back(b.g);
+			ndata->m_data.push_back(b.b);
+			ndata->m_data.push_back(b.a);
 		}
 	}
 	return ndata;
 }
 
-tgImageData& tgImageData::flipX() {
+tgImageData* tgImageData::flipX() {
 	std::vector<byte> ndata;
 	ndata.reserve(m_width * m_height * 4);
 
@@ -63,10 +63,10 @@ tgImageData& tgImageData::flipX() {
 		}
 	}
 	m_data = std::vector<byte>(ndata);
-	return *this;
+	return this;
 }
 
-tgImageData& tgImageData::flipY() {
+tgImageData* tgImageData::flipY() {
 	std::vector<byte> ndata;
 	ndata.reserve(m_width * m_height * 4);
 
@@ -80,7 +80,7 @@ tgImageData& tgImageData::flipY() {
 		}
 	}
 	m_data = std::vector<byte>(ndata);
-	return *this;
+	return this;
 }
 
 bool tgImageData::saveAs(std::ostream &stream) {

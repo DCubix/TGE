@@ -13,11 +13,13 @@
 class tgSampleData {
 public:
 	tgSampleData(tgAssetData *data);
+	~tgSampleData() = default;
 
 	ALenum getFormat() const { return m_format; }
 	short* getData() { return &m_data[0]; }
 	std::size_t getDataSize() { return m_data.size() * sizeof(short); }
 	int getSampleRate() const { return m_sampleRate; }
+
 private:
 	std::vector<short> m_data;
 	int m_sampleRate;

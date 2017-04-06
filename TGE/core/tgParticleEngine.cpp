@@ -64,25 +64,25 @@ void tgParticleEngine::update(float dt) {
 	}
 }
 
-void tgParticleEngine::render(tgSpriteBatch *sb) {
-	sb->save();
+void tgParticleEngine::render(tgRenderer *ren) {
+	ren->save();
 	for (uint i = 0; i < m_particleCount; i++) {
 		tgParticle *p = m_particlePool[i];
 
-		sb->setBlendMode(
+		ren->setBlendMode(
 			p->config.additive ?
 			tgBlendMode::tgBLEND_ADD : tgBlendMode::tgBLEND_NORMAL
 		);
-		sb->setColor(p->color);
-		sb->setOrigin(tgVector2(0.5f));
-		sb->setPosition(tgVector3(p->position, p->z));
-		sb->setRotation(p->rotation);
-		sb->setScale(tgVector2(p->scale));
-		sb->setUV(tgVector4(0, 0, 1, 1));
+		ren->setColor(p->color);
+		ren->setOrigin(tgVector2(0.5f));
+		ren->setPosition(tgVector3(p->position, p->z));
+		ren->setRotation(p->rotation);
+		ren->setScale(tgVector2(p->scale));
+		ren->setUV(tgVector4(0, 0, 1, 1));
 
-		sb->draw(p->texture);
+		ren->draw(p->texture);
 	}
-	sb->restore();
+	ren->restore();
 }
 
 void tgParticleEngine::emit(tgTexture* texture, tgVector2 const& position, tgParticleConfiguration const& config, tgParticleTransformCallback cb, int z) {

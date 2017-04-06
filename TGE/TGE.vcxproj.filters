@@ -36,9 +36,6 @@
     <ClInclude Include="core\tgWindow.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="graphics\tgBuffer.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="graphics\tgGL.h">
       <Filter>Header Files</Filter>
     </ClInclude>
@@ -46,12 +43,6 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="graphics\tgTexture.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="graphics\tgVertexArrayObject.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="graphics\tgVertexFormat.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="math\tgMath.h">
@@ -85,9 +76,6 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="tween\tgTimer.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="graphics\tgSpriteBatch.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="core\tgFont.h">
@@ -185,19 +173,10 @@
     <ClCompile Include="core\tgWindow.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="graphics\tgBuffer.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="graphics\tgShaderProgram.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="graphics\tgTexture.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="graphics\tgVertexArrayObject.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="graphics\tgVertexFormat.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="math\tgMath.cpp">
@@ -225,9 +204,6 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="tween\tgTimer.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="graphics\tgSpriteBatch.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="scripting\tgScript.cpp">

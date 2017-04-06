@@ -3,7 +3,7 @@
 #include "../ecs/tgECS.h"
 #include "../components/tgText.h"
 #include "../components/tgTransform.h"
-#include "../graphics/tgSpriteBatch.h"
+#include "../graphics/tgRenderer.h"
 
 #include <cctype>
 
@@ -41,9 +41,6 @@ static float computeTextWidth(std::string const& text, tgFont *fnt, tgVector2 co
 }
 
 void tgTextSystem::render(tgRenderer *renderer) {
-	tgSpriteBatch *sb = dynamic_cast<tgSpriteBatch*>(renderer);
-	if (!sb) { return; }
-
 	for (tgEntity *ent : getECS()->with<tgText, tgTransform>()) {
 		auto t = ent->get<tgText>();
 		auto transform = ent->get<tgTransform>();
@@ -58,7 +55,7 @@ void tgTextSystem::render(tgRenderer *renderer) {
 		tgFont *fnt = t->m_font;
 		tgTexture *tex = fnt ? fnt->getTexture() : nullptr;
 		if (fnt && tex) {
-			sb->save();
+			renderer->save();
 
 			float xscale = scl.x();
 			float yscale = scl.y();
@@ -85,22 +82,22 @@ void tgTextSystem::render(tgRenderer *renderer) {
 						chr = fnt->getCharMap()[char(fnt->getNumChars() - 1)];
 					}
 					if (!std::isspace(c)) {
-						sb->setUV(chr.clipRect);
-						sb->setPosition(
+						renderer->setUV(chr.clipRect);
+						renderer->setPosition(
 							tgVector3(pos.x() + (x + chr.xoffset * xscale) - fnt->getPadding()[0],
 									  pos.y() + (y + chr.yoffset * yscale) - fnt->getPadding()[1],
 									  pos.z())
 						);
-						sb->setScale(scl);
+						renderer->setScale(scl);
 
-						sb->setColor(tgVector4(1.0f));
+						renderer->setColor(tgVector4(1.0f));
 						for (tgTextRange &tr : t->getRangeProperties()) {
 							if (char_index >= tr.start && char_index <= tr.start + tr.length - 1) {
-								sb->setColor(tr.color);
+								renderer->setColor(tr.color);
 							}
 						}
 
-						sb->draw(fnt->getTexture());
+						renderer->draw(fnt->getTexture());
 					}
 					if (c != '\n') {
 						char_index++;
@@ -109,7 +106,7 @@ void tgTextSystem::render(tgRenderer *renderer) {
 				}
 				y += (fnt->getLineHeight() - fnt->getPadding()[3]) * yscale;
 			}
-			sb->restore();
+			renderer->restore();
 		}
 	}
 }

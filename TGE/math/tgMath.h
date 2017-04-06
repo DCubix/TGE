@@ -22,6 +22,10 @@ namespace tgMathUtil {
 	static T clamp(T val, T min, T max) {
 		return std::min(std::max(val, min), max);
 	}
+
+	static float lerp(float a, float b, float t) {
+		return (1 - t) * a + b * t;
+	}
 }
 
 #endif

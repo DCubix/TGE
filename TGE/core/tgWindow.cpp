@@ -4,7 +4,7 @@
 #include "../graphics/tgGL.h"
 #include "tgLog.h"
 
-tgWindow::tgWindow(std::string const &title, int width, int height, tgOpenGLConfiguration ogl)
+tgWindow::tgWindow(std::string const& title, int width, int height, tgOpenGLConfiguration ogl)
 	: m_title(title), m_width(width), m_height(height), m_sdlWindow(nullptr)
 {
 	if (SDL_Init(SDL_INIT_VIDEO) < 0) {

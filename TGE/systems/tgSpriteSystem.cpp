@@ -3,7 +3,7 @@
 #include "../ecs/tgECS.h"
 #include "../components/tgSprite.h"
 #include "../components/tgTransform.h"
-#include "../graphics/tgSpriteBatch.h"
+#include "../graphics/tgRenderer.h"
 
 void tgSpriteSystem::update(float dt) {
 	for (tgEntity *ent : getECS()->with<tgSprite>()) {
@@ -43,9 +43,6 @@ void tgSpriteSystem::update(float dt) {
 }
 
 void tgSpriteSystem::render(tgRenderer *renderer) {
-	tgSpriteBatch *sb = dynamic_cast<tgSpriteBatch*>(renderer);
-	if (!sb) { return; }
-
 	for (tgEntity *ent : getECS()->with<tgSprite, tgTransform>()) {
 		auto s = ent->get<tgSprite>();
 		auto transform = ent->get<tgTransform>();
@@ -60,18 +57,18 @@ void tgSpriteSystem::render(tgRenderer *renderer) {
 		if (s->m_texture) {
 			float rot = transform->getWorldRotation().toEuler().z();
 			pos.z() = s->m_renderOrder;
-			sb->save();
+			renderer->save();
 
-			sb->setUV(s->m_clipRectangle);
-			sb->setPosition(pos);
-			sb->setScale(scl);
-			sb->setOrigin(s->m_origin);
-			sb->setRotation(rot);
-			sb->setColor(s->m_color);
+			renderer->setUV(s->m_clipRectangle);
+			renderer->setPosition(pos);
+			renderer->setScale(scl);
+			renderer->setOrigin(s->m_origin);
+			renderer->setRotation(rot);
+			renderer->setColor(s->m_color);
 
-			sb->draw(s->m_texture);
+			renderer->draw(s->m_texture);
 
-			sb->restore();
+			renderer->restore();
 		}
 	}
 }

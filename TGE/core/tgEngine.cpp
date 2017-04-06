@@ -17,6 +17,7 @@ void tgEngine::start() {
 
 	tgAssets::create();
 
+	m_renderer = new tgRenderer(m_window->getWidth(), m_window->getHeight());
 	m_ecs = new tgECS();
 	m_audioSystem = new tgAudioSystem();
 	m_particleEngine = new tgParticleEngine(100000);
@@ -128,10 +129,7 @@ void tgEngine::mainloop() {
 		m_renderer->begin();
 		if (!m_changingStates) {
 			m_ecs->render(m_renderer);
-
-			tgSpriteBatch *sb = dynamic_cast<tgSpriteBatch*>(m_renderer);
-			if (sb)
-				m_particleEngine->render(sb);
+			m_particleEngine->render(m_renderer);
 
 			state->render(m_renderer);
 		}

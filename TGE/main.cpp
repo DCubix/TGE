@@ -6,8 +6,6 @@
 #include "core/tgLog.h"
 #include "core/tgInput.h"
 
-#include "graphics/tgSpriteBatch.h"
-
 #include "math/tgMath.h"
 
 #include "assets/tgAssets.h"
@@ -497,9 +495,6 @@ public:
 int main (int argc, char **argv) {
 	tgWindow *win = new tgWindow("TGE", 640, 480);
 	tgEngine *engine = new tgEngine(win);
-
-	tgSpriteBatch *sb = new tgSpriteBatch(640, 480);
-	engine->setRenderer(sb);
 
 	engine->registerState("menu", new Menu());
 	engine->registerState("game", new TicTacToe());
